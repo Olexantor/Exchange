@@ -15,14 +15,16 @@ class ExchangeViewController: UIViewController {
     
     var dict = [String: String]()
     
-    let exchangeImageView: UIImageView = {
+    private var viewModel: ExchangeViewModelType?
+    
+    private let exchangeImageView: UIImageView = {
        let imageView = UIImageView()
         imageView.image = UIImage(named: "circleArrows")
         imageView.sizeToFit()
        return imageView
     }()
     
-    let fromCurrencyButton: UIButton = {
+    private let fromCurrencyButton: UIButton = {
         let button = UIButton(type: .system)
         button.tag = 1
         button.setTitle("select 1st currency", for: .normal)
@@ -31,21 +33,21 @@ class ExchangeViewController: UIViewController {
         
     }()
     
-    let fromCurrencyTextField: UITextField = {
+    private let fromCurrencyTextField: UITextField = {
         let field = UITextField()
         field.placeholder = "0.0"
         field.textAlignment  = .center
         return field
     }()
     
-    let fromCurrencyLabel: UILabel = {
+    private let fromCurrencyLabel: UILabel = {
         let label  = UILabel()
-        label.text = "NON"
+        label.text = ""
 //        label.isEnabled = false
         return label
     }()
     
-    let intoCurrencyButton: UIButton = {
+    private let intoCurrencyButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("select 2nd currency", for: .normal)
         button.tag = 2
@@ -53,21 +55,20 @@ class ExchangeViewController: UIViewController {
         return button
     }()
     
-    let intoCurrencyTextField: UITextField = {
+    private let intoCurrencyTextField: UITextField = {
         let field = UITextField()
         field.placeholder = "0.0"
         field.textAlignment  = .center
         return field
     }()
     
-    let intoCurrencyLabel: UILabel = {
+    private let intoCurrencyLabel: UILabel = {
         let label  = UILabel()
-        label.text = "NON"
-//        label.isEnabled = false
+        label.text = ""
         return label
      }()
     
-    let convertButton: UIButton = {
+    private let convertButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("convert", for: .normal)
         return button
@@ -76,6 +77,7 @@ class ExchangeViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
+        viewModel = ExchangeViewModel()
         title = "Exchange"
         addingSubviews()
         setupConstraints()
@@ -158,12 +160,16 @@ class ExchangeViewController: UIViewController {
 //        valutesTableViewController.delegate = self
 
         if sender.tag == 1 {
+            let condition: SelectButtonCondition = .firstButton
+            guard let currencyViewModel = viewModel?.viewModelWithSelected(condition: condition) else { return }
+            navigationController?.pushViewController(SelectCurrencyViewController(viewModel: currencyViewModel), animated: true)
             print(1)
         } else {
+            let condition: SelectButtonCondition = .secondButton
+            guard let currencyViewModel = viewModel?.viewModelWithSelected(condition: condition) else { return }
+            navigationController?.pushViewController(SelectCurrencyViewController(viewModel: currencyViewModel), animated: true)
             print(2)
-            
         }
-        navigationController?.pushViewController(SelectCurrencyViewController(), animated: true)
     }
     
     
