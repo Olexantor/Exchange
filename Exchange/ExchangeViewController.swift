@@ -154,6 +154,7 @@ class ExchangeViewController: UIViewController {
     
     @objc private func selectCurrency(sender: UIButton) {
 //        let valutesTableViewController = ValutesTableViewController()
+//        let
 //        valutesTableViewController.delegate = self
 
         if sender.tag == 1 {
@@ -162,7 +163,7 @@ class ExchangeViewController: UIViewController {
             print(2)
             
         }
-//        navigationController?.pushViewController(valutesTableViewController, animated: true)
+        navigationController?.pushViewController(SelectCurrencyViewController(), animated: true)
     }
     
     
