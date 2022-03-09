@@ -92,7 +92,7 @@ class ExchangeViewController: UIViewController {
 //                print(error)
 //            }
 //        }
-//        NetworkManager.shared.fetchExchangeRate(with: "RUB") { [weak self] result in
+//        NetworkManager.shared.fetchExchangeRate(with: "USD") { [weak self] result in
 //            guard let self = self else { return }
 //            switch result {
 //            case .success(let rate):
