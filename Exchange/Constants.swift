@@ -7,10 +7,7 @@
 import Alamofire
 import Foundation
 
-let headers: HTTPHeaders = [
-    "x-rapidapi-host": "currency-converter5.p.rapidapi.com",
-    "x-rapidapi-key": "f96847c424msh3226f07e3f2ade4p1464a8jsn93f99a3b39e5"
-]
+let currencyUrl = "https://api.currencyapi.com/v3/latest?apikey=\(apiKey)"
+let convertUrl = "https://api.currencyapi.com/v3/latest?apikey=\(apiKey)&base_currency="
+private let apiKey = "6Nr010nsLWzCcDNJAKuvwxg6BiXdOpt5hpSOFelu"
 
-let currencyUrl = "https://currency-converter5.p.rapidapi.com/currency/list"
-let convertUrl = "https://currency-converter5.p.rapidapi.com/currency/convert?from="

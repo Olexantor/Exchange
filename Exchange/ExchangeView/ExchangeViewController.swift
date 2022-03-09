@@ -13,7 +13,8 @@ enum SelectButtonCondition {
 
 class ExchangeViewController: UIViewController {
     
-    var dict = [String: String]()
+    var array = [String]()
+    var dict = [String: Double]()
     
     private var viewModel: ExchangeViewModelType?
     
@@ -85,7 +86,17 @@ class ExchangeViewController: UIViewController {
 //            guard let self = self else { return }
 //            switch result {
 //            case .success(let currencyList):
-//                self.dict = currencyList.currencies
+//                self.array = currencyList.data.map{ $0.key }
+//                print(self.array)
+//            case .failure(let error):
+//                print(error)
+//            }
+//        }
+//        NetworkManager.shared.fetchExchangeRate(with: "USD") { [weak self] result in
+//            guard let self = self else { return }
+//            switch result {
+//            case .success(let rate):
+//                self.dict = rate.rates
 //                print(self.dict)
 //            case .failure(let error):
 //                print(error)

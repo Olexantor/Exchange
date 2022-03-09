@@ -24,6 +24,7 @@ class SelectCurrencyViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupTableView()
+        setupConstrains()
         // Do any additional setup after loading the view.
     }
     
