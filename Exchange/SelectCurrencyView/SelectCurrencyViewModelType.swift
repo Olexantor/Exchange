@@ -10,7 +10,11 @@ import Foundation
 protocol SelectCurrencyViewModelType {
     var conditionOfButton: SelectButtonCondition { get }
     
-    var listOfCurrency: [String] { get }
+    var networkErrorInBox: Box<Error?> { get }
     
-    func getCurrencies()
+    var currencyInBox: Box<[String]> { get }
+    
+    func numberOfRows() -> Int
+    
+    func cellViewModel(forIndexPath indexPath: IndexPath) -> CurrencyCellViewModelType?
 }

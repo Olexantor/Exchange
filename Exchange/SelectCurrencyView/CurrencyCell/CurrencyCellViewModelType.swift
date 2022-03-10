@@ -7,6 +7,6 @@
 
 import Foundation
 
-protocol CurrencyCellViewModelType {
-    
+protocol CurrencyCellViewModelType: AnyObject {
+    var currency: String { get }
 }

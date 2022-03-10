@@ -86,7 +86,7 @@ class ExchangeViewController: UIViewController {
 //            guard let self = self else { return }
 //            switch result {
 //            case .success(let currencyList):
-//                self.array = currencyList.data.map{ $0.key }
+//                self.array = currencyList.data.map{ $0.key }.sorted()
 //                print(self.array)
 //            case .failure(let error):
 //                print(error)
@@ -102,6 +102,9 @@ class ExchangeViewController: UIViewController {
 //                print(error)
 //            }
 //        }
+//        UserDefaults.standard.removeObject(forKey: "!")
+//        UserDefaults.standard.removeObject(forKey: "Saved Currencies")
+        UserDefaults.standard.removeObject(forKey: "currencies")
     }
     func addingSubviews() {
         view.addSubview(exchangeImageView)
@@ -169,22 +172,24 @@ class ExchangeViewController: UIViewController {
 //        let valutesTableViewController = ValutesTableViewController()
 //        let
 //        valutesTableViewController.delegate = self
-
-        if sender.tag == 1 {
-            let condition: SelectButtonCondition = .firstButton
-            guard let currencyViewModel = viewModel?.viewModelWithSelected(condition: condition) else { return }
-            navigationController?.pushViewController(SelectCurrencyViewController(viewModel: currencyViewModel), animated: true)
-            print(1)
-        } else {
-            let condition: SelectButtonCondition = .secondButton
-            guard let currencyViewModel = viewModel?.viewModelWithSelected(condition: condition) else { return }
-            navigationController?.pushViewController(SelectCurrencyViewController(viewModel: currencyViewModel), animated: true)
-            print(2)
+      
+            if sender.tag == 1 {
+                let condition: SelectButtonCondition = .firstButton
+                guard let currencyViewModel = viewModel?.viewModelWithSelected(condition: condition) else { return }
+                navigationController?.pushViewController(SelectCurrencyViewController(viewModel: currencyViewModel), animated: true)
+                print(1)
+            } else {
+                let condition: SelectButtonCondition = .secondButton
+                guard let currencyViewModel = viewModel?.viewModelWithSelected(condition: condition) else { return }
+               navigationController?.pushViewController(SelectCurrencyViewController(viewModel: currencyViewModel), animated: true)
+                print(2)
+            }
         }
+        
     }
     
     
 
 
-}
+
 
