@@ -8,5 +8,9 @@
 import Foundation
 
 final class CurrencyCellViewModel: CurrencyCellViewModelType {
+    var currency: String
     
+    init(currency: String) {
+        self.currency = currency
+    }
 }

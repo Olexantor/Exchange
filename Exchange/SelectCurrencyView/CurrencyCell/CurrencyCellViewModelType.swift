@@ -8,5 +8,5 @@
 import Foundation
 
 protocol CurrencyCellViewModelType {
-    
+    var currency: String { get }
 }

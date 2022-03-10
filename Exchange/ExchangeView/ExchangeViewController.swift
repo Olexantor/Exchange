@@ -86,7 +86,7 @@ class ExchangeViewController: UIViewController {
 //            guard let self = self else { return }
 //            switch result {
 //            case .success(let currencyList):
-//                self.array = currencyList.data.map{ $0.key }
+//                self.array = currencyList.data.map{ $0.key }.sorted()
 //                print(self.array)
 //            case .failure(let error):
 //                print(error)
