@@ -13,4 +13,10 @@ final class SelectCurrencyViewModel: SelectCurrencyViewModelType {
     init(conditionOfButton: SelectButtonCondition) {
         self.conditionOfButton = conditionOfButton
     }
+    
+    var listOfCurrency: [String] = []
+    
+    func getCurrencies() {
+      
+    }
 }

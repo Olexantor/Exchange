@@ -9,4 +9,8 @@ import Foundation
 
 protocol SelectCurrencyViewModelType {
     var conditionOfButton: SelectButtonCondition { get }
+    
+    var listOfCurrency: [String] { get }
+    
+    func getCurrencies()
 }
