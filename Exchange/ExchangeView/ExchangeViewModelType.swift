@@ -9,9 +9,9 @@ import Foundation
 
 protocol ExchangeViewModelType {
     
-    var fromCurrencyName: String { get }
+    var fromCurrencyName: Box<String>  { get }
     
-    var intoCurrencyName: String { get }
+    var intoCurrencyName: Box<String> { get }
     
     var fromCurrencyValue: Double { get }
     

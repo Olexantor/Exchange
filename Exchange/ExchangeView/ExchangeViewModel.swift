@@ -6,12 +6,15 @@
 //
 
 import Foundation
+protocol SelectedCurrencyDelegate: AnyObject {
+    func selectedCurrencyWith(currencyName: String, and condition: SelectButtonCondition)
+}
 
-final class ExchangeViewModel: ExchangeViewModelType {
+final class ExchangeViewModel: ExchangeViewModelType, SelectedCurrencyDelegate {
     
-    var fromCurrencyName = ""
+    var fromCurrencyName: Box<String> = Box("")
     
-    var intoCurrencyName = ""
+    var intoCurrencyName: Box<String> = Box("")
     
     var fromCurrencyValue = 0.0
     
@@ -37,4 +40,14 @@ final class ExchangeViewModel: ExchangeViewModelType {
     func viewModelWithSelected(condition: SelectButtonCondition) -> SelectCurrencyViewModelType? {
         return SelectCurrencyViewModel(conditionOfButton: condition)
     }
+    
+    func selectedCurrencyWith(currencyName: String, and condition: SelectButtonCondition) {
+        switch condition {
+        case .firstButton:
+            fromCurrencyName.value = currencyName
+        case .secondButton:
+            intoCurrencyName.value = currencyName
+        }
+    }
+    
 }

@@ -10,7 +10,9 @@ import SwiftUI
 
 class SelectCurrencyViewController: UIViewController {
     
-    private let viewModel: SelectCurrencyViewModelType
+    weak var delegate: SelectedCurrencyDelegate?
+    
+    private let selectViewModel: SelectCurrencyViewModelType
     
     private var tableView = UITableView()
     
@@ -24,7 +26,7 @@ class SelectCurrencyViewController: UIViewController {
     }()
 
     init(viewModel: SelectCurrencyViewModelType) {
-        self.viewModel = viewModel
+        self.selectViewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -39,21 +41,6 @@ class SelectCurrencyViewController: UIViewController {
         setupTableView()
         setupConstrains()
         setupBindings()
-        
-        
-//        viewModel.currencyInBox.bind { [weak self] _ in
-//            guard let self = self else { return }
-//            DispatchQueue.main.async {
-//                self.tableView.reloadData()
-//                self.activityIndicator.stopAnimating()
-//            }
-//        }
-//
-//        viewModel.networkError.bind { [weak self] error in
-//            guard let self = self else { return }
-//            guard error != nil else { return }
-//            self.showAlert()
-//        }
     }
     
     private func setupTableView() {
@@ -77,15 +64,14 @@ class SelectCurrencyViewController: UIViewController {
     }
     
     private func setupBindings() {
-        viewModel.currencyInBox.bind { [weak self] _ in
+        selectViewModel.currencyInBox.bind { [weak self] _ in
             guard let self = self else { return }
             DispatchQueue.main.async {
                 self.tableView.reloadData()
                 self.activityIndicator.stopAnimating()
             }
         }
-        
-        viewModel.networkErrorInBox.bind { [weak self] error in
+        selectViewModel.networkErrorInBox.bind { [weak self] error in
             guard let self = self else { return }
             guard error != nil else { return }
             self.showAlert()
@@ -108,22 +94,23 @@ class SelectCurrencyViewController: UIViewController {
 
 extension SelectCurrencyViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        viewModel.numberOfRows()
+        selectViewModel.numberOfRows()
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: CurrencyCell.identifier, for: indexPath) as? CurrencyCell
         guard let tableViewCell = cell else { return UITableViewCell() }
-        let cellViewModel = viewModel.cellViewModel(forIndexPath: indexPath)
+        let cellViewModel = selectViewModel.cellViewModel(forIndexPath: indexPath)
         tableViewCell.viewModel = cellViewModel
         return tableViewCell
     }
 }
 //MARK: - UITableViewDelegate
+
 extension SelectCurrencyViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-    
-        tableView.deselectRow(at: indexPath, animated: true)
+        selectViewModel.delegate?.selectedCurrencyWith(currencyName: selectViewModel.currencyInBox.value[indexPath.row], and: selectViewModel.conditionOfButton)
+        navigationController?.popViewController(animated: true)
     }
 }
 
