@@ -16,7 +16,7 @@ class ExchangeViewController: UIViewController {
     var array = [String]()
     var dict = [String: Double]()
     
-    private var viewModel: ExchangeViewModelType?
+    private var exchViewModel: ExchangeViewModelType?
     
     private let exchangeImageView: UIImageView = {
        let imageView = UIImageView()
@@ -78,10 +78,11 @@ class ExchangeViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
-        viewModel = ExchangeViewModel()
+        exchViewModel = ExchangeViewModel()
         title = "Exchange"
         addingSubviews()
         setupConstraints()
+        setupBindings()
 //        NetworkManager.shared.fetchCurrencyList { [weak self] result in
 //            guard let self = self else { return }
 //            switch result {
@@ -106,7 +107,7 @@ class ExchangeViewController: UIViewController {
 //        UserDefaults.standard.removeObject(forKey: "Saved Currencies")
         UserDefaults.standard.removeObject(forKey: "currencies")
     }
-    func addingSubviews() {
+    private func addingSubviews() {
         view.addSubview(exchangeImageView)
         view.addSubview(fromCurrencyButton)
         view.addSubview(fromCurrencyTextField)
@@ -117,7 +118,7 @@ class ExchangeViewController: UIViewController {
         view.addSubview(convertButton)
     }
     
-    func setupConstraints() {
+    private func setupConstraints() {
         exchangeImageView.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
             make.width.height.equalTo(100)
@@ -168,22 +169,21 @@ class ExchangeViewController: UIViewController {
         }
     }
     
+    private func setupBindings() {
+        exchViewModel?.fromCurrencyName.bind { [weak self] currency in
+            self?.fromCurrencyLabel.text = currency
+        }
+        exchViewModel?.intoCurrencyName.bind { [weak self] currency in
+            self?.intoCurrencyLabel.text = currency
+        }
+    }
+    
     @objc private func selectCurrency(sender: UIButton) {
-//        let valutesTableViewController = ValutesTableViewController()
-//        let
-//        valutesTableViewController.delegate = self
-      
-            if sender.tag == 1 {
-                let condition: SelectButtonCondition = .firstButton
-                guard let currencyViewModel = viewModel?.viewModelWithSelected(condition: condition) else { return }
-                navigationController?.pushViewController(SelectCurrencyViewController(viewModel: currencyViewModel), animated: true)
-                print(1)
-            } else {
-                let condition: SelectButtonCondition = .secondButton
-                guard let currencyViewModel = viewModel?.viewModelWithSelected(condition: condition) else { return }
-               navigationController?.pushViewController(SelectCurrencyViewController(viewModel: currencyViewModel), animated: true)
-                print(2)
-            }
+        let condition: SelectButtonCondition = sender.tag == 1 ? .firstButton : .secondButton
+        guard var currencyViewModel = exchViewModel?.viewModelWithSelected(condition: condition) else { return }
+        let selectCurrencyVC = SelectCurrencyViewController(viewModel: currencyViewModel)
+        currencyViewModel.delegate = exchViewModel as? SelectedCurrencyDelegate
+        navigationController?.pushViewController(selectCurrencyVC, animated: true)
         }
         
     }

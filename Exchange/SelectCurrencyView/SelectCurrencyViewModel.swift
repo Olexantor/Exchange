@@ -14,6 +14,8 @@ final class SelectCurrencyViewModel: SelectCurrencyViewModelType {
     var networkErrorInBox: Box<Error?> = Box(nil)
     var currencyInBox: Box<[String]> = Box([])
     
+    var delegate: SelectedCurrencyDelegate?
+    
     private var listOfCurrency = [String]() {
         didSet {
             currencyInBox.value = listOfCurrency

@@ -8,6 +8,9 @@
 import Foundation
 
 protocol SelectCurrencyViewModelType {
+    
+    var delegate: SelectedCurrencyDelegate? { get set }
+    
     var conditionOfButton: SelectButtonCondition { get }
     
     var networkErrorInBox: Box<Error?> { get }
