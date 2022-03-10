@@ -6,12 +6,22 @@
 //
 import SnapKit
 import UIKit
+import SwiftUI
 
 class SelectCurrencyViewController: UIViewController {
     
-    var viewModel: SelectCurrencyViewModelType
+    private let viewModel: SelectCurrencyViewModelType
     
     private var tableView = UITableView()
+    
+    private let activityIndicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView()
+        indicator.color = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
+        indicator.hidesWhenStopped = true
+        let transfrom = CGAffineTransform.init(scaleX: 3, y: 3)
+        indicator.transform = transfrom
+        return indicator
+    }()
 
     init(viewModel: SelectCurrencyViewModelType) {
         self.viewModel = viewModel
@@ -21,19 +31,38 @@ class SelectCurrencyViewController: UIViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationController?.view.addSubview(activityIndicator)
+        activityIndicator.startAnimating()
         setupTableView()
         setupConstrains()
-        // Do any additional setup after loading the view.
+        setupBindings()
+        
+        
+//        viewModel.currencyInBox.bind { [weak self] _ in
+//            guard let self = self else { return }
+//            DispatchQueue.main.async {
+//                self.tableView.reloadData()
+//                self.activityIndicator.stopAnimating()
+//            }
+//        }
+//
+//        viewModel.networkError.bind { [weak self] error in
+//            guard let self = self else { return }
+//            guard error != nil else { return }
+//            self.showAlert()
+//        }
     }
     
     private func setupTableView() {
+        tableView.backgroundColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(
-            UITableViewCell.self,
-            forCellReuseIdentifier: "currencyCell"
+            CurrencyCell.self,
+            forCellReuseIdentifier: CurrencyCell.identifier
         )
         view.addSubview(tableView)
     }
@@ -42,19 +71,59 @@ class SelectCurrencyViewController: UIViewController {
         tableView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
+        activityIndicator.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+    }
+    
+    private func setupBindings() {
+        viewModel.currencyInBox.bind { [weak self] _ in
+            guard let self = self else { return }
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+                self.activityIndicator.stopAnimating()
+            }
+        }
+        
+        viewModel.networkErrorInBox.bind { [weak self] error in
+            guard let self = self else { return }
+            guard error != nil else { return }
+            self.showAlert()
+        }
+    }
+    // MARK: - Alert
+    
+    private func showAlert() {
+        let alert = UIAlertController(
+            title: "Error!",
+            message: "Something wrong with network",
+            preferredStyle: .alert
+        )
+        let okAction = UIAlertAction(title: "OK", style: .default)
+        alert.addAction(okAction)
+        present(alert, animated: true)
     }
 }
+//MARK: - UITableViewDataSource methods
 
 extension SelectCurrencyViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        10
+        viewModel.numberOfRows()
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        UITableViewCell()
+        let cell = tableView.dequeueReusableCell(withIdentifier: CurrencyCell.identifier, for: indexPath) as? CurrencyCell
+        guard let tableViewCell = cell else { return UITableViewCell() }
+        let cellViewModel = viewModel.cellViewModel(forIndexPath: indexPath)
+        tableViewCell.viewModel = cellViewModel
+        return tableViewCell
+    }
+}
+//MARK: - UITableViewDelegate
+extension SelectCurrencyViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    
+        tableView.deselectRow(at: indexPath, animated: true)
     }
 }
 
-extension SelectCurrencyViewController: UITableViewDelegate {
-    
-}

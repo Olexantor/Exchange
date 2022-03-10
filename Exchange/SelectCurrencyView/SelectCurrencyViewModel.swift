@@ -11,40 +11,43 @@ final class SelectCurrencyViewModel: SelectCurrencyViewModelType {
 
     var conditionOfButton: SelectButtonCondition
     
-    var networkError: Box<Error?> = Box(nil)
+    var networkErrorInBox: Box<Error?> = Box(nil)
+    var currencyInBox: Box<[String]> = Box([])
     
-    var listOfCurrency: Box<[String]> = Box([])
+    private var listOfCurrency = [String]() {
+        didSet {
+            currencyInBox.value = listOfCurrency
+        }
+    }
     
     init(conditionOfButton: SelectButtonCondition) {
         self.conditionOfButton = conditionOfButton
         getCurrencies()
     }
     
-    func getCurrencies() {
+    private func getCurrencies() {
         let defaults = UserDefaults.standard
-        let array = ["hello", "world"]
-        defaults.set(array, forKey: "Saved currencies")
-        if (defaults.object(forKey: "Saved currencies") != nil) {
-            listOfCurrency.value = UserDefaults.standard.object(forKey: "Saved currencies") as? [String] ?? [String]()
+        if (defaults.object(forKey: "currencies") != nil) {
+            listOfCurrency = UserDefaults.standard.object(forKey: "currencies") as? [String] ?? [String]()
         } else {
             NetworkManager.shared.fetchCurrencyList { [weak self] result in
                 switch result {
                 case .success(let currencyList):
-                    self?.listOfCurrency.value = currencyList.data.map{ $0.key }.sorted()
-                    defaults.set(self?.listOfCurrency, forKey: "Saved currencies")
+                    self?.listOfCurrency = currencyList.data.map{ $0.key }.sorted()
+                    defaults.set(self?.listOfCurrency, forKey: "currencies")
                 case .failure(let error):
-                    self?.networkError.value = error
+                    self?.networkErrorInBox.value = error
                 }
             }
         }
     }
     
     func numberOfRows() -> Int {
-        listOfCurrency.value.count
+        listOfCurrency.count
     }
     
     func cellViewModel(forIndexPath indexPath: IndexPath) -> CurrencyCellViewModelType? {
-        let currency = listOfCurrency.value[indexPath.row]
+        let currency = listOfCurrency[indexPath.row]
         return CurrencyCellViewModel(currency: currency)
     }
 }
