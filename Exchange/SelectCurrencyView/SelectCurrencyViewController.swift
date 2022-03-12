@@ -8,12 +8,13 @@ import SnapKit
 import UIKit
 import SwiftUI
 import RxSwift
+import RxRelay
 
 class SelectCurrencyViewController: UIViewController {
     
     weak var delegate: SelectedCurrencyDelegate?
     
-    private let selectViewModel: SelectCurrencyViewModelType
+    private var selectViewModel: SelectCurrencyViewModelType
     
     private var tableView = UITableView()
     
@@ -22,9 +23,10 @@ class SelectCurrencyViewController: UIViewController {
         guard let text = searchController.searchBar.text else { return false}
         return text.isEmpty
     }
-    private var isFiltered: Bool {
+    private var isFiltering: Bool {
         return searchController.isActive && !searchBarIsEmpty
     }
+    
     
     private let disposeBag = DisposeBag()
     
@@ -37,7 +39,7 @@ class SelectCurrencyViewController: UIViewController {
         indicator.transform = transfrom
         return indicator
     }()
-
+    
     init(viewModel: SelectCurrencyViewModelType) {
         self.selectViewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -51,6 +53,7 @@ class SelectCurrencyViewController: UIViewController {
         super.viewDidLoad()
         navigationController?.view.addSubview(activityIndicator)
         activityIndicator.startAnimating()
+        setupSearchController()
         setupTableView()
         setupConstrains()
         setupBindings()
@@ -59,9 +62,9 @@ class SelectCurrencyViewController: UIViewController {
     private func setupSearchController() {
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
-        searchController.searchBar.placeholder = "Поиск"
-        
-//        navigationItem.searchController = searchController
+        searchController.searchBar.placeholder = "Search"
+        self.navigationItem.searchController = searchController
+        navigationItem.hidesSearchBarWhenScrolling = false
         definesPresentationContext = true
     }
     
@@ -73,6 +76,7 @@ class SelectCurrencyViewController: UIViewController {
             CurrencyCell.self,
             forCellReuseIdentifier: CurrencyCell.identifier
         )
+        title = "Currecies"
         view.addSubview(tableView)
     }
     
@@ -83,10 +87,6 @@ class SelectCurrencyViewController: UIViewController {
         activityIndicator.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
-    }
-    
-    private func setupIsFilteredObserver() {
-        
     }
     
     private func setupBindings() {
@@ -118,7 +118,7 @@ class SelectCurrencyViewController: UIViewController {
 }
 //MARK: - UITableViewDataSource methods
 
-extension SelectCurrencyViewController: UITableViewDataSource {
+extension SelectCurrencyViewController : UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         selectViewModel.numberOfRows()
     }
@@ -141,11 +141,14 @@ extension SelectCurrencyViewController: UITableViewDelegate {
 }
 
 
-//MARK: - //MARK: - SearchResultsUpdating
+//MARK: - SearchResultsUpdating
 extension SelectCurrencyViewController: UISearchResultsUpdating {
-    
-    
     func updateSearchResults(for searchController: UISearchController) {
-        <#code#>
+        filterContentForSearchedText(searchController.searchBar.text ?? "")
+    }
+    
+    private func filterContentForSearchedText(_ searchText: String) {
+        selectViewModel.filterDataWith(text: searchText, and: isFiltering)
+        tableView.reloadData()
     }
 }

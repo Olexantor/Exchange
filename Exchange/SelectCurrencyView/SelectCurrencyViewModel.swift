@@ -8,23 +8,48 @@
 import Foundation
 
 final class SelectCurrencyViewModel: SelectCurrencyViewModelType {
-
     var conditionOfButton: SelectButtonCondition
-    
     var networkErrorInBox: Box<Error?> = Box(nil)
     var currencyInBox: Box<[String]> = Box([])
-    
     var delegate: SelectedCurrencyDelegate?
     
+    init(conditionOfButton: SelectButtonCondition) {
+        self.conditionOfButton = conditionOfButton
+        getCurrencies()
+    }
     private var listOfCurrency = [String]() {
         didSet {
             currencyInBox.value = listOfCurrency
         }
     }
+    private  var isFiltered = false
+    private var filteredCurrency = [String]() {
+        didSet {
+            currencyInBox.value = filteredCurrency
+        }
+    }
+
+    func numberOfRows() -> Int {
+        if isFiltered {
+            return filteredCurrency.count
+        } else {
+            return listOfCurrency.count
+        }
+    }
     
-    init(conditionOfButton: SelectButtonCondition) {
-        self.conditionOfButton = conditionOfButton
-        getCurrencies()
+    func cellViewModel(forIndexPath indexPath: IndexPath) -> CurrencyCellViewModelType? {
+        let currency: String
+        if isFiltered {
+            currency = filteredCurrency[indexPath.row]
+        } else {
+            currency = listOfCurrency[indexPath.row]
+        }
+        return CurrencyCellViewModel(currency: currency)
+    }
+    
+    func filterDataWith(text: String, and condition: Bool) {
+        isFiltered = condition
+        filteredCurrency = listOfCurrency.filter{ $0.lowercased().contains(text.lowercased()) }
     }
     
     private func getCurrencies() {
@@ -43,13 +68,5 @@ final class SelectCurrencyViewModel: SelectCurrencyViewModelType {
             }
         }
     }
-    
-    func numberOfRows() -> Int {
-        listOfCurrency.count
-    }
-    
-    func cellViewModel(forIndexPath indexPath: IndexPath) -> CurrencyCellViewModelType? {
-        let currency = listOfCurrency[indexPath.row]
-        return CurrencyCellViewModel(currency: currency)
-    }
 }
+
