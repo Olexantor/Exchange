@@ -9,15 +9,10 @@ import Foundation
 import UIKit
 
 protocol ExchangeViewModelType {
-    
     var firstCurrencyNameInBox: Box<String>  { get }
     
     var secondCurrencyNameInBox: Box<String> { get }
-    
-    var firstCurrencyValue: Double { get }
-    
-    var secondCurrencyValue: Double { get }
-    
+
     var firstCurrencyCalculatedValueInBox: Box<String> { get }
     
     var secondCurrencyCalculatedValueInBox: Box<String> { get }
@@ -37,5 +32,4 @@ protocol ExchangeViewModelType {
     func getCurrencyRates(for currency: String, with saveLocation: SaveLocation?)
     
     func calculateValueFor(for value: String, from textField: TextFieldID)
-    
 }
