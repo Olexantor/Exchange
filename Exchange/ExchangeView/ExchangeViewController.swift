@@ -11,6 +11,10 @@ enum SelectButtonCondition {
     case firstButton, secondButton
 }
 
+enum TextFieldID {
+    case firstTF, secondTF
+}
+
 class ExchangeViewController: UIViewController {
     
     private let scrollView: UIScrollView = {
@@ -34,7 +38,7 @@ class ExchangeViewController: UIViewController {
         return imageView
     }()
     
-    private let fromCurrencyButton: UIButton = {
+    private let firstCurrencySelectionButton: UIButton = {
         let button = UIButton(type: .system)
         button.tag = 1
         button.setTitle("select 1st currency", for: .normal)
@@ -43,7 +47,7 @@ class ExchangeViewController: UIViewController {
         
     }()
     
-    private let fromCurrencyTextField: UITextField = {
+    private let firstCurrencyTextField: UITextField = {
         let field = UITextField()
         field.placeholder = "0.0"
         field.textAlignment  = .center
@@ -51,13 +55,13 @@ class ExchangeViewController: UIViewController {
         return field
     }()
     
-    private let fromCurrencyLabel: UILabel = {
+    private var firstCurrencyLabel: UILabel = {
         let label  = UILabel()
         label.text = ""
         return label
     }()
     
-    private let intoCurrencyButton: UIButton = {
+    private let secondCurrencySelectionButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("select 2nd currency", for: .normal)
         button.tag = 2
@@ -65,7 +69,7 @@ class ExchangeViewController: UIViewController {
         return button
     }()
     
-    private let intoCurrencyTextField: UITextField = {
+    private let secondCurrencyTextField: UITextField = {
         let field = UITextField()
         field.placeholder = "0.0"
         field.textAlignment  = .center
@@ -73,7 +77,7 @@ class ExchangeViewController: UIViewController {
         return field
     }()
     
-    private let intoCurrencyLabel: UILabel = {
+    private var secondCurrencyLabel: UILabel = {
         let label  = UILabel()
         label.text = ""
         return label
@@ -96,26 +100,8 @@ class ExchangeViewController: UIViewController {
         setupBindings()
         registerForKeyboardNotifications()
         hideKeyboardWhenTappedAround()
-        //        NetworkManager.shared.fetchCurrencyList { [weak self] result in
-        //            guard let self = self else { return }
-        //            switch result {
-        //            case .success(let currencyList):
-        //                self.array = currencyList.data.map{ $0.key }.sorted()
-        //                print(self.array)
-        //            case .failure(let error):
-        //                print(error)
-        //            }
-        //        }
-        //        NetworkManager.shared.fetchExchangeRate(with: "USD") { [weak self] result in
-        //            guard let self = self else { return }
-        //            switch result {
-        //            case .success(let rate):
-        //                self.dict = rate.rates
-        //                print(self.dict)
-        //            case .failure(let error):
-        //                print(error)
-        //            }
-        //        }
+        firstCurrencyTextField.delegate = self
+        secondCurrencyTextField.delegate =  self
     }
     
     deinit {
@@ -126,17 +112,16 @@ class ExchangeViewController: UIViewController {
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
         contentView.addSubview(exchangeImageView)
-        contentView.addSubview(fromCurrencyButton)
-        contentView.addSubview(fromCurrencyTextField)
-        contentView.addSubview(fromCurrencyLabel)
-        contentView.addSubview(intoCurrencyButton)
-        contentView.addSubview(intoCurrencyTextField)
-        contentView.addSubview(intoCurrencyLabel)
+        contentView.addSubview(firstCurrencySelectionButton)
+        contentView.addSubview(firstCurrencyTextField)
+        contentView.addSubview(firstCurrencyLabel)
+        contentView.addSubview(secondCurrencySelectionButton)
+        contentView.addSubview(secondCurrencyTextField)
+        contentView.addSubview(secondCurrencyLabel)
         contentView.addSubview(convertButton)
     }
     
     private func setupConstraints() {
-        
         scrollView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
@@ -151,58 +136,70 @@ class ExchangeViewController: UIViewController {
             make.size.equalTo(100)
         }
         
-        fromCurrencyButton.snp.makeConstraints { make in
+        firstCurrencySelectionButton.snp.makeConstraints { make in
             make.top.equalTo(exchangeImageView.snp.bottom).offset(16)
             make.width.equalTo(170)
             make.centerX.equalToSuperview()
-            make.bottom.equalTo(fromCurrencyTextField.snp.top).offset(-24)
+            make.bottom.equalTo(firstCurrencyTextField.snp.top).offset(-24)
         }
         
-        fromCurrencyTextField.snp.makeConstraints { make in
+        firstCurrencyTextField.snp.makeConstraints { make in
             make.width.equalTo(170)
             make.centerX.centerY.equalToSuperview()
         }
         
-        fromCurrencyLabel.snp.makeConstraints { make in
+        firstCurrencyLabel.snp.makeConstraints { make in
             make.width.equalTo(40)
-            make.bottom.equalTo(fromCurrencyTextField.snp.bottom)
-            make.leading.equalTo(fromCurrencyTextField.snp.trailing)
-            make.top.equalTo(fromCurrencyTextField.snp.top)
+            make.bottom.equalTo(firstCurrencyTextField.snp.bottom)
+            make.leading.equalTo(firstCurrencyTextField.snp.trailing)
+            make.top.equalTo(firstCurrencyTextField.snp.top)
         }
         
-        intoCurrencyButton.snp.makeConstraints { make in
+        secondCurrencySelectionButton.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.width.equalTo(fromCurrencyTextField.snp.width)
-            make.top.equalTo(fromCurrencyTextField).offset(64)
+            make.width.equalTo(firstCurrencyTextField.snp.width)
+            make.top.equalTo(firstCurrencyTextField).offset(64)
         }
         
-        intoCurrencyTextField.snp.makeConstraints { make in
-            make.width.equalTo(fromCurrencyTextField.snp.width)
+        secondCurrencyTextField.snp.makeConstraints { make in
+            make.width.equalTo(firstCurrencyTextField.snp.width)
             make.centerX.equalToSuperview()
-            make.top.equalTo(intoCurrencyButton.snp.bottom).offset(24)
+            make.top.equalTo(secondCurrencySelectionButton.snp.bottom).offset(24)
         }
         
-        intoCurrencyLabel.snp.makeConstraints { make in
-            make.width.equalTo(fromCurrencyLabel.snp.width)
-            make.bottom.equalTo(intoCurrencyTextField.snp.bottom)
-            make.leading.equalTo(intoCurrencyTextField.snp.trailing)
-            make.top.equalTo(intoCurrencyTextField.snp.top)
+        secondCurrencyLabel.snp.makeConstraints { make in
+            make.width.equalTo(firstCurrencyLabel.snp.width)
+            make.bottom.equalTo(secondCurrencyTextField.snp.bottom)
+            make.leading.equalTo(secondCurrencyTextField.snp.trailing)
+            make.top.equalTo(secondCurrencyTextField.snp.top)
         }
         
         convertButton.snp.makeConstraints { make in
             make.width.equalTo(70)
             make.centerX.equalToSuperview()
-            make.top.equalTo(intoCurrencyTextField.snp.bottom).offset(32)
+            make.top.equalTo(secondCurrencyTextField.snp.bottom).offset(32)
             make.bottom.equalToSuperview().offset(-16)
         }
     }
     
     private func setupBindings() {
-        exchViewModel?.fromCurrencyName.bind { [weak self] currency in
-            self?.fromCurrencyLabel.text = currency
+        exchViewModel?.firstCurrencyNameInBox.bind { [weak self] currency in
+            self?.firstCurrencyLabel.text = currency
+            self?.exchViewModel?.saveLocation = .firstDictionary
+            self?.exchViewModel?.getCurrencyRates(for: currency, with: self?.exchViewModel?.saveLocation)
         }
-        exchViewModel?.intoCurrencyName.bind { [weak self] currency in
-            self?.intoCurrencyLabel.text = currency
+        exchViewModel?.secondCurrencyNameInBox.bind { [weak self] currency in
+            self?.secondCurrencyLabel.text = currency
+            self?.exchViewModel?.saveLocation = .secondDictionary
+            self?.exchViewModel?.getCurrencyRates(for: currency, with: self?.exchViewModel?.saveLocation)
+        }
+        
+        exchViewModel?.firstCurrencyCalculatedValueInBox.bind{ [weak self] currencyValue in
+            self?.firstCurrencyTextField.text = currencyValue
+        }
+        
+        exchViewModel?.secondCurrencyCalculatedValueInBox.bind{ [weak self] currencyValue in
+            self?.secondCurrencyTextField.text = currencyValue
         }
     }
     
@@ -232,10 +229,9 @@ class ExchangeViewController: UIViewController {
             safeArea.size.height += scrollView.contentOffset.y
             safeArea.size.height -= keyboardSize.height + (UIScreen.main.bounds.height*0.04) // Adjust buffer to your liking
             
-            let activeField: UIView? = [fromCurrencyTextField, intoCurrencyTextField].first { $0.isFirstResponder }
+            let activeField: UIView? = [firstCurrencyTextField, secondCurrencyTextField].first { $0.isFirstResponder }
             if let activeField = activeField {
                 if safeArea.contains(CGPoint(x: 0, y: activeField.frame.maxY)) {
-                    print("No need to Scroll")
                     return
                 } else {
                     distance = activeField.frame.maxY - safeArea.size.height
@@ -252,7 +248,7 @@ class ExchangeViewController: UIViewController {
         if distance == 0 {
             return
         }
-        self.scrollView.setContentOffset(CGPoint(x: 0, y: -scrollOffset), animated: true)
+        self.scrollView.setContentOffset(CGPoint(x: 0, y: -scrollOffset - distance), animated: true)
         scrollOffset = 0
         distance = 0
         scrollView.isScrollEnabled = true
@@ -270,6 +266,16 @@ class ExchangeViewController: UIViewController {
 }
 //MARK: - UITextFieldDelegate
 extension ExchangeViewController: UITextFieldDelegate {
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        let textFieldID: TextFieldID = textField == firstCurrencyTextField ? .firstTF : .secondTF
+        exchViewModel?.clearingTheFieldFor(textFieldID: textFieldID)
+    }
+    
+    func textFieldDidChangeSelection(_ textField: UITextField) {
+        let textFieldID: TextFieldID = textField == firstCurrencyTextField ? .firstTF : .secondTF
+        guard let value = textField.text else { return}
+        exchViewModel?.calculateValueFor(for: value, from: textFieldID)
+    }
     
 }
 
