@@ -5,6 +5,10 @@
 //  Created by Александр on 09.03.2022.
 //
 
+enum SaveLocation {
+    case firstDictionary, secondDictionary
+}
+
 import Foundation
 protocol SelectedCurrencyDelegate: AnyObject {
     func selectedCurrencyWith(currencyName: String, and condition: SelectButtonCondition)
@@ -12,13 +16,42 @@ protocol SelectedCurrencyDelegate: AnyObject {
 
 final class ExchangeViewModel: ExchangeViewModelType, SelectedCurrencyDelegate {
     
-    var fromCurrencyName: Box<String> = Box("")
+    var firstCurrencyNameInBox: Box<String>
     
-    var intoCurrencyName: Box<String> = Box("")
+    var secondCurrencyNameInBox: Box<String>
     
-    var fromCurrencyValue = 0.0
+    var firstCurrencyValue = 0.0
     
-    var intoCurrencyValue = 0.0
+    var secondCurrencyValue = 0.0
+    
+    var firstCurrencyCalculatedValueInBox: Box<String>
+    
+    var secondCurrencyCalculatedValueInBox: Box<String>
+    
+    var networkErrorInBox: Box<Error?> = Box(nil)
+    
+    var saveLocation: SaveLocation?
+    
+    var ratesForFirstCurrency = [String: Double]() {
+        didSet {
+            print(ratesForFirstCurrency)
+        }
+    }
+    
+    var ratesForSecondCurrency = [String: Double]() {
+        didSet {
+            print(ratesForSecondCurrency)
+        }
+    }
+    
+    init(firstCurrencyNameInBox: Box<String> = Box(""), secondCurrencyNameInBox: Box<String> = Box(""), firstCurrencyCalculatedValue: Box<String> = Box(""), secondCurrencyCalculatedValue: Box<String> = Box("")) {
+        self.firstCurrencyNameInBox = firstCurrencyNameInBox
+        self.secondCurrencyNameInBox = secondCurrencyNameInBox
+        self.firstCurrencyCalculatedValueInBox = firstCurrencyCalculatedValue
+        self.secondCurrencyCalculatedValueInBox = secondCurrencyCalculatedValue
+    }
+    
+    
     
 //    func getCurrencies() {
 //        let defaults = UserDefaults.standard
@@ -44,10 +77,48 @@ final class ExchangeViewModel: ExchangeViewModelType, SelectedCurrencyDelegate {
     func selectedCurrencyWith(currencyName: String, and condition: SelectButtonCondition) {
         switch condition {
         case .firstButton:
-            fromCurrencyName.value = currencyName
+            firstCurrencyNameInBox.value = currencyName
         case .secondButton:
-            intoCurrencyName.value = currencyName
+            secondCurrencyNameInBox.value = currencyName
         }
     }
     
+    func clearingTheFieldFor(textFieldID: TextFieldID) {
+        switch textFieldID {
+        case .firstTF:
+            secondCurrencyCalculatedValueInBox.value = ""
+        case .secondTF:
+            firstCurrencyCalculatedValueInBox.value = ""
+        }
+    }
+    
+    func getCurrencyRates(for currency: String, with saveLocation: SaveLocation?) {
+        guard let saveLocation = saveLocation else {
+            return
+        }
+        NetworkManager.shared.fetchExchangeRate(with: currency) { [weak self] result in
+            guard let self = self else { return }
+            switch result {
+            case .success(let rate):
+                if saveLocation == .firstDictionary {
+                    self.ratesForFirstCurrency = rate.rates
+                } else {
+                    self.ratesForSecondCurrency = rate.rates
+                }
+            case .failure(let error):
+                self.networkErrorInBox.value = error
+            }
+        }
+    }
+    
+    func calculateValueFor(for value: String, from textField: TextFieldID) {
+        guard !firstCurrencyNameInBox.value.isEmpty && !secondCurrencyNameInBox.value.isEmpty else { return }
+        guard let value = Double(value) else { return }
+        switch textField {
+        case .firstTF:
+            secondCurrencyCalculatedValueInBox.value = String(format: "%0.2f", (value * Double(ratesForFirstCurrency[secondCurrencyNameInBox.value] ?? 0.0)) )
+        case .secondTF:
+            firstCurrencyCalculatedValueInBox.value = String(format: "%0.2f", (value * Double(ratesForSecondCurrency[firstCurrencyNameInBox.value] ?? 0.0)) )
+        }
+    }
 }
