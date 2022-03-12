@@ -7,6 +7,7 @@
 import SnapKit
 import UIKit
 import SwiftUI
+import RxSwift
 
 class SelectCurrencyViewController: UIViewController {
     
@@ -15,6 +16,18 @@ class SelectCurrencyViewController: UIViewController {
     private let selectViewModel: SelectCurrencyViewModelType
     
     private var tableView = UITableView()
+    
+    private let searchController = UISearchController(searchResultsController: nil)
+    private var searchBarIsEmpty: Bool {
+        guard let text = searchController.searchBar.text else { return false}
+        return text.isEmpty
+    }
+    private var isFiltered: Bool {
+        return searchController.isActive && !searchBarIsEmpty
+    }
+    
+    private let disposeBag = DisposeBag()
+    
     
     private let activityIndicator: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView()
@@ -43,6 +56,15 @@ class SelectCurrencyViewController: UIViewController {
         setupBindings()
     }
     
+    private func setupSearchController() {
+        searchController.searchResultsUpdater = self
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.searchBar.placeholder = "Поиск"
+        
+//        navigationItem.searchController = searchController
+        definesPresentationContext = true
+    }
+    
     private func setupTableView() {
         tableView.backgroundColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
         tableView.delegate = self
@@ -61,6 +83,10 @@ class SelectCurrencyViewController: UIViewController {
         activityIndicator.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
+    }
+    
+    private func setupIsFilteredObserver() {
+        
     }
     
     private func setupBindings() {
@@ -114,3 +140,12 @@ extension SelectCurrencyViewController: UITableViewDelegate {
     }
 }
 
+
+//MARK: - //MARK: - SearchResultsUpdating
+extension SelectCurrencyViewController: UISearchResultsUpdating {
+    
+    
+    func updateSearchResults(for searchController: UISearchController) {
+        <#code#>
+    }
+}
