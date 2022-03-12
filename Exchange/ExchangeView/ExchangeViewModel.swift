@@ -15,60 +15,21 @@ protocol SelectedCurrencyDelegate: AnyObject {
 }
 
 final class ExchangeViewModel: ExchangeViewModelType, SelectedCurrencyDelegate {
+    var firstCurrencyNameInBox: Box<String> = Box("")
     
-    var firstCurrencyNameInBox: Box<String>
+    var secondCurrencyNameInBox: Box<String> = Box("")
     
-    var secondCurrencyNameInBox: Box<String>
+    var firstCurrencyCalculatedValueInBox: Box<String> = Box("")
     
-    var firstCurrencyValue = 0.0
-    
-    var secondCurrencyValue = 0.0
-    
-    var firstCurrencyCalculatedValueInBox: Box<String>
-    
-    var secondCurrencyCalculatedValueInBox: Box<String>
+    var secondCurrencyCalculatedValueInBox: Box<String> = Box("")
     
     var networkErrorInBox: Box<Error?> = Box(nil)
     
     var saveLocation: SaveLocation?
     
-    var ratesForFirstCurrency = [String: Double]() {
-        didSet {
-            print(ratesForFirstCurrency)
-        }
-    }
+    var ratesForFirstCurrency = [String: Double]()
     
-    var ratesForSecondCurrency = [String: Double]() {
-        didSet {
-            print(ratesForSecondCurrency)
-        }
-    }
-    
-    init(firstCurrencyNameInBox: Box<String> = Box(""), secondCurrencyNameInBox: Box<String> = Box(""), firstCurrencyCalculatedValue: Box<String> = Box(""), secondCurrencyCalculatedValue: Box<String> = Box("")) {
-        self.firstCurrencyNameInBox = firstCurrencyNameInBox
-        self.secondCurrencyNameInBox = secondCurrencyNameInBox
-        self.firstCurrencyCalculatedValueInBox = firstCurrencyCalculatedValue
-        self.secondCurrencyCalculatedValueInBox = secondCurrencyCalculatedValue
-    }
-    
-    
-    
-//    func getCurrencies() {
-//        let defaults = UserDefaults.standard
-//        if (defaults.object(forKey: "!") != nil) {
-//            listOfCurrency = UserDefaults.standard.object(forKey: "!") as? [String] ?? [String]()
-//        } else {
-//            NetworkManager.shared.fetchCurrencyList { [weak self] result in
-//                switch result {
-//                case .success(let currencyList):
-//                        self?.listOfCurrency = currencyList.data.map{ $0.key }.sorted()
-//                    defaults.set(self?.listOfCurrency, forKey: "!")
-//                case .failure(let error):
-//                    self?.networkError.value = error
-//                }
-//            }
-//        }
-//    }
+    var ratesForSecondCurrency = [String: Double]()
     
     func viewModelWithSelected(condition: SelectButtonCondition) -> SelectCurrencyViewModelType? {
         return SelectCurrencyViewModel(conditionOfButton: condition)
