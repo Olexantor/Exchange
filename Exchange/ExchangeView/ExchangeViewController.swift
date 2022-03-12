@@ -92,9 +92,8 @@ class ExchangeViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
-        navigationController?.navigationBar.barTintColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
         exchViewModel = ExchangeViewModel()
-        title = "Exchange"
+        setupNavigationBar()
         addingSubviews()
         setupConstraints()
         setupBindings()
@@ -106,6 +105,11 @@ class ExchangeViewController: UIViewController {
     
     deinit {
         removeKeyboardNotifications()
+    }
+    
+    private func setupNavigationBar() {
+        title = "Exchange"
+        navigationController?.navigationBar.barTintColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
     }
     
     private func addingSubviews() {
