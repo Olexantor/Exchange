@@ -82,17 +82,12 @@
 		1FD95A8D27D791A000312424 /* Exchange */ = {
 			isa = PBXGroup;
 			children = (
-				1FD95A8E27D791A000312424 /* AppDelegate.swift */,
 				1FE3413D27D8E2CC00C4D870 /* ExchangeView */,
 				1FE3414427D8E88000C4D870 /* SelectCurrencyView */,
-				1FD95A9727D791A400312424 /* Assets.xcassets */,
-				1FD95A9927D791A400312424 /* LaunchScreen.storyboard */,
-				1FD95A9C27D791A400312424 /* Info.plist */,
-				1FD95AA227D7964F00312424 /* NetworkManager.swift */,
-				1FD95AA727D7980600312424 /* Constants.swift */,
-				1FD95AA927D7A2D600312424 /* CurrenciesList.swift */,
-				1FE3415027D8FEBA00C4D870 /* ExchangeRate.swift */,
-				1FE3414227D8E6B000C4D870 /* Box.swift */,
+				1FFB371127DE475D00404EC7 /* Services */,
+				1FFB371027DE473600404EC7 /* Models */,
+				1FFB371327DE479400404EC7 /* Supporting files */,
+				1FFB371227DE477600404EC7 /* Storyboards */,
 			);
 			path = Exchange;
 			sourceTree = "<group>";
@@ -126,6 +121,43 @@
 				1FE3414E27D8ED1D00C4D870 /* CurrencyCellViewModel.swift */,
 			);
 			path = CurrencyCell;
+			sourceTree = "<group>";
+		};
+		1FFB371027DE473600404EC7 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				1FD95AA927D7A2D600312424 /* CurrenciesList.swift */,
+				1FE3415027D8FEBA00C4D870 /* ExchangeRate.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		1FFB371127DE475D00404EC7 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				1FD95AA227D7964F00312424 /* NetworkManager.swift */,
+				1FD95AA727D7980600312424 /* Constants.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		1FFB371227DE477600404EC7 /* Storyboards */ = {
+			isa = PBXGroup;
+			children = (
+				1FD95A9927D791A400312424 /* LaunchScreen.storyboard */,
+			);
+			path = Storyboards;
+			sourceTree = "<group>";
+		};
+		1FFB371327DE479400404EC7 /* Supporting files */ = {
+			isa = PBXGroup;
+			children = (
+				1FD95A8E27D791A000312424 /* AppDelegate.swift */,
+				1FD95A9727D791A400312424 /* Assets.xcassets */,
+				1FD95A9C27D791A400312424 /* Info.plist */,
+				1FE3414227D8E6B000C4D870 /* Box.swift */,
+			);
+			path = "Supporting files";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -363,7 +395,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = JKCU96H3SQ;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Exchange/Info.plist;
+				INFOPLIST_FILE = "Exchange/Supporting files/Info.plist";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
@@ -393,7 +425,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = JKCU96H3SQ;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Exchange/Info.plist;
+				INFOPLIST_FILE = "Exchange/Supporting files/Info.plist";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
