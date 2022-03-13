@@ -6,9 +6,6 @@
 //
 import SnapKit
 import UIKit
-import SwiftUI
-import RxSwift
-import RxRelay
 
 class SelectCurrencyViewController: UIViewController {
     
