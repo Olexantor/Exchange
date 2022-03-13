@@ -9,7 +9,6 @@ import UIKit
 
 final class CurrencyCell: UITableViewCell {
     static let identifier = "currency cell"
-    
     weak var viewModel: CurrencyCellViewModelType? {
         didSet {
             guard let viewModel = viewModel else { return }
