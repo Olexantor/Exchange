@@ -42,7 +42,11 @@ class ExchangeViewController: UIViewController {
         let button = UIButton(type: .system)
         button.tag = 1
         button.setTitle("select 1st currency", for: .normal)
-        button.addTarget(self, action: #selector(selectCurrency), for: .touchUpInside)
+        button.addTarget(
+            self,
+            action: #selector(selectCurrency),
+            for: .touchUpInside
+        )
         return button
         
     }()
@@ -65,7 +69,11 @@ class ExchangeViewController: UIViewController {
         let button = UIButton(type: .system)
         button.setTitle("select 2nd currency", for: .normal)
         button.tag = 2
-        button.addTarget(self, action: #selector(selectCurrency), for: .touchUpInside)
+        button.addTarget(
+            self,
+            action: #selector(selectCurrency),
+            for: .touchUpInside
+        )
         return button
     }()
     
@@ -159,15 +167,15 @@ class ExchangeViewController: UIViewController {
             make.height.equalTo(firstCurrencySelectionButton)
             make.width.equalTo(firstCurrencySelectionButton)
             make.top.equalTo(firstCurrencyTextField).offset(48)
-                }
+        }
         
         secondCurrencyTextField.snp.makeConstraints { make in
-                    make.width.equalTo(firstCurrencyTextField.snp.width)
+            make.width.equalTo(firstCurrencyTextField.snp.width)
             make.height.equalTo(firstCurrencyTextField.snp.height)
-                    make.centerX.equalToSuperview()
-                    make.top.equalTo(secondCurrencySelectionButton.snp.bottom).offset(24)
+            make.centerX.equalToSuperview()
+            make.top.equalTo(secondCurrencySelectionButton.snp.bottom).offset(24)
             make.bottom.equalToSuperview().offset(-180)
-                }
+        }
         
         secondCurrencyLabel.snp.makeConstraints { make in
             make.width.equalTo(firstCurrencyLabel.snp.width)
@@ -181,13 +189,19 @@ class ExchangeViewController: UIViewController {
         exchViewModel?.firstCurrencyNameInBox.bind { [weak self] currency in
             self?.firstCurrencyLabel.text = currency
             self?.exchViewModel?.saveLocation = .firstDictionary
-            self?.exchViewModel?.getCurrencyRates(for: currency, with: self?.exchViewModel?.saveLocation)
+            self?.exchViewModel?.getCurrencyRates(
+                for: currency,
+                with: self?.exchViewModel?.saveLocation
+            )
         }
         
         exchViewModel?.secondCurrencyNameInBox.bind { [weak self] currency in
             self?.secondCurrencyLabel.text = currency
             self?.exchViewModel?.saveLocation = .secondDictionary
-            self?.exchViewModel?.getCurrencyRates(for: currency, with: self?.exchViewModel?.saveLocation)
+            self?.exchViewModel?.getCurrencyRates(
+                for: currency,
+                with: self?.exchViewModel?.saveLocation
+            )
         }
         
         exchViewModel?.firstCurrencyCalculatedValueInBox.bind{ [weak self] currencyValue in
@@ -197,25 +211,67 @@ class ExchangeViewController: UIViewController {
         exchViewModel?.secondCurrencyCalculatedValueInBox.bind{ [weak self] currencyValue in
             self?.secondCurrencyTextField.text = currencyValue
         }
+        
+        exchViewModel?.networkErrorInBox.bind{ [weak self] error in
+            guard error != nil else { return }
+            self?.showAlert()
+        }
     }
     
     @objc private func selectCurrency(sender: UIButton) {
         let condition: SelectButtonCondition = sender.tag == 1 ? .firstButton : .secondButton
-        guard var currencyViewModel = exchViewModel?.viewModelWithSelected(condition: condition) else { return }
-        let selectCurrencyVC = SelectCurrencyViewController(viewModel: currencyViewModel)
+        guard var currencyViewModel = exchViewModel?.viewModelWithSelected(
+            condition: condition
+        ) else { return }
+        let selectCurrencyVC = SelectCurrencyViewController(
+            viewModel: currencyViewModel
+        )
         currencyViewModel.delegate = exchViewModel as? SelectedCurrencyDelegate
-        navigationController?.pushViewController(selectCurrencyVC, animated: true)
+        navigationController?.pushViewController(
+            selectCurrencyVC,
+            animated: true
+        )
+    }
+    
+    // MARK: - Alert
+    private func showAlert() {
+        let alert = UIAlertController(
+            title: "Error!",
+            message: "Something wrong with network",
+            preferredStyle: .alert
+        )
+        let okAction = UIAlertAction(title: "OK", style: .default)
+        alert.addAction(okAction)
+        present(alert, animated: true)
     }
     
     //MARK: - Setup shifting content with NotificationCenter
     private func registerForKeyboardNotifications() {
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillShow),
+            name: UIResponder.keyboardWillShowNotification,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillHide),
+            name: UIResponder.keyboardWillHideNotification,
+            object: nil
+        )
     }
     
     private func removeKeyboardNotifications() {
-        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+        NotificationCenter.default.removeObserver(
+            self,
+            name: UIResponder.keyboardWillShowNotification,
+            object: nil
+        )
+        NotificationCenter.default.removeObserver(
+            self,
+            name: UIResponder.keyboardWillHideNotification,
+            object: nil
+        )
     }
     
     @objc func keyboardWillShow(notification: NSNotification) {
@@ -223,25 +279,37 @@ class ExchangeViewController: UIViewController {
             var safeArea = self.view.frame
             safeArea.size.height += scrollView.contentOffset.y
             safeArea.size.height -= keyboardSize.height + (UIScreen.main.bounds.height*0.04)
-            let activeField: UIView? = [firstCurrencyTextField, secondCurrencyTextField].first { $0.isFirstResponder }
+            let activeField: UIView? = [
+                firstCurrencyTextField,
+                secondCurrencyTextField
+            ].first { $0.isFirstResponder }
             if let activeField = activeField {
-                if safeArea.contains(CGPoint(x: 0, y: activeField.frame.maxY)) {
+                if safeArea.contains(CGPoint(
+                    x: 0,
+                    y: activeField.frame.maxY
+                )) {
                     return
                 } else {
                     distance = activeField.frame.maxY - safeArea.size.height
                     scrollOffset = scrollView.contentOffset.y
-                    self.scrollView.setContentOffset(CGPoint(x: 0, y: scrollOffset + distance), animated: true)
+                    self.scrollView.setContentOffset(
+                        CGPoint(x: 0,y: scrollOffset + distance),
+                        animated: true
+                    )
                 }
             }
             scrollView.isScrollEnabled = false
         }
     }
-
+    
     @objc func keyboardWillHide(notification: NSNotification) {
         if distance == 0 {
             return
         }
-        self.scrollView.setContentOffset(CGPoint(x: 0, y: -scrollOffset - distance), animated: true)
+        self.scrollView.setContentOffset(
+            CGPoint(x: 0, y: -scrollOffset - distance),
+            animated: true
+        )
         scrollOffset = 0
         distance = 0
         scrollView.isScrollEnabled = true
@@ -249,7 +317,10 @@ class ExchangeViewController: UIViewController {
     
     //MARK: - Keyboard Hiding Methods
     private func hideKeyboardWhenTappedAround() {
-        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        let tap = UITapGestureRecognizer(
+            target: self,
+            action: #selector(dismissKeyboard)
+        )
         tap.cancelsTouchesInView = false
         view.addGestureRecognizer(tap)
     }
@@ -271,7 +342,6 @@ extension ExchangeViewController: UITextFieldDelegate {
         guard let value = textField.text else { return}
         exchViewModel?.calculateValueFor(for: value, from: textFieldID)
     }
-    
 }
 
 
