@@ -83,12 +83,6 @@ class ExchangeViewController: UIViewController {
         return label
     }()
     
-    private let convertButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("convert", for: .normal)
-        return button
-    }()
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
@@ -122,7 +116,6 @@ class ExchangeViewController: UIViewController {
         contentView.addSubview(secondCurrencySelectionButton)
         contentView.addSubview(secondCurrencyTextField)
         contentView.addSubview(secondCurrencyLabel)
-        contentView.addSubview(convertButton)
     }
     
     private func setupConstraints() {
@@ -135,54 +128,52 @@ class ExchangeViewController: UIViewController {
         }
         
         exchangeImageView.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(50)
-            make.centerX.equalToSuperview()
             make.size.equalTo(100)
+            make.centerX.equalToSuperview()
+            make.top.equalToSuperview().offset(50)
         }
         
         firstCurrencySelectionButton.snp.makeConstraints { make in
-            make.top.equalTo(exchangeImageView.snp.bottom).offset(16)
             make.width.equalTo(170)
+            make.height.equalTo(32)
             make.centerX.equalToSuperview()
-            make.bottom.equalTo(firstCurrencyTextField.snp.top).offset(-24)
+            make.top.equalTo(exchangeImageView.snp.bottom).offset(16)
         }
         
         firstCurrencyTextField.snp.makeConstraints { make in
             make.width.equalTo(170)
-            make.centerX.centerY.equalToSuperview()
+            make.height.equalTo(34)
+            make.centerX.equalToSuperview()
+            make.top.equalTo(firstCurrencySelectionButton.snp.bottom).offset(24)
         }
         
         firstCurrencyLabel.snp.makeConstraints { make in
             make.width.equalTo(40)
-            make.bottom.equalTo(firstCurrencyTextField.snp.bottom)
+            make.height.equalTo(32)
+            make.centerY.equalTo(firstCurrencyTextField)
             make.leading.equalTo(firstCurrencyTextField.snp.trailing)
-            make.top.equalTo(firstCurrencyTextField.snp.top)
         }
         
         secondCurrencySelectionButton.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.width.equalTo(firstCurrencyTextField.snp.width)
-            make.top.equalTo(firstCurrencyTextField).offset(64)
-        }
+            make.height.equalTo(firstCurrencySelectionButton)
+            make.width.equalTo(firstCurrencySelectionButton)
+            make.top.equalTo(firstCurrencyTextField).offset(48)
+                }
         
         secondCurrencyTextField.snp.makeConstraints { make in
-            make.width.equalTo(firstCurrencyTextField.snp.width)
-            make.centerX.equalToSuperview()
-            make.top.equalTo(secondCurrencySelectionButton.snp.bottom).offset(24)
-        }
+                    make.width.equalTo(firstCurrencyTextField.snp.width)
+            make.height.equalTo(firstCurrencyTextField.snp.height)
+                    make.centerX.equalToSuperview()
+                    make.top.equalTo(secondCurrencySelectionButton.snp.bottom).offset(24)
+            make.bottom.equalToSuperview().offset(-180)
+                }
         
         secondCurrencyLabel.snp.makeConstraints { make in
             make.width.equalTo(firstCurrencyLabel.snp.width)
-            make.bottom.equalTo(secondCurrencyTextField.snp.bottom)
+            make.height.equalTo(firstCurrencyLabel.snp.height)
             make.leading.equalTo(secondCurrencyTextField.snp.trailing)
-            make.top.equalTo(secondCurrencyTextField.snp.top)
-        }
-        
-        convertButton.snp.makeConstraints { make in
-            make.width.equalTo(70)
-            make.centerX.equalToSuperview()
-            make.top.equalTo(secondCurrencyTextField.snp.bottom).offset(32)
-            make.bottom.equalToSuperview().offset(-16)
+            make.centerY.equalTo(secondCurrencyTextField)
         }
     }
     
@@ -192,6 +183,7 @@ class ExchangeViewController: UIViewController {
             self?.exchViewModel?.saveLocation = .firstDictionary
             self?.exchViewModel?.getCurrencyRates(for: currency, with: self?.exchViewModel?.saveLocation)
         }
+        
         exchViewModel?.secondCurrencyNameInBox.bind { [weak self] currency in
             self?.secondCurrencyLabel.text = currency
             self?.exchViewModel?.saveLocation = .secondDictionary
@@ -228,11 +220,9 @@ class ExchangeViewController: UIViewController {
     
     @objc func keyboardWillShow(notification: NSNotification) {
         if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
-            
             var safeArea = self.view.frame
             safeArea.size.height += scrollView.contentOffset.y
-            safeArea.size.height -= keyboardSize.height + (UIScreen.main.bounds.height*0.04) // Adjust buffer to your liking
-            
+            safeArea.size.height -= keyboardSize.height + (UIScreen.main.bounds.height*0.04)
             let activeField: UIView? = [firstCurrencyTextField, secondCurrencyTextField].first { $0.isFirstResponder }
             if let activeField = activeField {
                 if safeArea.contains(CGPoint(x: 0, y: activeField.frame.maxY)) {
@@ -241,7 +231,6 @@ class ExchangeViewController: UIViewController {
                     distance = activeField.frame.maxY - safeArea.size.height
                     scrollOffset = scrollView.contentOffset.y
                     self.scrollView.setContentOffset(CGPoint(x: 0, y: scrollOffset + distance), animated: true)
-                    
                 }
             }
             scrollView.isScrollEnabled = false
@@ -257,6 +246,7 @@ class ExchangeViewController: UIViewController {
         distance = 0
         scrollView.isScrollEnabled = true
     }
+    
     //MARK: - Keyboard Hiding Methods
     private func hideKeyboardWhenTappedAround() {
         let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
@@ -268,6 +258,7 @@ class ExchangeViewController: UIViewController {
         view.endEditing(true)
     }
 }
+
 //MARK: - UITextFieldDelegate
 extension ExchangeViewController: UITextFieldDelegate {
     func textFieldDidBeginEditing(_ textField: UITextField) {
@@ -282,6 +273,7 @@ extension ExchangeViewController: UITextFieldDelegate {
     }
     
 }
+
 
 
 

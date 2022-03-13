@@ -28,7 +28,7 @@ class SelectCurrencyViewController: UIViewController {
     }
     
     
-    private let disposeBag = DisposeBag()
+//    private let disposeBag = DisposeBag()
     
     
     private let activityIndicator: UIActivityIndicatorView = {
