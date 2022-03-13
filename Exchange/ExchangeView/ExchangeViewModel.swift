@@ -16,26 +16,22 @@ protocol SelectedCurrencyDelegate: AnyObject {
 
 final class ExchangeViewModel: ExchangeViewModelType, SelectedCurrencyDelegate {
     var firstCurrencyNameInBox: Box<String> = Box("")
-    
     var secondCurrencyNameInBox: Box<String> = Box("")
-    
     var firstCurrencyCalculatedValueInBox: Box<String> = Box("")
-    
     var secondCurrencyCalculatedValueInBox: Box<String> = Box("")
-    
     var networkErrorInBox: Box<Error?> = Box(nil)
-    
     var saveLocation: SaveLocation?
-    
     var ratesForFirstCurrency = [String: Double]()
-    
     var ratesForSecondCurrency = [String: Double]()
     
     func viewModelWithSelected(condition: SelectButtonCondition) -> SelectCurrencyViewModelType? {
         return SelectCurrencyViewModel(conditionOfButton: condition)
     }
     
-    func selectedCurrencyWith(currencyName: String, and condition: SelectButtonCondition) {
+    func selectedCurrencyWith(
+        currencyName: String,
+        and condition: SelectButtonCondition
+    ) {
         switch condition {
         case .firstButton:
             firstCurrencyNameInBox.value = currencyName
@@ -53,7 +49,10 @@ final class ExchangeViewModel: ExchangeViewModelType, SelectedCurrencyDelegate {
         }
     }
     
-    func getCurrencyRates(for currency: String, with saveLocation: SaveLocation?) {
+    func getCurrencyRates(
+        for currency: String,
+        with saveLocation: SaveLocation?
+    ) {
         guard let saveLocation = saveLocation else {
             return
         }
