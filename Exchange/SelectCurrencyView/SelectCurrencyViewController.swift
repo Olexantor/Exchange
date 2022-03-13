@@ -8,13 +8,9 @@ import SnapKit
 import UIKit
 
 class SelectCurrencyViewController: UIViewController {
-    
     weak var delegate: SelectedCurrencyDelegate?
-    
     private var selectViewModel: SelectCurrencyViewModelType
-    
     private var tableView = UITableView()
-    
     private let searchController = UISearchController(searchResultsController: nil)
     private var searchBarIsEmpty: Bool {
         guard let text = searchController.searchBar.text else { return false}
@@ -112,12 +108,21 @@ class SelectCurrencyViewController: UIViewController {
 //MARK: - UITableViewDataSource methods
 
 extension SelectCurrencyViewController : UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(
+        _ tableView: UITableView,
+        numberOfRowsInSection section: Int
+    ) -> Int {
         selectViewModel.numberOfRows()
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: CurrencyCell.identifier, for: indexPath) as? CurrencyCell
+    func tableView(
+        _ tableView: UITableView,
+        cellForRowAt indexPath: IndexPath
+    ) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(
+            withIdentifier: CurrencyCell.identifier,
+            for: indexPath
+        ) as? CurrencyCell
         guard let tableViewCell = cell else { return UITableViewCell() }
         let cellViewModel = selectViewModel.cellViewModel(forIndexPath: indexPath)
         tableViewCell.viewModel = cellViewModel
@@ -127,8 +132,14 @@ extension SelectCurrencyViewController : UITableViewDataSource {
 //MARK: - UITableViewDelegate
 
 extension SelectCurrencyViewController: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        selectViewModel.delegate?.selectedCurrencyWith(currencyName: selectViewModel.currencyInBox.value[indexPath.row], and: selectViewModel.conditionOfButton)
+    func tableView(
+        _ tableView: UITableView,
+        didSelectRowAt indexPath: IndexPath
+    ) {
+        selectViewModel.delegate?.selectedCurrencyWith(
+            currencyName: selectViewModel.currencyInBox.value[indexPath.row],
+            and: selectViewModel.conditionOfButton
+        )
         navigationController?.popViewController(animated: true)
     }
 }

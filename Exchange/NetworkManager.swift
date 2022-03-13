@@ -14,7 +14,10 @@ enum fetchErrors: Error {
 class NetworkManager {
     static let shared = NetworkManager()
     
-    func fetchCurrencyList(completion: @escaping (Result<CurrenciesList, Error>) -> Void) {
+    func fetchCurrencyList(completion: @escaping (
+        Result<CurrenciesList,
+        Error>
+    ) -> Void) {
         AF.request(currencyUrl).validate().response { response in
             switch response.result {
             case .success:
@@ -36,7 +39,10 @@ class NetworkManager {
         }
     }
     
-    func fetchExchangeRate(with base: String, and completion: @escaping (Result<ExchangeRate, Error>) -> Void) {
+    func fetchExchangeRate(with base: String, and completion: @escaping (
+        Result<ExchangeRate,
+        Error>
+    ) -> Void) {
         let url = convertUrl+base
         AF.request(url).validate().response { response in
             switch response.result {
