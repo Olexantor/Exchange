@@ -4,6 +4,8 @@
 //
 //  Created by Александр on 08.03.2022.
 //
+import RxSwift
+import RxCocoa
 import SnapKit
 import UIKit
 
@@ -29,6 +31,8 @@ class ExchangeViewController: UIViewController {
     private var scrollOffset : CGFloat = 0
     private var distance : CGFloat = 0
     
+    private let disposeBag = DisposeBag()
+    
     private var exchViewModel: ExchangeViewModelType?
     
     private let exchangeImageView: UIImageView = {
@@ -42,11 +46,6 @@ class ExchangeViewController: UIViewController {
         let button = UIButton(type: .system)
         button.tag = 1
         button.setTitle("select 1st currency", for: .normal)
-        button.addTarget(
-            self,
-            action: #selector(selectCurrency),
-            for: .touchUpInside
-        )
         return button
         
     }()
@@ -69,11 +68,6 @@ class ExchangeViewController: UIViewController {
         let button = UIButton(type: .system)
         button.setTitle("select 2nd currency", for: .normal)
         button.tag = 2
-        button.addTarget(
-            self,
-            action: #selector(selectCurrency),
-            for: .touchUpInside
-        )
         return button
     }()
     
@@ -103,6 +97,7 @@ class ExchangeViewController: UIViewController {
         hideKeyboardWhenTappedAround()
         firstCurrencyTextField.delegate = self
         secondCurrencyTextField.delegate =  self
+        configureRx()
     }
     
     deinit {
@@ -112,6 +107,22 @@ class ExchangeViewController: UIViewController {
     private func setupNavigationBar() {
         title = "Exchange"
         navigationController?.navigationBar.barTintColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
+    }
+    
+    private func configureRx() {
+        firstCurrencySelectionButton.rx.tap.asSignal().emit(onNext: { [unowned self] _ in
+            selectCurrency(sender: firstCurrencySelectionButton)
+        }).disposed(by: disposeBag)
+        
+        secondCurrencySelectionButton.rx.tap.asSignal().emit(onNext: { [unowned self] _ in
+            selectCurrency(sender: secondCurrencySelectionButton)
+        }).disposed(by: disposeBag)
+        
+        
+        exchViewModel?.calculateValues(with: ExchangeViewModelInput(
+            firstCurrencyText: firstCurrencyTextField.rx.text.asDriver(),
+            secondCurrencyText: secondCurrencyTextField.rx.text.asDriver()
+        ))
     }
     
     private func addingSubviews() {
@@ -218,7 +229,7 @@ class ExchangeViewController: UIViewController {
         }
     }
     
-    @objc private func selectCurrency(sender: UIButton) {
+    private func selectCurrency(sender: UIButton) {
         let condition: SelectButtonCondition = sender.tag == 1 ? .firstButton : .secondButton
         guard var currencyViewModel = exchViewModel?.viewModelWithSelected(
             condition: condition
@@ -337,11 +348,11 @@ extension ExchangeViewController: UITextFieldDelegate {
         exchViewModel?.clearingTheFieldFor(textFieldID: textFieldID)
     }
     
-    func textFieldDidChangeSelection(_ textField: UITextField) {
-        let textFieldID: TextFieldID = textField == firstCurrencyTextField ? .firstTF : .secondTF
-        guard let value = textField.text else { return}
-        exchViewModel?.calculateValueFor(for: value, from: textFieldID)
-    }
+//    func textFieldDidChangeSelection(_ textField: UITextField) {
+//        let textFieldID: TextFieldID = textField == firstCurrencyTextField ? .firstTF : .secondTF
+//        guard let value = textField.text else { return}
+//        exchViewModel?.calculateValueFor(for: value, from: textFieldID)
+//    }
 }
 
 

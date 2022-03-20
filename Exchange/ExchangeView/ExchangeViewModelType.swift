@@ -4,9 +4,14 @@
 //
 //  Created by Александр on 09.03.2022.
 //
-
 import Foundation
+import RxCocoa
 import UIKit
+
+struct ExchangeViewModelInput {
+    let firstCurrencyText: Driver<String?>
+    let secondCurrencyText: Driver<String?>
+}
 
 protocol ExchangeViewModelType {
     var firstCurrencyNameInBox: Box<String>  { get }
@@ -21,4 +26,5 @@ protocol ExchangeViewModelType {
     func clearingTheFieldFor(textFieldID: TextFieldID)
     func getCurrencyRates(for currency: String, with saveLocation: SaveLocation?)
     func calculateValueFor(for value: String, from textField: TextFieldID)
+    func calculateValues(with input: ExchangeViewModelInput)
 }

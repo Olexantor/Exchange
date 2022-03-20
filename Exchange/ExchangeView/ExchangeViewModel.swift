@@ -10,6 +10,7 @@ enum SaveLocation {
 }
 
 import Foundation
+import RxSwift
 protocol SelectedCurrencyDelegate: AnyObject {
     func selectedCurrencyWith(currencyName: String, and condition: SelectButtonCondition)
 }
@@ -23,6 +24,8 @@ final class ExchangeViewModel: ExchangeViewModelType, SelectedCurrencyDelegate {
     var saveLocation: SaveLocation?
     var ratesForFirstCurrency = [String: Double]()
     var ratesForSecondCurrency = [String: Double]()
+    
+    private let disposeBag = DisposeBag()
     
     func viewModelWithSelected(condition: SelectButtonCondition) -> SelectCurrencyViewModelType? {
         return SelectCurrencyViewModel(conditionOfButton: condition)
@@ -71,14 +74,30 @@ final class ExchangeViewModel: ExchangeViewModelType, SelectedCurrencyDelegate {
         }
     }
     
-    func calculateValueFor(for value: String, from textField: TextFieldID) {
-        guard !firstCurrencyNameInBox.value.isEmpty && !secondCurrencyNameInBox.value.isEmpty else { return }
-        guard let value = Double(value) else { return }
-        switch textField {
-        case .firstTF:
+//    func calculateValueFor(for value: String, from textField: TextFieldID) {
+//        guard !firstCurrencyNameInBox.value.isEmpty && !secondCurrencyNameInBox.value.isEmpty else { return }
+//        guard let value = Double(value) else { return }
+//        switch textField {
+//        case .firstTF:
+//            secondCurrencyCalculatedValueInBox.value = String(format: "%0.2f", (value * Double(ratesForFirstCurrency[secondCurrencyNameInBox.value] ?? 0.0)) )
+//        case .secondTF:
+//            firstCurrencyCalculatedValueInBox.value = String(format: "%0.2f", (value * Double(ratesForSecondCurrency[firstCurrencyNameInBox.value] ?? 0.0)) )
+//        }
+//    }
+    
+    func calculateValues(with input: ExchangeViewModelInput) {
+        input.firstCurrencyText.drive(onNext: { [unowned self] text in
+            guard !firstCurrencyNameInBox.value.isEmpty && !secondCurrencyNameInBox.value.isEmpty else { return }
+            guard let text = text else { return }
+            guard let value = Double(text) else { return }
             secondCurrencyCalculatedValueInBox.value = String(format: "%0.2f", (value * Double(ratesForFirstCurrency[secondCurrencyNameInBox.value] ?? 0.0)) )
-        case .secondTF:
+        }).disposed(by: disposeBag)
+        
+        input.secondCurrencyText.drive(onNext: { [unowned self] text in
+            guard !firstCurrencyNameInBox.value.isEmpty && !secondCurrencyNameInBox.value.isEmpty else { return }
+            guard let text = text else { return }
+            guard let value = Double(text) else { return }
             firstCurrencyCalculatedValueInBox.value = String(format: "%0.2f", (value * Double(ratesForSecondCurrency[firstCurrencyNameInBox.value] ?? 0.0)) )
-        }
+        }).disposed(by: disposeBag)
     }
 }
