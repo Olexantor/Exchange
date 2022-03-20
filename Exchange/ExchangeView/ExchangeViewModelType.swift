@@ -25,6 +25,6 @@ protocol ExchangeViewModelType {
     func viewModelWithSelected(condition: SelectButtonCondition) -> SelectCurrencyViewModelType?
     func clearingTheFieldFor(textFieldID: TextFieldID)
     func getCurrencyRates(for currency: String, with saveLocation: SaveLocation?)
-    func calculateValueFor(for value: String, from textField: TextFieldID)
+//    func calculateValueFor(for value: String, from textField: TextFieldID)
     func calculateValues(with input: ExchangeViewModelInput)
 }
