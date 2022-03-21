@@ -15,7 +15,15 @@ enum TextFieldID {
     case firstTF, secondTF
 }
 
-class ExchangeViewController: UIViewController {
+final class ExchangeViewController: UIViewController, ViewType {
+
+    typealias ViewModel = ExchangeViewModel
+    
+    var bindings = ViewModel.Bindings()
+    
+    func bind(to viewModel: ExchangeViewModel) {
+    
+    }
     
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()

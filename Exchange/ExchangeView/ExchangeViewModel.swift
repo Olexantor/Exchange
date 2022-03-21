@@ -14,7 +14,25 @@ protocol SelectedCurrencyDelegate: AnyObject {
     func selectedCurrencyWith(currencyName: String, and condition: SelectButtonCondition)
 }
 
-final class ExchangeViewModel: ExchangeViewModelType, SelectedCurrencyDelegate {
+final class ExchangeViewModel: ExchangeViewModelType, SelectedCurrencyDelegate, ViewModelType {
+
+    
+    struct Dependencies {
+        let networkService: NetworkManager
+    }
+    
+    typealias Routes = ExchangeViewRouter
+    
+    static func configure(
+        input: (),
+        binding: (),
+        dependency: Dependencies,
+        router: Routes
+    ) -> ExchangeViewModel {
+        return ExchangeViewModel()
+    }
+
+    
     var firstCurrencyNameInBox: Box<String> = Box("")
     var secondCurrencyNameInBox: Box<String> = Box("")
     var firstCurrencyCalculatedValueInBox: Box<String> = Box("")

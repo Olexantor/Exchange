@@ -28,6 +28,8 @@
 		1FE3415127D8FEBA00C4D870 /* ExchangeRate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FE3415027D8FEBA00C4D870 /* ExchangeRate.swift */; };
 		CE2E216B27E89B7A0022DF44 /* MVVM+Example.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2E216927E89B7A0022DF44 /* MVVM+Example.swift */; };
 		CE2E216C27E89B7A0022DF44 /* MVVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2E216A27E89B7A0022DF44 /* MVVM.swift */; };
+		CE2E216E27E89C1C0022DF44 /* ExchangeViewScreenBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2E216D27E89C1C0022DF44 /* ExchangeViewScreenBuilder.swift */; };
+		CE2E217027E8A5F90022DF44 /* ExchangeViewRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2E216F27E8A5F90022DF44 /* ExchangeViewRouter.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -52,6 +54,8 @@
 		1FE3415027D8FEBA00C4D870 /* ExchangeRate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExchangeRate.swift; sourceTree = "<group>"; };
 		CE2E216927E89B7A0022DF44 /* MVVM+Example.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "MVVM+Example.swift"; sourceTree = "<group>"; };
 		CE2E216A27E89B7A0022DF44 /* MVVM.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MVVM.swift; sourceTree = "<group>"; };
+		CE2E216D27E89C1C0022DF44 /* ExchangeViewScreenBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExchangeViewScreenBuilder.swift; sourceTree = "<group>"; };
+		CE2E216F27E8A5F90022DF44 /* ExchangeViewRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExchangeViewRouter.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -102,6 +106,8 @@
 				1FD95A9227D791A000312424 /* ExchangeViewController.swift */,
 				1FE3413E27D8E3F700C4D870 /* ExchangeViewModelType.swift */,
 				1FE3414027D8E61B00C4D870 /* ExchangeViewModel.swift */,
+				CE2E216D27E89C1C0022DF44 /* ExchangeViewScreenBuilder.swift */,
+				CE2E216F27E8A5F90022DF44 /* ExchangeViewRouter.swift */,
 			);
 			path = ExchangeView;
 			sourceTree = "<group>";
@@ -257,9 +263,11 @@
 				1FE3414D27D8ECF300C4D870 /* CurrencyCellViewModelType.swift in Sources */,
 				CE2E216B27E89B7A0022DF44 /* MVVM+Example.swift in Sources */,
 				1FE3414A27D8E9C300C4D870 /* SelectCurrencyViewModel.swift in Sources */,
+				CE2E216E27E89C1C0022DF44 /* ExchangeViewScreenBuilder.swift in Sources */,
 				1FD95AA827D7980600312424 /* Constants.swift in Sources */,
 				1FE3413F27D8E3F700C4D870 /* ExchangeViewModelType.swift in Sources */,
 				1FE3414327D8E6B000C4D870 /* Box.swift in Sources */,
+				CE2E217027E8A5F90022DF44 /* ExchangeViewRouter.swift in Sources */,
 				1FE3414627D8E8BD00C4D870 /* SelectCurrencyViewModelType.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
