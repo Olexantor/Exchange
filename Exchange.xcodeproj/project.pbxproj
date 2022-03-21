@@ -26,6 +26,8 @@
 		1FE3414D27D8ECF300C4D870 /* CurrencyCellViewModelType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FE3414C27D8ECF300C4D870 /* CurrencyCellViewModelType.swift */; };
 		1FE3414F27D8ED1D00C4D870 /* CurrencyCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FE3414E27D8ED1D00C4D870 /* CurrencyCellViewModel.swift */; };
 		1FE3415127D8FEBA00C4D870 /* ExchangeRate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FE3415027D8FEBA00C4D870 /* ExchangeRate.swift */; };
+		CE2E216B27E89B7A0022DF44 /* MVVM+Example.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2E216927E89B7A0022DF44 /* MVVM+Example.swift */; };
+		CE2E216C27E89B7A0022DF44 /* MVVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2E216A27E89B7A0022DF44 /* MVVM.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -48,6 +50,8 @@
 		1FE3414C27D8ECF300C4D870 /* CurrencyCellViewModelType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyCellViewModelType.swift; sourceTree = "<group>"; };
 		1FE3414E27D8ED1D00C4D870 /* CurrencyCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyCellViewModel.swift; sourceTree = "<group>"; };
 		1FE3415027D8FEBA00C4D870 /* ExchangeRate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExchangeRate.swift; sourceTree = "<group>"; };
+		CE2E216927E89B7A0022DF44 /* MVVM+Example.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "MVVM+Example.swift"; sourceTree = "<group>"; };
+		CE2E216A27E89B7A0022DF44 /* MVVM.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MVVM.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -152,6 +156,8 @@
 		1FFB371327DE479400404EC7 /* Supporting files */ = {
 			isa = PBXGroup;
 			children = (
+				CE2E216A27E89B7A0022DF44 /* MVVM.swift */,
+				CE2E216927E89B7A0022DF44 /* MVVM+Example.swift */,
 				1FD95A8E27D791A000312424 /* AppDelegate.swift */,
 				1FD95A9727D791A400312424 /* Assets.xcassets */,
 				1FD95A9C27D791A400312424 /* Info.plist */,
@@ -247,7 +253,9 @@
 				1FE3413C27D8BEC700C4D870 /* CurrencyCell.swift in Sources */,
 				1FD95AAA27D7A2D600312424 /* CurrenciesList.swift in Sources */,
 				1FE3414F27D8ED1D00C4D870 /* CurrencyCellViewModel.swift in Sources */,
+				CE2E216C27E89B7A0022DF44 /* MVVM.swift in Sources */,
 				1FE3414D27D8ECF300C4D870 /* CurrencyCellViewModelType.swift in Sources */,
+				CE2E216B27E89B7A0022DF44 /* MVVM+Example.swift in Sources */,
 				1FE3414A27D8E9C300C4D870 /* SelectCurrencyViewModel.swift in Sources */,
 				1FD95AA827D7980600312424 /* Constants.swift in Sources */,
 				1FE3413F27D8E3F700C4D870 /* ExchangeViewModelType.swift in Sources */,
