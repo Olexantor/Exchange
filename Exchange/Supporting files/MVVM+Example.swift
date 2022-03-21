@@ -13,6 +13,7 @@ final class ApplicationDelegate {
             title: "Example"
         ))
         
+//        let vc2 = ExampleScreenBuilder().build(.init(title: <#T##String#>))
         let window = UIWindow()
         window.rootViewController = vc
         return window
