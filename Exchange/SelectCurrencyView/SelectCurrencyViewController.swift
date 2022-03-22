@@ -49,13 +49,17 @@ final class SelectCurrencyViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationController?.view.addSubview(activityIndicator)
+        view.addSubview(activityIndicator)
         activityIndicator.startAnimating()
         setupSearchController()
         setupTableView()
         setupConstrains()
 //        setupBindings()
     }
+    
+//    override func viewWillAppear(_ animated: Bool) {
+//        navigationController?.view.addSubview(activityIndicator)
+//    }
     
     private func setupSearchController() {
         searchController.searchResultsUpdater = self
@@ -74,7 +78,7 @@ final class SelectCurrencyViewController: UIViewController {
             CurrencyCell.self,
             forCellReuseIdentifier: CurrencyCell.identifier
         )
-        title = "Currecies"
+//        title = "Currecies"
         view.addSubview(tableView)
     }
     
