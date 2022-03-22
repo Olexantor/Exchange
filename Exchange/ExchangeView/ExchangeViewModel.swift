@@ -16,6 +16,9 @@ protocol SelectedCurrencyDelegate: AnyObject {
 
 final class ExchangeViewModel: ExchangeViewModelType, SelectedCurrencyDelegate, ViewModelType {
 
+    struct Inputs{
+        let title: String
+    }
     
     struct Dependencies {
         let networkService: NetworkManager
@@ -23,12 +26,19 @@ final class ExchangeViewModel: ExchangeViewModelType, SelectedCurrencyDelegate, 
     
     typealias Routes = ExchangeViewRouter
     
+    let headerTitle: String
+    
     static func configure(
-        input: (),
+        input: Inputs,
         binding: (),
         dependency: Dependencies,
         router: Routes
     ) -> ExchangeViewModel {
+        
+        let headerTitle = input
+            .title
+            .uppercased()
+        
         return ExchangeViewModel()
     }
 

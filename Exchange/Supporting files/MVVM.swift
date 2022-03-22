@@ -24,7 +24,8 @@ extension ScreenBuilder {
     /// Здесь создается контроллер, модель и роутер, и связываются друг с другом.
     func build(
         _ inputs: VC.ViewModel.Inputs
-    ) -> VC where VC.ViewModel.Routes.TransitionHandler == UIViewController {
+    ) -> VC where VC.ViewModel.Routes.TransitionHandler == UIViewController
+    {
         
         let vc = VC.make()
         vc.loadViewIfNeeded()
