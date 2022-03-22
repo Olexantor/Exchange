@@ -4,13 +4,21 @@
 //
 //  Created by Александр on 09.03.2022.
 //
-/*
+
 import SnapKit
 import UIKit
 
-class SelectCurrencyViewController: UIViewController {
-    weak var delegate: SelectedCurrencyDelegate?
-    private var selectViewModel: SelectCurrencyViewModelType
+final class SelectCurrencyViewController: UIViewController {
+
+//    typealias ViewModel = SelectCurrencyViewModel
+//
+//    let bindings = ViewModel.Bindings()
+//
+//    func bind(to viewModel: ViewModel) {
+//    }
+    
+//    weak var delegate: SelectedCurrencyDelegate?
+//    private var selectViewModel: SelectCurrencyViewModelType
     private var tableView = UITableView()
     private let searchController = UISearchController(searchResultsController: nil)
     private var searchBarIsEmpty: Bool {
@@ -30,14 +38,14 @@ class SelectCurrencyViewController: UIViewController {
         return indicator
     }()
     
-    init(viewModel: SelectCurrencyViewModelType) {
-        self.selectViewModel = viewModel
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+//    init(viewModel: SelectCurrencyViewModelType) {
+//        self.selectViewModel = viewModel
+//        super.init(nibName: nil, bundle: nil)
+//    }
+//
+//    required init?(coder: NSCoder) {
+//        fatalError("init(coder:) has not been implemented")
+//    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -46,7 +54,7 @@ class SelectCurrencyViewController: UIViewController {
         setupSearchController()
         setupTableView()
         setupConstrains()
-        setupBindings()
+//        setupBindings()
     }
     
     private func setupSearchController() {
@@ -79,6 +87,7 @@ class SelectCurrencyViewController: UIViewController {
         }
     }
     
+    /*
     private func setupBindings() {
         selectViewModel.currencyInBox.bind { [weak self] _ in
             guard let self = self else { return }
@@ -93,6 +102,7 @@ class SelectCurrencyViewController: UIViewController {
             self.showAlert()
         }
     }
+     */
     // MARK: - Alert
     
     private func showAlert() {
@@ -113,7 +123,8 @@ extension SelectCurrencyViewController : UITableViewDataSource {
         _ tableView: UITableView,
         numberOfRowsInSection section: Int
     ) -> Int {
-        selectViewModel.numberOfRows()
+//        selectViewModel.numberOfRows()
+        10
     }
     
     func tableView(
@@ -125,8 +136,8 @@ extension SelectCurrencyViewController : UITableViewDataSource {
             for: indexPath
         ) as? CurrencyCell
         guard let tableViewCell = cell else { return UITableViewCell() }
-        let cellViewModel = selectViewModel.cellViewModel(forIndexPath: indexPath)
-        tableViewCell.viewModel = cellViewModel
+//        let cellViewModel = selectViewModel.cellViewModel(forIndexPath: indexPath)
+//        tableViewCell.viewModel = cellViewModel
         return tableViewCell
     }
 }
@@ -137,14 +148,26 @@ extension SelectCurrencyViewController: UITableViewDelegate {
         _ tableView: UITableView,
         didSelectRowAt indexPath: IndexPath
     ) {
-        selectViewModel.delegate?.selectedCurrencyWith(
-            currencyName: selectViewModel.currencyInBox.value[indexPath.row],
-            and: selectViewModel.conditionOfButton
-        )
+//        selectViewModel.delegate?.selectedCurrencyWith(
+//            currencyName: selectViewModel.currencyInBox.value[indexPath.row],
+//            and: selectViewModel.conditionOfButton
+//        )
         navigationController?.popViewController(animated: true)
     }
 }
 
+//MARK: - Implement ViewType
+
+extension SelectCurrencyViewController: ViewType {
+    typealias ViewModel = SelectCurrencyViewModel
+    
+    var bindings: ViewModel.Bindings {
+        ViewModel.Bindings()
+    }
+    
+    func bind(to viewModel: ViewModel) {
+    }
+}
 
 //MARK: - SearchResultsUpdating
 extension SelectCurrencyViewController: UISearchResultsUpdating {
@@ -153,8 +176,8 @@ extension SelectCurrencyViewController: UISearchResultsUpdating {
     }
     
     private func filterContentForSearchedText(_ searchText: String) {
-        selectViewModel.filterDataWith(text: searchText, and: isFiltering)
+//        selectViewModel.filterDataWith(text: searchText, and: isFiltering)
         tableView.reloadData()
     }
 }
-*/
+

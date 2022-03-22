@@ -14,4 +14,9 @@ struct ExchangeViewRouter: RouterType {
     init(transitionHandler: UIViewController) {
         vc = transitionHandler
     }
+    
+    func showSelectCurrencyView(with title: String) {
+        let newVC = SelectCurrencyScreenBuilder().build(.init(title: title))
+        vc.navigationController?.pushViewController(newVC, animated: true)
+    }
 }

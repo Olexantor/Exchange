@@ -4,7 +4,7 @@
 //
 //  Created by Александр on 09.03.2022.
 //
-/*
+
 import UIKit
 
 final class CurrencyCell: UITableViewCell {
@@ -42,4 +42,4 @@ final class CurrencyCell: UITableViewCell {
         }
     }
 }
-*/
+

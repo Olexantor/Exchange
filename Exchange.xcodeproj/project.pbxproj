@@ -30,6 +30,10 @@
 		CE2E216C27E89B7A0022DF44 /* MVVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2E216A27E89B7A0022DF44 /* MVVM.swift */; };
 		CE2E216E27E89C1C0022DF44 /* ExchangeViewScreenBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2E216D27E89C1C0022DF44 /* ExchangeViewScreenBuilder.swift */; };
 		CE2E217027E8A5F90022DF44 /* ExchangeViewRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2E216F27E8A5F90022DF44 /* ExchangeViewRouter.swift */; };
+		CE2E217527E9CD500022DF44 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = CE2E217427E9CD500022DF44 /* RxCocoa */; };
+		CE2E217727E9CD500022DF44 /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = CE2E217627E9CD500022DF44 /* RxSwift */; };
+		CE2E217927E9D3180022DF44 /* SelectCurrencyScreenBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2E217827E9D3180022DF44 /* SelectCurrencyScreenBuilder.swift */; };
+		CE2E217B27E9DE680022DF44 /* SelectCurrencyRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2E217A27E9DE680022DF44 /* SelectCurrencyRouter.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -56,6 +60,8 @@
 		CE2E216A27E89B7A0022DF44 /* MVVM.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MVVM.swift; sourceTree = "<group>"; };
 		CE2E216D27E89C1C0022DF44 /* ExchangeViewScreenBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExchangeViewScreenBuilder.swift; sourceTree = "<group>"; };
 		CE2E216F27E8A5F90022DF44 /* ExchangeViewRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExchangeViewRouter.swift; sourceTree = "<group>"; };
+		CE2E217827E9D3180022DF44 /* SelectCurrencyScreenBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectCurrencyScreenBuilder.swift; sourceTree = "<group>"; };
+		CE2E217A27E9DE680022DF44 /* SelectCurrencyRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectCurrencyRouter.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,7 +69,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CE2E217527E9CD500022DF44 /* RxCocoa in Frameworks */,
 				1FD95AA627D796B300312424 /* Alamofire in Frameworks */,
+				CE2E217727E9CD500022DF44 /* RxSwift in Frameworks */,
 				1FD95ACD27D88E3C00312424 /* SnapKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -75,6 +83,7 @@
 			isa = PBXGroup;
 			children = (
 				1FD95A8D27D791A000312424 /* Exchange */,
+				1FE3413E27D8E3F700C4D870 /* ExchangeViewModelType.swift */,
 				1FD95A8C27D791A000312424 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -104,7 +113,6 @@
 			isa = PBXGroup;
 			children = (
 				1FD95A9227D791A000312424 /* ExchangeViewController.swift */,
-				1FE3413E27D8E3F700C4D870 /* ExchangeViewModelType.swift */,
 				1FE3414027D8E61B00C4D870 /* ExchangeViewModel.swift */,
 				CE2E216D27E89C1C0022DF44 /* ExchangeViewScreenBuilder.swift */,
 				CE2E216F27E8A5F90022DF44 /* ExchangeViewRouter.swift */,
@@ -115,9 +123,11 @@
 		1FE3414427D8E88000C4D870 /* SelectCurrencyView */ = {
 			isa = PBXGroup;
 			children = (
+				CE2E217827E9D3180022DF44 /* SelectCurrencyScreenBuilder.swift */,
 				1FE3413927D8B96F00C4D870 /* SelectCurrencyViewController.swift */,
 				1FE3414927D8E9C300C4D870 /* SelectCurrencyViewModel.swift */,
 				1FE3414527D8E8BD00C4D870 /* SelectCurrencyViewModelType.swift */,
+				CE2E217A27E9DE680022DF44 /* SelectCurrencyRouter.swift */,
 				1FE3414B27D8ECB000C4D870 /* CurrencyCell */,
 			);
 			path = SelectCurrencyView;
@@ -191,6 +201,8 @@
 			packageProductDependencies = (
 				1FD95AA527D796B300312424 /* Alamofire */,
 				1FD95ACC27D88E3C00312424 /* SnapKit */,
+				CE2E217427E9CD500022DF44 /* RxCocoa */,
+				CE2E217627E9CD500022DF44 /* RxSwift */,
 			);
 			productName = Exchange;
 			productReference = 1FD95A8B27D791A000312424 /* Exchange.app */;
@@ -223,6 +235,7 @@
 			packageReferences = (
 				1FD95AA427D796B300312424 /* XCRemoteSwiftPackageReference "Alamofire" */,
 				1FD95ACB27D88E3C00312424 /* XCRemoteSwiftPackageReference "SnapKit" */,
+				CE2E217327E9CD500022DF44 /* XCRemoteSwiftPackageReference "RxSwift" */,
 			);
 			productRefGroup = 1FD95A8C27D791A000312424 /* Products */;
 			projectDirPath = "";
@@ -252,6 +265,8 @@
 			files = (
 				1FD95AA327D7964F00312424 /* NetworkManager.swift in Sources */,
 				1FE3415127D8FEBA00C4D870 /* ExchangeRate.swift in Sources */,
+				CE2E217927E9D3180022DF44 /* SelectCurrencyScreenBuilder.swift in Sources */,
+				CE2E217B27E9DE680022DF44 /* SelectCurrencyRouter.swift in Sources */,
 				1FE3414127D8E61B00C4D870 /* ExchangeViewModel.swift in Sources */,
 				1FD95A9327D791A000312424 /* ExchangeViewController.swift in Sources */,
 				1FD95A8F27D791A000312424 /* AppDelegate.swift in Sources */,
@@ -502,6 +517,14 @@
 				kind = branch;
 			};
 		};
+		CE2E217327E9CD500022DF44 /* XCRemoteSwiftPackageReference "RxSwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ReactiveX/RxSwift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -514,6 +537,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 1FD95ACB27D88E3C00312424 /* XCRemoteSwiftPackageReference "SnapKit" */;
 			productName = SnapKit;
+		};
+		CE2E217427E9CD500022DF44 /* RxCocoa */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CE2E217327E9CD500022DF44 /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxCocoa;
+		};
+		CE2E217627E9CD500022DF44 /* RxSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CE2E217327E9CD500022DF44 /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxSwift;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

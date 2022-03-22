@@ -4,24 +4,35 @@
 //
 //  Created by Александр on 09.03.2022.
 //
+import RxCocoa
+import RxSwift
 
-enum SaveLocation {
-    case firstDictionary, secondDictionary
-}
+//enum SaveLocation {
+//    case firstDictionary, secondDictionary
+//}
 
 import Foundation
-protocol SelectedCurrencyDelegate: AnyObject {
-    func selectedCurrencyWith(currencyName: String, and condition: SelectButtonCondition)
+//protocol SelectedCurrencyDelegate: AnyObject {
+//    func selectedCurrencyWith(currencyName: String, and condition: SelectButtonCondition)
+//}
+
+struct ExchangeViewModel {
+    let headerTitle: String
+    let disposables: Disposable
 }
 
-final class ExchangeViewModel: ExchangeViewModelType, SelectedCurrencyDelegate, ViewModelType {
+extension ExchangeViewModel: ViewModelType {
+//    ExchangeViewModelType, SelectedCurrencyDelegate,
  
     struct Inputs{
         let title: String
     }
     
-    final class Bindings {
-        var didTabFirstButton: () -> Void = {}
+    struct Bindings {
+        let didPressedFirstCurrenncyButton: Signal<Void>
+        let didPressedSecondCurrencyButton: Signal<Void>
+        
+//        var didTapButtonWithSender: () -> Void = {}
     }
     
     struct Dependencies {
@@ -29,12 +40,6 @@ final class ExchangeViewModel: ExchangeViewModelType, SelectedCurrencyDelegate, 
     }
     
     typealias Routes = ExchangeViewRouter
-    
-    let headerTitle: String
-    
-    init(headerTitle: String) {
-        self.headerTitle =  headerTitle
-    }
     
     static func configure(
         input: Inputs,
@@ -47,10 +52,27 @@ final class ExchangeViewModel: ExchangeViewModelType, SelectedCurrencyDelegate, 
             .title
             .uppercased()
         
-        return .init(headerTitle: headerTitle)
+        let firstButtonDisposable = binding.didPressedFirstCurrenncyButton
+            .emit(onNext: { _ in
+                router.showSelectCurrencyView(with: "currencies")
+            })
+        
+        let secondButtonDisposable = binding.didPressedSecondCurrencyButton
+            .emit(onNext: { _ in
+                router.showSelectCurrencyView(with: "currencies")
+            })
+        
+        return .init(
+            headerTitle: headerTitle,
+            disposables: CompositeDisposable(firstButtonDisposable, secondButtonDisposable)
+        )
     }
+}
 
-    
+
+
+
+    /*
     var firstCurrencyNameInBox: Box<String> = Box("")
     var secondCurrencyNameInBox: Box<String> = Box("")
     var firstCurrencyCalculatedValueInBox: Box<String> = Box("")
@@ -59,6 +81,7 @@ final class ExchangeViewModel: ExchangeViewModelType, SelectedCurrencyDelegate, 
     var saveLocation: SaveLocation?
     var ratesForFirstCurrency = [String: Double]()
     var ratesForSecondCurrency = [String: Double]()
+     
     
     func viewModelWithSelected(condition: SelectButtonCondition) -> SelectCurrencyViewModelType? {
         return SelectCurrencyViewModel(conditionOfButton: condition)
@@ -118,3 +141,4 @@ final class ExchangeViewModel: ExchangeViewModelType, SelectedCurrencyDelegate, 
         }
     }
 }
+*/

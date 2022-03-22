@@ -4,7 +4,7 @@
 //
 //  Created by Александр on 09.03.2022.
 //
-
+/*
 import Foundation
 import UIKit
 
@@ -22,3 +22,4 @@ protocol ExchangeViewModelType {
     func getCurrencyRates(for currency: String, with saveLocation: SaveLocation?)
     func calculateValueFor(for value: String, from textField: TextFieldID)
 }
+*/
