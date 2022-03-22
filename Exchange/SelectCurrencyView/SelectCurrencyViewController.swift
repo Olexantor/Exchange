@@ -4,6 +4,7 @@
 //
 //  Created by Александр on 09.03.2022.
 //
+/*
 import SnapKit
 import UIKit
 
@@ -156,3 +157,4 @@ extension SelectCurrencyViewController: UISearchResultsUpdating {
         tableView.reloadData()
     }
 }
+*/

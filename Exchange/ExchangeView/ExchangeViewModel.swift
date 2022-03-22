@@ -15,9 +15,13 @@ protocol SelectedCurrencyDelegate: AnyObject {
 }
 
 final class ExchangeViewModel: ExchangeViewModelType, SelectedCurrencyDelegate, ViewModelType {
-
+ 
     struct Inputs{
         let title: String
+    }
+    
+    final class Bindings {
+        var didTabFirstButton: () -> Void = {}
     }
     
     struct Dependencies {
@@ -31,12 +35,13 @@ final class ExchangeViewModel: ExchangeViewModelType, SelectedCurrencyDelegate, 
     init(headerTitle: String) {
         self.headerTitle =  headerTitle
     }
+    
     static func configure(
         input: Inputs,
-        binding: (),
+        binding: Bindings,
         dependency: Dependencies,
         router: Routes
-    ) -> ExchangeViewModel {
+    ) -> Self {
         
         let headerTitle = input
             .title

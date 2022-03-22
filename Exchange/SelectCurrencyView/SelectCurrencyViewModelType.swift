@@ -4,7 +4,7 @@
 //
 //  Created by Александр on 09.03.2022.
 //
-
+/*
 import Foundation
 
 protocol SelectCurrencyViewModelType {
@@ -16,3 +16,4 @@ protocol SelectCurrencyViewModelType {
     func cellViewModel(forIndexPath indexPath: IndexPath) -> CurrencyCellViewModelType?
     func filterDataWith(text: String, and condition: Bool)
 }
+*/
