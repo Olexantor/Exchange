@@ -28,6 +28,9 @@ final class ExchangeViewModel: ExchangeViewModelType, SelectedCurrencyDelegate, 
     
     let headerTitle: String
     
+    init(headerTitle: String) {
+        self.headerTitle =  headerTitle
+    }
     static func configure(
         input: Inputs,
         binding: (),
@@ -39,7 +42,7 @@ final class ExchangeViewModel: ExchangeViewModelType, SelectedCurrencyDelegate, 
             .title
             .uppercased()
         
-        return ExchangeViewModel()
+        return .init(headerTitle: headerTitle)
     }
 
     

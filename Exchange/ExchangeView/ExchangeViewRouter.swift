@@ -9,9 +9,9 @@ import Foundation
 import UIKit
 
 struct ExchangeViewRouter: RouterType {
-    let vc: ExchangeViewController
+    let vc: UIViewController
     
-    init(transitionHandler: ExchangeViewController) {
+    init(transitionHandler: UIViewController) {
         vc = transitionHandler
     }
 }

@@ -23,6 +23,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func makeWindow() -> UIWindow {
         let vc = ExchangeScreenBuilder().build(.init(title: "Exchange"))
+        let window =  UIWindow()
+        window.rootViewController = vc
+        return window
     }
 //    let vc = ExchangeScreenBuilder().builder()
     
