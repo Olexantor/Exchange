@@ -84,6 +84,7 @@
 			children = (
 				1FD95A8D27D791A000312424 /* Exchange */,
 				1FE3413E27D8E3F700C4D870 /* ExchangeViewModelType.swift */,
+				1FE3414527D8E8BD00C4D870 /* SelectCurrencyViewModelType.swift */,
 				1FD95A8C27D791A000312424 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -126,7 +127,6 @@
 				CE2E217827E9D3180022DF44 /* SelectCurrencyScreenBuilder.swift */,
 				1FE3413927D8B96F00C4D870 /* SelectCurrencyViewController.swift */,
 				1FE3414927D8E9C300C4D870 /* SelectCurrencyViewModel.swift */,
-				1FE3414527D8E8BD00C4D870 /* SelectCurrencyViewModelType.swift */,
 				CE2E217A27E9DE680022DF44 /* SelectCurrencyRouter.swift */,
 				1FE3414B27D8ECB000C4D870 /* CurrencyCell */,
 			);

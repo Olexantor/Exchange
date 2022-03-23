@@ -52,12 +52,15 @@ extension ExchangeViewModel: ViewModelType {
             .title
             .uppercased()
         
-        let firstButtonDisposable = binding.didPressedFirstCurrenncyButton
+        let firstButtonDisposable = binding.didPressedFirstCurrenncyButton.debug("====")
+            .do(onNext: { _ in
+               print("Tap")
+            })
             .emit(onNext: { _ in
                 router.showSelectCurrencyView(with: "currencies")
             })
         
-        let secondButtonDisposable = binding.didPressedSecondCurrencyButton
+        let secondButtonDisposable = binding.didPressedSecondCurrencyButton.debug("====")
             .emit(onNext: { _ in
                 router.showSelectCurrencyView(with: "currencies")
             })

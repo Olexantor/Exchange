@@ -10,12 +10,6 @@ import UIKit
 
 final class SelectCurrencyViewController: UIViewController {
 
-//    typealias ViewModel = SelectCurrencyViewModel
-//
-//    let bindings = ViewModel.Bindings()
-//
-//    func bind(to viewModel: ViewModel) {
-//    }
     
 //    weak var delegate: SelectedCurrencyDelegate?
 //    private var selectViewModel: SelectCurrencyViewModelType
@@ -46,6 +40,7 @@ final class SelectCurrencyViewController: UIViewController {
 //    required init?(coder: NSCoder) {
 //        fatalError("init(coder:) has not been implemented")
 //    }
+//   
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -54,12 +49,9 @@ final class SelectCurrencyViewController: UIViewController {
         setupSearchController()
         setupTableView()
         setupConstrains()
-//        setupBindings()
+        setupBindings()
     }
     
-//    override func viewWillAppear(_ animated: Bool) {
-//        navigationController?.view.addSubview(activityIndicator)
-//    }
     
     private func setupSearchController() {
         searchController.searchResultsUpdater = self
@@ -91,22 +83,22 @@ final class SelectCurrencyViewController: UIViewController {
         }
     }
     
-    /*
+    
     private func setupBindings() {
-        selectViewModel.currencyInBox.bind { [weak self] _ in
+        ViewModel.currencyInBox.bind { [weak self] _ in
             guard let self = self else { return }
             DispatchQueue.main.async {
                 self.tableView.reloadData()
                 self.activityIndicator.stopAnimating()
             }
         }
-        selectViewModel.networkErrorInBox.bind { [weak self] error in
+        ViewModel.networkErrorInBox.bind { [weak self] error in
             guard let self = self else { return }
             guard error != nil else { return }
             self.showAlert()
         }
     }
-     */
+     
     // MARK: - Alert
     
     private func showAlert() {
@@ -170,6 +162,19 @@ extension SelectCurrencyViewController: ViewType {
     }
     
     func bind(to viewModel: ViewModel) {
+        title = viewModel.headerTitle
+        viewModel.currencyInBox.bind { [weak self] _ in
+            guard let self = self else { return }
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+                self.activityIndicator.stopAnimating()
+            }
+        }
+        viewModel.networkErrorInBox.bind { [weak self] error in
+            guard let self = self else { return }
+            guard error != nil else { return }
+            self.showAlert()
+        }
     }
 }
 

@@ -7,45 +7,15 @@
 
 import Foundation
 
-struct SelectCurrencyViewModel: ViewModelType {
-    
-    struct Inputs {
-        let title: String
-    }
-    
-    struct Bindings {}
-    
-    struct Dependencies {
-        let networkService: NetworkManager
-    }
-    
-    typealias Routes = SelectCurrencyRouter
-    
+struct SelectCurrencyViewModel: SelectCurrencyViewModelType  {
     let headerTitle: String
-    
-    static func configure(
-        input: Inputs,
-        binding: Bindings,
-        dependency: Dependencies,
-        router: Routes
-    ) -> Self {
-        
-        let headerTitle = input
-            .title
-            .uppercased()
-        
-        return .init(headerTitle: headerTitle)
-    }
-    
-//    var conditionOfButton: SelectButtonCondition
-    var networkErrorInBox: Box<Error?> = Box(nil)
-    var currencyInBox: Box<[String]> = Box([])
-//    var delegate: SelectedCurrencyDelegate?
-    
-//    init(conditionOfButton: SelectButtonCondition) {
-//        self.conditionOfButton = conditionOfButton
-//        getCurrencies()
-//    }
+
+
+    var networkErrorInBox: Box<Error?>
+//    = Box(nil)
+    var currencyInBox: Box<[String]>
+//    = Box([])
+
     private var listOfCurrency = [String]() {
         didSet {
             currencyInBox.value = listOfCurrency
@@ -76,27 +46,85 @@ struct SelectCurrencyViewModel: ViewModelType {
         return CurrencyCellViewModel(currency: currency)
     }
     
-//    func filterDataWith(text: String, and condition: Bool) {
-//        isFiltered = condition
-//        filteredCurrency = listOfCurrency.filter{ $0.lowercased().contains(text.lowercased()) }
-//    }
+    mutating func filterDataWith(text: String, and condition: Bool) {
+        isFiltered = condition
+        filteredCurrency = listOfCurrency.filter{ $0.lowercased().contains(text.lowercased()) }
+    }
     
-//    private func getCurrencies() {
-//        let defaults = UserDefaults.standard
-//        if (defaults.object(forKey: "currencies") != nil) {
-//            listOfCurrency = UserDefaults.standard.object(forKey: "currencies") as? [String] ?? [String]()
-//        } else {
-//            NetworkManager.shared.fetchCurrencyList { [weak self] result in
-//                switch result {
-//                case .success(let currencyList):
-//                    self?.listOfCurrency = currencyList.data.map{ $0.key }.sorted()
-//                    defaults.set(self?.listOfCurrency, forKey: "currencies")
-//                case .failure(let error):
-//                    self?.networkErrorInBox.value = error
-//                }
-//            }
-//        }
-//    }
+    private mutating func getCurrencies() {
+        let defaults = UserDefaults.standard
+        if (defaults.object(forKey: "currencies") != nil) {
+            listOfCurrency = UserDefaults.standard.object(forKey: "currencies") as? [String] ?? [String]()
+        } else {
+            NetworkManager.shared.fetchCurrencyList { result in
+                switch result {
+                case .success(let currencyList):
+                    listOfCurrency = currencyList.data.map{ $0.key }.sorted()
+                    defaults.set(listOfCurrency, forKey: "currencies")
+                case .failure(let error):
+                    networkErrorInBox.value = error
+                }
+            }
+        }
+    }
 }
 
+extension SelectCurrencyViewModel: ViewModelType {
+    
+    struct Inputs {
+        let title: String
+    }
+    
+    struct Bindings {}
+    
+    struct Dependencies {
+        let networkService: NetworkManager
+    }
+    
+    typealias Routes = SelectCurrencyRouter
+    
+    static func configure(
+        input: Inputs,
+        binding: Bindings,
+        dependency: Dependencies,
+        router: Routes
+    ) -> Self {
+        
+        var listOfCurrency = [String]() {
+            didSet {
+                currencyInBox.value = listOfCurrency
+            }
+        }
+        var isFiltered = false
+        
+        var filteredCurrency = [String]() {
+            didSet {
+                currencyInBox.value = filteredCurrency
+            }
+        }
+        
+        func getCurrencies() {
+            let defaults = UserDefaults.standard
+            if (defaults.object(forKey: "currencies") != nil) {
+                listOfCurrency = UserDefaults.standard.object(forKey: "currencies") as? [String] ?? [String]()
+            } else {
+                NetworkManager.shared.fetchCurrencyList { result in
+                    switch result {
+                    case .success(let currencyList):
+                        listOfCurrency = currencyList.data.map{ $0.key }.sorted()
+                        defaults.set(listOfCurrency, forKey: "currencies")
+                    case .failure(let error):
+                        networkErrorInBox.value = error
+                    }
+                }
+            }
+        }
+        
+        let headerTitle = input
+            .title
+            .uppercased()
+        
+        return .init(headerTitle: headerTitle, networkErrorInBox: Box(nil), currencyInBox: Box([]))
+    }
+}
 
