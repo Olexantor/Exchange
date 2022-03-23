@@ -84,19 +84,19 @@ final class SelectCurrencyViewController: UIViewController {
     }
     
     
-    private func setupBindings() {
-        ViewModel.currencyInBox.bind { [weak self] _ in
-            guard let self = self else { return }
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
-                self.activityIndicator.stopAnimating()
-            }
-        }
-        ViewModel.networkErrorInBox.bind { [weak self] error in
-            guard let self = self else { return }
-            guard error != nil else { return }
-            self.showAlert()
-        }
+//    private func setupBindings() {
+//        ViewModel.currencyInBox.bind { [weak self] _ in
+//            guard let self = self else { return }
+//            DispatchQueue.main.async {
+//                self.tableView.reloadData()
+//                self.activityIndicator.stopAnimating()
+//            }
+//        }
+//        ViewModel.networkErrorInBox.bind { [weak self] error in
+//            guard let self = self else { return }
+//            guard error != nil else { return }
+//            self.showAlert()
+//        }
     }
      
     // MARK: - Alert
