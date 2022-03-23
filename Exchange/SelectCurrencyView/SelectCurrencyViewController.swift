@@ -91,6 +91,7 @@ extension SelectCurrencyViewController : UITableViewDataSource {
         _ tableView: UITableView,
         numberOfRowsInSection section: Int
     ) -> Int {
+        ///--- Почему бы не использовать просто `cellViewModels.count`?
         numberOfRows
     }
     
@@ -103,6 +104,7 @@ extension SelectCurrencyViewController : UITableViewDataSource {
             for: indexPath
         ) as? CurrencyCell
         guard let tableViewCell = cell else { return UITableViewCell() }
+        ///--- Для чего тебе проверка, что `cellViewModels` не пустой?
         if !cellViewModels.isEmpty {
             tableViewCell.viewModel = cellViewModels[indexPath.row]
         }
@@ -138,10 +140,12 @@ extension SelectCurrencyViewController: ViewType {
         
         viewModel.currencyInBox.bind { [weak self] currencies in
             guard let self = self else { return }
+            ///--- Попробуй проверить, приходят ли сюда модели после загрузки из сети, а не из кэша
             self.cellViewModels = viewModel.cellViewModels
             self.numberOfRows = currencies.count
             DispatchQueue.main.async {
                 self.tableView.reloadData()
+                ///--- Попробуй проверить, в какой момент ты останавливаешь индикатор
                 self.activityIndicator.stopAnimating()
             }
         }
