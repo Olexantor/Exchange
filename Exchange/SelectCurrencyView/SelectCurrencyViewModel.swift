@@ -15,6 +15,11 @@ struct SelectCurrencyViewModel: SelectCurrencyViewModelType  {
     var currencyInBox: Box<[String]>
 
     var listOfCurrency: [String]
+    
+    var cellViewModels:[CurrencyCellViewModel]
+    
+//    var viewForCell: (IndexPath) -> CurrencyCellViewModel
+    
 
 //    private var listOfCurrency = [String]() {
 //        didSet {
@@ -28,13 +33,13 @@ struct SelectCurrencyViewModel: SelectCurrencyViewModelType  {
 //        }
 //    }
 
-    func numberOfRows() -> Int {
+//    func numberOfRows() -> Int {
 //        if isFiltered {
 //            return filteredCurrency.count
 //        } else {
-            return listOfCurrency.count
+//            return listOfCurrency.count
 //        }
-    }
+//    }
     
     func cellViewModel(forIndexPath indexPath: IndexPath) -> CurrencyCellViewModelType? {
         let currency: String
@@ -44,6 +49,14 @@ struct SelectCurrencyViewModel: SelectCurrencyViewModelType  {
             currency = listOfCurrency[indexPath.row]
 //        }
         return CurrencyCellViewModel(currency: currency)
+    }
+    
+    func createCellViewModels(for currencies: [String]) -> [CurrencyCellViewModel] {
+        var cellViewModels = [CurrencyCellViewModel]()
+        currencies.forEach { currency in
+            cellViewModels.append(CurrencyCellViewModel(currency: currency))
+        }
+        return cellViewModels
     }
     
 //    mutating func filterDataWith(text: String, and condition: Bool) {
@@ -90,12 +103,22 @@ extension SelectCurrencyViewModel: ViewModelType {
         router: Routes
     ) -> Self {
         
+        func createCellViewModels(for currencies: [String]) -> [CurrencyCellViewModel] {
+            var cellViewModels = [CurrencyCellViewModel]()
+            currencies.forEach { currency in
+                cellViewModels.append(CurrencyCellViewModel(currency: currency))
+            }
+            return cellViewModels
+        }
+        
         let networkErrorInBox = Box<Error?>(nil)
         let currencyInBox = Box<[String]>([])
+        var cellViewModels = [CurrencyCellViewModel]()
 
         var listOfCurrency = [String]() {
             didSet {
                 currencyInBox.value = listOfCurrency
+                cellViewModels = createCellViewModels(for: listOfCurrency)
             }
         }
         
@@ -124,11 +147,19 @@ extension SelectCurrencyViewModel: ViewModelType {
             }
         }
         getCurrencies()
+        
+        
+        
+//        func cellViewModel(forIndexPath indexPath: IndexPath) -> CurrencyCellViewModelType? {
+//            let currency: String
+//                currency = listOfCurrency[indexPath.row]
+//            return CurrencyCellViewModel(currency: currency)
+//        }
         let headerTitle = input
             .title
             .uppercased()
         
-        return .init(headerTitle: headerTitle, networkErrorInBox: networkErrorInBox, currencyInBox: currencyInBox, listOfCurrency: listOfCurrency)
+        return .init(headerTitle: headerTitle, networkErrorInBox: networkErrorInBox, currencyInBox: currencyInBox, listOfCurrency: listOfCurrency, cellViewModels: cellViewModels)
     }
 }
 

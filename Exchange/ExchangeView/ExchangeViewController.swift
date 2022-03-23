@@ -115,14 +115,13 @@ final class ExchangeViewController: UIViewController, ViewType {
         super.viewDidLoad()
         view.backgroundColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
         setupNavigationBar()
-//        exchViewModel = ExchangeViewModel()
         addingSubviews()
         setupConstraints()
-//        setupBindings()
         registerForKeyboardNotifications()
         hideKeyboardWhenTappedAround()
         firstCurrencyTextField.delegate = self
         secondCurrencyTextField.delegate =  self
+        UserDefaults.standard.removeObject(forKey: "currencies")
     }
     
     deinit {
@@ -359,13 +358,13 @@ final class ExchangeViewController: UIViewController, ViewType {
 //MARK: - UITextFieldDelegate
 extension ExchangeViewController: UITextFieldDelegate {
     func textFieldDidBeginEditing(_ textField: UITextField) {
-        let textFieldID: TextFieldID = textField == firstCurrencyTextField ? .firstTF : .secondTF
+//        let textFieldID: TextFieldID = textField == firstCurrencyTextField ? .firstTF : .secondTF
 //        exchViewModel?.clearingTheFieldFor(textFieldID: textFieldID)
     }
     
     func textFieldDidChangeSelection(_ textField: UITextField) {
-        let textFieldID: TextFieldID = textField == firstCurrencyTextField ? .firstTF : .secondTF
-        guard let value = textField.text else { return}
+//        let textFieldID: TextFieldID = textField == firstCurrencyTextField ? .firstTF : .secondTF
+//        guard let value = textField.text else { return}
 //        exchViewModel?.calculateValueFor(for: value, from: textFieldID)
     }
 }

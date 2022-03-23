@@ -10,9 +10,6 @@ import UIKit
 
 final class SelectCurrencyViewController: UIViewController {
 
-    
-//    weak var delegate: SelectedCurrencyDelegate?
-//    private var selectViewModel: SelectCurrencyViewModelType
     private var tableView = UITableView()
     private var numberOfRows = 0
     
@@ -25,6 +22,8 @@ final class SelectCurrencyViewController: UIViewController {
         return searchController.isActive && !searchBarIsEmpty
     }
     
+    private var cellViewModels = [CurrencyCellViewModel]()
+    
     private let activityIndicator: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView()
         indicator.color = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
@@ -36,12 +35,11 @@ final class SelectCurrencyViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.addSubview(activityIndicator)
         activityIndicator.startAnimating()
-        setupSearchController()
         setupTableView()
+        tableView.addSubview(activityIndicator)
         setupConstrains()
-//        setupBindings()
+        setupSearchController()
     }
     
     
@@ -62,7 +60,6 @@ final class SelectCurrencyViewController: UIViewController {
             CurrencyCell.self,
             forCellReuseIdentifier: CurrencyCell.identifier
         )
-//        title = "Currecies"
         view.addSubview(tableView)
     }
     
@@ -74,8 +71,6 @@ final class SelectCurrencyViewController: UIViewController {
             $0.edges.equalToSuperview()
         }
     }
-    
-     
     // MARK: - Alert
     
     private func showAlert() {
@@ -108,8 +103,9 @@ extension SelectCurrencyViewController : UITableViewDataSource {
             for: indexPath
         ) as? CurrencyCell
         guard let tableViewCell = cell else { return UITableViewCell() }
-//        let cellViewModel = selectViewModel.cellViewModel(forIndexPath: indexPath)
-//        tableViewCell.viewModel = cellViewModel
+        if !cellViewModels.isEmpty {
+            tableViewCell.viewModel = cellViewModels[indexPath.row]
+        }
         return tableViewCell
     }
 }
@@ -139,15 +135,17 @@ extension SelectCurrencyViewController: ViewType {
     
     func bind(to viewModel: ViewModel) {
         title = viewModel.headerTitle
-        numberOfRows = viewModel.numberOfRows()
         
-        viewModel.currencyInBox.bind { [weak self] _ in
+        viewModel.currencyInBox.bind { [weak self] currencies in
             guard let self = self else { return }
+            self.cellViewModels = viewModel.cellViewModels
+            self.numberOfRows = currencies.count
             DispatchQueue.main.async {
                 self.tableView.reloadData()
                 self.activityIndicator.stopAnimating()
             }
         }
+        
         viewModel.networkErrorInBox.bind { [weak self] error in
             guard let self = self else { return }
             guard error != nil else { return }
