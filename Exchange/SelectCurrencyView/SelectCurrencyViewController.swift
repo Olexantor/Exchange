@@ -15,6 +15,7 @@ final class SelectCurrencyViewController: UIViewController {
 //    private var selectViewModel: SelectCurrencyViewModelType
     private var tableView = UITableView()
     private var numberOfRows = 0
+    
     private let searchController = UISearchController(searchResultsController: nil)
     private var searchBarIsEmpty: Bool {
         guard let text = searchController.searchBar.text else { return false}
@@ -32,16 +33,6 @@ final class SelectCurrencyViewController: UIViewController {
         indicator.transform = transfrom
         return indicator
     }()
-    
-//    init(viewModel: SelectCurrencyViewModelType) {
-//        self.selectViewModel = viewModel
-//        super.init(nibName: nil, bundle: nil)
-//    }
-//
-//    required init?(coder: NSCoder) {
-//        fatalError("init(coder:) has not been implemented")
-//    }
-//   
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -84,21 +75,6 @@ final class SelectCurrencyViewController: UIViewController {
         }
     }
     
-    
-//    private func setupBindings() {
-//        ViewModel.currencyInBox.bind { [weak self] _ in
-//            guard let self = self else { return }
-//            DispatchQueue.main.async {
-//                self.tableView.reloadData()
-//                self.activityIndicator.stopAnimating()
-//            }
-//        }
-//        ViewModel.networkErrorInBox.bind { [weak self] error in
-//            guard let self = self else { return }
-//            guard error != nil else { return }
-//            self.showAlert()
-//        }
-//    }
      
     // MARK: - Alert
     
@@ -111,7 +87,7 @@ final class SelectCurrencyViewController: UIViewController {
         let okAction = UIAlertAction(title: "OK", style: .default)
         alert.addAction(okAction)
         present(alert, animated: true)
-    }
+}
 }
 //MARK: - UITableViewDataSource methods
 

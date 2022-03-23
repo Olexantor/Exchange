@@ -12,10 +12,8 @@ struct SelectCurrencyViewModel: SelectCurrencyViewModelType  {
 
 
     var networkErrorInBox: Box<Error?>
-//    = Box(nil)
     var currencyInBox: Box<[String]>
-//    = Box([])
-    
+
     var listOfCurrency: [String]
 
 //    private var listOfCurrency = [String]() {
@@ -24,11 +22,11 @@ struct SelectCurrencyViewModel: SelectCurrencyViewModelType  {
 //        }
 //    }
 //    private  var isFiltered = false
-    private var filteredCurrency = [String]() {
-        didSet {
-            currencyInBox.value = filteredCurrency
-        }
-    }
+//    private var filteredCurrency = [String]() {
+//        didSet {
+//            currencyInBox.value = filteredCurrency
+//        }
+//    }
 
     func numberOfRows() -> Int {
 //        if isFiltered {
