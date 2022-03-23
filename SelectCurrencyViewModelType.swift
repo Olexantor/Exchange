@@ -14,6 +14,6 @@ protocol SelectCurrencyViewModelType {
     var currencyInBox: Box<[String]> { get set }
     func numberOfRows() -> Int
     func cellViewModel(forIndexPath indexPath: IndexPath) -> CurrencyCellViewModelType?
-    mutating func filterDataWith(text: String, and condition: Bool)
+//    func filterDataWith(text: String, and condition: Bool)
 }
 

@@ -14,6 +14,7 @@ final class SelectCurrencyViewController: UIViewController {
 //    weak var delegate: SelectedCurrencyDelegate?
 //    private var selectViewModel: SelectCurrencyViewModelType
     private var tableView = UITableView()
+    private var numberOfRows = 0
     private let searchController = UISearchController(searchResultsController: nil)
     private var searchBarIsEmpty: Bool {
         guard let text = searchController.searchBar.text else { return false}
@@ -49,7 +50,7 @@ final class SelectCurrencyViewController: UIViewController {
         setupSearchController()
         setupTableView()
         setupConstrains()
-        setupBindings()
+//        setupBindings()
     }
     
     
@@ -97,7 +98,7 @@ final class SelectCurrencyViewController: UIViewController {
 //            guard error != nil else { return }
 //            self.showAlert()
 //        }
-    }
+//    }
      
     // MARK: - Alert
     
@@ -119,8 +120,7 @@ extension SelectCurrencyViewController : UITableViewDataSource {
         _ tableView: UITableView,
         numberOfRowsInSection section: Int
     ) -> Int {
-//        selectViewModel.numberOfRows()
-        10
+        numberOfRows
     }
     
     func tableView(
@@ -163,6 +163,8 @@ extension SelectCurrencyViewController: ViewType {
     
     func bind(to viewModel: ViewModel) {
         title = viewModel.headerTitle
+        numberOfRows = viewModel.numberOfRows()
+        
         viewModel.currencyInBox.bind { [weak self] _ in
             guard let self = self else { return }
             DispatchQueue.main.async {
