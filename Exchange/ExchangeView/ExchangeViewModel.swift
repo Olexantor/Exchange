@@ -17,6 +17,7 @@ import Foundation
 //}
 
 struct ExchangeViewModel {
+    typealias callback = (String) -> Void
     let headerTitle: String
     let disposables: Disposable
 }
@@ -52,6 +53,11 @@ extension ExchangeViewModel: ViewModelType {
             .title
             .uppercased()
         
+        let firstCurrencyNameInBox = Box<String>("")
+        let secondCurrencyNameInBox = Box<String>("")
+        
+        
+        
         let firstButtonDisposable = binding.didPressedFirstCurrenncyButton.debug("====")
             .emit(onNext: { _ in
                 router.showSelectCurrencyView(with: "currencies")
@@ -82,6 +88,8 @@ extension ExchangeViewModel: ViewModelType {
     var ratesForFirstCurrency = [String: Double]()
     var ratesForSecondCurrency = [String: Double]()
      
+     , { secondCurrencyNameInBox.value = $0 }
+     , { firstCurrencyNameInBox.value = $0 }
     
     func viewModelWithSelected(condition: SelectButtonCondition) -> SelectCurrencyViewModelType? {
         return SelectCurrencyViewModel(conditionOfButton: condition)

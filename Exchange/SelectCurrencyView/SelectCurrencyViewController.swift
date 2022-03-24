@@ -117,6 +117,7 @@ extension SelectCurrencyViewController: UITableViewDelegate {
         _ tableView: UITableView,
         didSelectRowAt indexPath: IndexPath
     ) {
+        cellViewModels[indexPath.row].currency
 //        selectViewModel.delegate?.selectedCurrencyWith(
 //            currencyName: selectViewModel.currencyInBox.value[indexPath.row],
 //            and: selectViewModel.conditionOfButton
