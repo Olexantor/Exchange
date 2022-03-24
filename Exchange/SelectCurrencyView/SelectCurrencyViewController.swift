@@ -102,9 +102,9 @@ extension SelectCurrencyViewController : UITableViewDataSource {
             withIdentifier: CurrencyCell.identifier,
             for: indexPath
         ) as? CurrencyCell
+        
         guard let tableViewCell = cell else { return UITableViewCell() }
-
-            tableViewCell.viewModel = cellViewModels[indexPath.row]
+        tableViewCell.viewModel = cellViewModels[indexPath.row]
         activityIndicator.stopAnimating()
 
         return tableViewCell

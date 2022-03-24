@@ -133,20 +133,20 @@ extension SelectCurrencyViewModel: ViewModelType {
         
         
         func getCurrencies() {
-//            let defaults = UserDefaults.standard
-//            if (defaults.object(forKey: "currencies") != nil) {
-//                listOfCurrency = UserDefaults.standard.object(forKey: "currencies") as? [String] ?? [String]()
-//            } else {
+            let defaults = UserDefaults.standard
+            if (defaults.object(forKey: "currencies") != nil) {
+                listOfCurrency = UserDefaults.standard.object(forKey: "currencies") as? [String] ?? [String]()
+            } else {
                 NetworkManager.shared.fetchCurrencyList { result in
                     switch result {
                     case .success(let currencyList):
                         listOfCurrency = currencyList.data.map{ $0.key }.sorted()
-//                        defaults.set(listOfCurrency, forKey: "currencies")
+                        defaults.set(listOfCurrency, forKey: "currencies")
                     case .failure(let error):
                         networkErrorInBox.value = error
                     }
                 }
-//            }
+            }
         }
         getCurrencies()
         
