@@ -7,16 +7,18 @@
 
 import Foundation
 
-struct SelectCurrencyViewModel: SelectCurrencyViewModelType  {
+struct SelectCurrencyViewModel {
+//    :SelectCurrencyViewModelType
+
     let headerTitle: String
 
-
-    var networkErrorInBox: Box<Error?>
-    var currencyInBox: Box<[String]>
-
-    var listOfCurrency: [String]
+    let networkErrorInBox: Box<Error?>
     
-    var cellViewModels:[CurrencyCellViewModel]
+    let cellViewModels:Box<[CurrencyCellViewModel]>
+    
+//    var currencyInBox: Box<[String]>
+//    
+//    var listOfCurrency: [String]
     
 //    var viewForCell: (IndexPath) -> CurrencyCellViewModel
     
@@ -41,23 +43,23 @@ struct SelectCurrencyViewModel: SelectCurrencyViewModelType  {
 //        }
 //    }
     
-    func cellViewModel(forIndexPath indexPath: IndexPath) -> CurrencyCellViewModelType? {
-        let currency: String
+//    func cellViewModel(forIndexPath indexPath: IndexPath) -> CurrencyCellViewModelType? {
+//        let currency: String
 //        if isFiltered {
 //            currency = filteredCurrency[indexPath.row]
 //        } else {
-            currency = listOfCurrency[indexPath.row]
+//            currency = listOfCurrency[indexPath.row]
 //        }
-        return CurrencyCellViewModel(currency: currency)
-    }
+//        return CurrencyCellViewModel(currency: currency)
+//    }
     
-    func createCellViewModels(for currencies: [String]) -> [CurrencyCellViewModel] {
-        var cellViewModels = [CurrencyCellViewModel]()
-        currencies.forEach { currency in
-            cellViewModels.append(CurrencyCellViewModel(currency: currency))
-        }
-        return cellViewModels
-    }
+//    func createCellViewModels(for currencies: [String]) -> [CurrencyCellViewModel] {
+//        var cellViewModels = [CurrencyCellViewModel]()
+//        currencies.forEach { currency in
+//            cellViewModels.append(CurrencyCellViewModel(currency: currency))
+//        }
+//        return cellViewModels
+//    }
     
 //    mutating func filterDataWith(text: String, and condition: Bool) {
 //        isFiltered = condition
@@ -102,7 +104,16 @@ extension SelectCurrencyViewModel: ViewModelType {
         dependency: Dependencies,
         router: Routes
     ) -> Self {
+        //        let currencyInBox = Box<[String]>([])
+        //                currencyInBox.value = listOfCurrency
         
+        //        var isFiltered = false
+        //
+        //        var filteredCurrency = [String]() {
+        //            didSet {
+        //                currencyInBox.value = filteredCurrency
+        //            }
+        //        }
         func createCellViewModels(for currencies: [String]) -> [CurrencyCellViewModel] {
             var cellViewModels = [CurrencyCellViewModel]()
             currencies.forEach { currency in
@@ -112,54 +123,42 @@ extension SelectCurrencyViewModel: ViewModelType {
         }
         
         let networkErrorInBox = Box<Error?>(nil)
-        let currencyInBox = Box<[String]>([])
-        var cellViewModels = [CurrencyCellViewModel]()
+        let cellViewModels = Box<[CurrencyCellViewModel]>([])
 
         var listOfCurrency = [String]() {
             didSet {
-                currencyInBox.value = listOfCurrency
-                cellViewModels = createCellViewModels(for: listOfCurrency)
+                cellViewModels.value = createCellViewModels(for: listOfCurrency)
             }
         }
         
-//        var isFiltered = false
-//
-//        var filteredCurrency = [String]() {
-//            didSet {
-//                currencyInBox.value = filteredCurrency
-//            }
-//        }
         
         func getCurrencies() {
-            let defaults = UserDefaults.standard
-            if (defaults.object(forKey: "currencies") != nil) {
-                listOfCurrency = UserDefaults.standard.object(forKey: "currencies") as? [String] ?? [String]()
-            } else {
+//            let defaults = UserDefaults.standard
+//            if (defaults.object(forKey: "currencies") != nil) {
+//                listOfCurrency = UserDefaults.standard.object(forKey: "currencies") as? [String] ?? [String]()
+//            } else {
                 NetworkManager.shared.fetchCurrencyList { result in
                     switch result {
                     case .success(let currencyList):
                         listOfCurrency = currencyList.data.map{ $0.key }.sorted()
-                        defaults.set(listOfCurrency, forKey: "currencies")
+//                        defaults.set(listOfCurrency, forKey: "currencies")
                     case .failure(let error):
                         networkErrorInBox.value = error
                     }
                 }
-            }
+//            }
         }
         getCurrencies()
         
-        
-        
-//        func cellViewModel(forIndexPath indexPath: IndexPath) -> CurrencyCellViewModelType? {
-//            let currency: String
-//                currency = listOfCurrency[indexPath.row]
-//            return CurrencyCellViewModel(currency: currency)
-//        }
         let headerTitle = input
             .title
             .uppercased()
         
-        return .init(headerTitle: headerTitle, networkErrorInBox: networkErrorInBox, currencyInBox: currencyInBox, listOfCurrency: listOfCurrency, cellViewModels: cellViewModels)
+        return .init(
+            headerTitle: headerTitle,
+            networkErrorInBox: networkErrorInBox,
+            cellViewModels: cellViewModels
+        )
     }
 }
 

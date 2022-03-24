@@ -11,7 +11,6 @@ import UIKit
 final class SelectCurrencyViewController: UIViewController {
 
     private var tableView = UITableView()
-    private var numberOfRows = 0
     
     private let searchController = UISearchController(searchResultsController: nil)
     private var searchBarIsEmpty: Bool {
@@ -68,7 +67,7 @@ final class SelectCurrencyViewController: UIViewController {
             $0.edges.equalToSuperview()
         }
         activityIndicator.snp.makeConstraints {
-            $0.edges.equalToSuperview()
+            $0.center.equalToSuperview()
         }
     }
     // MARK: - Alert
@@ -92,7 +91,7 @@ extension SelectCurrencyViewController : UITableViewDataSource {
         numberOfRowsInSection section: Int
     ) -> Int {
         ///--- Почему бы не использовать просто `cellViewModels.count`?
-        numberOfRows
+        cellViewModels.count
     }
     
     func tableView(
@@ -104,10 +103,11 @@ extension SelectCurrencyViewController : UITableViewDataSource {
             for: indexPath
         ) as? CurrencyCell
         guard let tableViewCell = cell else { return UITableViewCell() }
-        ///--- Для чего тебе проверка, что `cellViewModels` не пустой?
-        if !cellViewModels.isEmpty {
+//        ///--- Для чего тебе проверка, что `cellViewModels` не пустой?
+//        if !cellViewModels.isEmpty {
             tableViewCell.viewModel = cellViewModels[indexPath.row]
-        }
+        activityIndicator.stopAnimating()
+//        }
         return tableViewCell
     }
 }
@@ -138,17 +138,24 @@ extension SelectCurrencyViewController: ViewType {
     func bind(to viewModel: ViewModel) {
         title = viewModel.headerTitle
         
-        viewModel.currencyInBox.bind { [weak self] currencies in
-            guard let self = self else { return }
-            ///--- Попробуй проверить, приходят ли сюда модели после загрузки из сети, а не из кэша
-            self.cellViewModels = viewModel.cellViewModels
-            self.numberOfRows = currencies.count
+        viewModel.cellViewModels.bind { [weak self] cellsModels in
+            self?.cellViewModels = cellsModels
             DispatchQueue.main.async {
-                self.tableView.reloadData()
-                ///--- Попробуй проверить, в какой момент ты останавливаешь индикатор
-                self.activityIndicator.stopAnimating()
+                self?.tableView.reloadData()
             }
         }
+        
+//        viewModel.currencyInBox.bind { [weak self] _ in
+//            guard let self = self else { return }
+//            ///--- Попробуй проверить, приходят ли сюда модели после загрузки из сети, а не из кэша
+//            self.cellViewModels = viewModel.cellViewModels
+//
+//            DispatchQueue.main.async {
+//                self.tableView.reloadData()
+//                ///--- Попробуй проверить, в какой момент ты останавливаешь индикатор
+//                self.activityIndicator.stopAnimating()
+//            }
+//        }
         
         viewModel.networkErrorInBox.bind { [weak self] error in
             guard let self = self else { return }
