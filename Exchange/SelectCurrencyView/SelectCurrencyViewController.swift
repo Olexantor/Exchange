@@ -103,11 +103,10 @@ extension SelectCurrencyViewController : UITableViewDataSource {
             for: indexPath
         ) as? CurrencyCell
         guard let tableViewCell = cell else { return UITableViewCell() }
-//        ///--- Для чего тебе проверка, что `cellViewModels` не пустой?
-//        if !cellViewModels.isEmpty {
+
             tableViewCell.viewModel = cellViewModels[indexPath.row]
         activityIndicator.stopAnimating()
-//        }
+
         return tableViewCell
     }
 }
