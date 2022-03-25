@@ -10,25 +10,8 @@ import SnapKit
 import UIKit
 
 final class ExchangeViewController: UIViewController {
-    
     var disposeBag = DisposeBag()
 
-//    typealias ViewModel = ExchangeViewModel
-//
-//    var bindings: ViewModel.Bindings {
-//        ViewModel.Bindings(
-//            didPressedFirstCurrenncyButton: firstCurrencySelectionButton.rx.tap.asSignal(),
-//            didPressedSecondCurrencyButton: secondCurrencySelectionButton.rx.tap.asSignal()
-//        )
-//    }
-//
-//    func bind(to viewModel: ExchangeViewModel) {
-//        title = viewModel.headerTitle
-//        viewModel.disposables
-//            .disposed(by: disposeBag)
-//
-//    }
-    
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         return scrollView
