@@ -105,6 +105,7 @@ extension SelectCurrencyViewController : UITableViewDataSource {
         
         guard let tableViewCell = cell else { return UITableViewCell() }
         tableViewCell.viewModel = cellViewModels[indexPath.row]
+        ///--- Этот метод вызывается каждый раз перед отображением ячейки. Уверен, что это правильное место для остановки индикатора? Подумай, в какой момент времени ты хочешь его показать и при наступлении какого события ты хочешь его скрыть?
         activityIndicator.stopAnimating()
 
         return tableViewCell
@@ -117,7 +118,9 @@ extension SelectCurrencyViewController: UITableViewDelegate {
         _ tableView: UITableView,
         didSelectRowAt indexPath: IndexPath
     ) {
+        ///--- Наоборот, не `callback` из модели пробрасываем в экран, а все нажатия из экрана через `Bindings` пробрасываем в модель.
         callback(cellViewModels[indexPath.row].currency)
+        ///--- Навигация должна быть в роутере.
         navigationController?.popViewController(animated: true)
     }
 }
@@ -126,6 +129,7 @@ extension SelectCurrencyViewController: UITableViewDelegate {
 extension SelectCurrencyViewController: ViewType {
     typealias ViewModel = SelectCurrencyViewModel
     
+    ///--- Получается, сюда надо как-то передать нажатие на ячейку.
     var bindings: ViewModel.Bindings {
         ViewModel.Bindings()
     }
