@@ -49,12 +49,16 @@ extension ExchangeViewModel: ViewModelType {
         
         let firstButtonDisposable = binding.didPressedFirstCurrenncyButton.debug("====")
             .emit(onNext: { _ in
-                router.showSelectCurrencyView(with: "currencies", and: { firstCurrencyNameInBox.value = $0 } )
+                router.showSelectCurrencyView(with: "currencies") {
+                    firstCurrencyNameInBox.value = $0
+                }
             })
         
         let secondButtonDisposable = binding.didPressedSecondCurrencyButton.debug("====")
             .emit(onNext: { _ in
-                router.showSelectCurrencyView(with: "currencies", and: { secondCurrencyNameInBox.value = $0 } )
+                router.showSelectCurrencyView(with: "currencies") {
+                    firstCurrencyNameInBox.value = $0
+                }
             })
         
         return .init(
