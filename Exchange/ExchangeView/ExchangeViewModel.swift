@@ -57,7 +57,7 @@ extension ExchangeViewModel: ViewModelType {
         let secondButtonDisposable = binding.didPressedSecondCurrencyButton.debug("====")
             .emit(onNext: { _ in
                 router.showSelectCurrencyView(with: "currencies") {
-                    firstCurrencyNameInBox.value = $0
+                    secondCurrencyNameInBox.value = $0
                 }
             })
         
