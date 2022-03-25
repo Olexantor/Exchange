@@ -41,7 +41,6 @@ final class SelectCurrencyViewController: UIViewController {
         setupSearchController()
     }
     
-    
     private func setupSearchController() {
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
@@ -116,15 +115,10 @@ extension SelectCurrencyViewController: UITableViewDelegate {
         _ tableView: UITableView,
         didSelectRowAt indexPath: IndexPath
     ) {
-        cellViewModels[indexPath.row].currency
-//        selectViewModel.delegate?.selectedCurrencyWith(
-//            currencyName: selectViewModel.currencyInBox.value[indexPath.row],
-//            and: selectViewModel.conditionOfButton
-//        )
+//        cellViewModels[indexPath.row].currency
         navigationController?.popViewController(animated: true)
     }
 }
-
 //MARK: - Implement ViewType
 
 extension SelectCurrencyViewController: ViewType {
@@ -144,16 +138,6 @@ extension SelectCurrencyViewController: ViewType {
             }
         }
         
-//        viewModel.currencyInBox.bind { [weak self] _ in
-//            guard let self = self else { return }
-//            self.cellViewModels = viewModel.cellViewModels
-//
-//            DispatchQueue.main.async {
-//                self.tableView.reloadData()
-//                self.activityIndicator.stopAnimating()
-//            }
-//        }
-        
         viewModel.networkErrorInBox.bind { [weak self] error in
             guard let self = self else { return }
             guard error != nil else { return }
@@ -161,16 +145,13 @@ extension SelectCurrencyViewController: ViewType {
         }
     }
 }
-
 //MARK: - SearchResultsUpdating
+
 extension SelectCurrencyViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
-        filterContentForSearchedText(searchController.searchBar.text ?? "")
     }
     
     private func filterContentForSearchedText(_ searchText: String) {
-//        selectViewModel.filterDataWith(text: searchText, and: isFiltering)
-        tableView.reloadData()
     }
 }
 

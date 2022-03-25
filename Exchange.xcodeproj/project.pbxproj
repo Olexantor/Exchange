@@ -18,10 +18,8 @@
 		1FD95ACD27D88E3C00312424 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 1FD95ACC27D88E3C00312424 /* SnapKit */; };
 		1FE3413A27D8B96F00C4D870 /* SelectCurrencyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FE3413927D8B96F00C4D870 /* SelectCurrencyViewController.swift */; };
 		1FE3413C27D8BEC700C4D870 /* CurrencyCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FE3413B27D8BEC700C4D870 /* CurrencyCell.swift */; };
-		1FE3413F27D8E3F700C4D870 /* ExchangeViewModelType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FE3413E27D8E3F700C4D870 /* ExchangeViewModelType.swift */; };
 		1FE3414127D8E61B00C4D870 /* ExchangeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FE3414027D8E61B00C4D870 /* ExchangeViewModel.swift */; };
 		1FE3414327D8E6B000C4D870 /* Box.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FE3414227D8E6B000C4D870 /* Box.swift */; };
-		1FE3414627D8E8BD00C4D870 /* SelectCurrencyViewModelType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FE3414527D8E8BD00C4D870 /* SelectCurrencyViewModelType.swift */; };
 		1FE3414A27D8E9C300C4D870 /* SelectCurrencyViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FE3414927D8E9C300C4D870 /* SelectCurrencyViewModel.swift */; };
 		1FE3414D27D8ECF300C4D870 /* CurrencyCellViewModelType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FE3414C27D8ECF300C4D870 /* CurrencyCellViewModelType.swift */; };
 		1FE3414F27D8ED1D00C4D870 /* CurrencyCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FE3414E27D8ED1D00C4D870 /* CurrencyCellViewModel.swift */; };
@@ -48,10 +46,8 @@
 		1FD95AA927D7A2D600312424 /* CurrenciesList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrenciesList.swift; sourceTree = "<group>"; };
 		1FE3413927D8B96F00C4D870 /* SelectCurrencyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectCurrencyViewController.swift; sourceTree = "<group>"; };
 		1FE3413B27D8BEC700C4D870 /* CurrencyCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyCell.swift; sourceTree = "<group>"; };
-		1FE3413E27D8E3F700C4D870 /* ExchangeViewModelType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExchangeViewModelType.swift; sourceTree = "<group>"; };
 		1FE3414027D8E61B00C4D870 /* ExchangeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExchangeViewModel.swift; sourceTree = "<group>"; };
 		1FE3414227D8E6B000C4D870 /* Box.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Box.swift; sourceTree = "<group>"; };
-		1FE3414527D8E8BD00C4D870 /* SelectCurrencyViewModelType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectCurrencyViewModelType.swift; sourceTree = "<group>"; };
 		1FE3414927D8E9C300C4D870 /* SelectCurrencyViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectCurrencyViewModel.swift; sourceTree = "<group>"; };
 		1FE3414C27D8ECF300C4D870 /* CurrencyCellViewModelType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyCellViewModelType.swift; sourceTree = "<group>"; };
 		1FE3414E27D8ED1D00C4D870 /* CurrencyCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyCellViewModel.swift; sourceTree = "<group>"; };
@@ -83,8 +79,6 @@
 			isa = PBXGroup;
 			children = (
 				1FD95A8D27D791A000312424 /* Exchange */,
-				1FE3413E27D8E3F700C4D870 /* ExchangeViewModelType.swift */,
-				1FE3414527D8E8BD00C4D870 /* SelectCurrencyViewModelType.swift */,
 				1FD95A8C27D791A000312424 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -280,10 +274,8 @@
 				1FE3414A27D8E9C300C4D870 /* SelectCurrencyViewModel.swift in Sources */,
 				CE2E216E27E89C1C0022DF44 /* ExchangeViewScreenBuilder.swift in Sources */,
 				1FD95AA827D7980600312424 /* Constants.swift in Sources */,
-				1FE3413F27D8E3F700C4D870 /* ExchangeViewModelType.swift in Sources */,
 				1FE3414327D8E6B000C4D870 /* Box.swift in Sources */,
 				CE2E217027E8A5F90022DF44 /* ExchangeViewRouter.swift in Sources */,
-				1FE3414627D8E8BD00C4D870 /* SelectCurrencyViewModelType.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
