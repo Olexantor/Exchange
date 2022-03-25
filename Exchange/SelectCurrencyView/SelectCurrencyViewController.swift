@@ -23,6 +23,8 @@ final class SelectCurrencyViewController: UIViewController {
     
     private var cellViewModels = [CurrencyCellViewModel]()
     
+    private var callback: ((String) -> Void)!
+    
     private let activityIndicator: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView()
         indicator.color = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
@@ -115,7 +117,7 @@ extension SelectCurrencyViewController: UITableViewDelegate {
         _ tableView: UITableView,
         didSelectRowAt indexPath: IndexPath
     ) {
-//        cellViewModels[indexPath.row].currency
+        callback(cellViewModels[indexPath.row].currency)
         navigationController?.popViewController(animated: true)
     }
 }
@@ -130,6 +132,7 @@ extension SelectCurrencyViewController: ViewType {
     
     func bind(to viewModel: ViewModel) {
         title = viewModel.headerTitle
+        callback = viewModel.callback
         
         viewModel.cellViewModels.bind { [weak self] cellsModels in
             self?.cellViewModels = cellsModels

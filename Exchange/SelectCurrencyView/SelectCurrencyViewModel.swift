@@ -11,11 +11,13 @@ struct SelectCurrencyViewModel {
     let headerTitle: String
     let networkErrorInBox: Box<Error?>
     let cellViewModels:Box<[CurrencyCellViewModel]>
+    let callback: (String) -> Void
 }
 
 extension SelectCurrencyViewModel: ViewModelType {
     struct Inputs {
         let title: String
+        let callback: (String) -> Void
     }
     
     struct Bindings {}
@@ -73,10 +75,14 @@ extension SelectCurrencyViewModel: ViewModelType {
             .title
             .uppercased()
         
+        let callback = input
+            .callback
+        
         return .init(
             headerTitle: headerTitle,
             networkErrorInBox: networkErrorInBox,
-            cellViewModels: cellViewModels
+            cellViewModels: cellViewModels,
+            callback: callback
         )
     }
 }

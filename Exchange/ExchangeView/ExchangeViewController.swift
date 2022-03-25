@@ -9,25 +9,25 @@ import RxCocoa
 import SnapKit
 import UIKit
 
-final class ExchangeViewController: UIViewController, ViewType {
+final class ExchangeViewController: UIViewController {
     
     var disposeBag = DisposeBag()
 
-    typealias ViewModel = ExchangeViewModel
-    
-    var bindings: ViewModel.Bindings {
-        ViewModel.Bindings(
-            didPressedFirstCurrenncyButton: firstCurrencySelectionButton.rx.tap.asSignal(),
-            didPressedSecondCurrencyButton: secondCurrencySelectionButton.rx.tap.asSignal()
-        )
-    }
-    
-    func bind(to viewModel: ExchangeViewModel) {
-        title = viewModel.headerTitle
-        viewModel.disposables
-            .disposed(by: disposeBag)
-        
-    }
+//    typealias ViewModel = ExchangeViewModel
+//
+//    var bindings: ViewModel.Bindings {
+//        ViewModel.Bindings(
+//            didPressedFirstCurrenncyButton: firstCurrencySelectionButton.rx.tap.asSignal(),
+//            didPressedSecondCurrencyButton: secondCurrencySelectionButton.rx.tap.asSignal()
+//        )
+//    }
+//
+//    func bind(to viewModel: ExchangeViewModel) {
+//        title = viewModel.headerTitle
+//        viewModel.disposables
+//            .disposed(by: disposeBag)
+//
+//    }
     
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -280,6 +280,7 @@ final class ExchangeViewController: UIViewController, ViewType {
     }
     
     //MARK: - Keyboard Hiding Methods
+    
     private func hideKeyboardWhenTappedAround() {
         let tap = UITapGestureRecognizer(
             target: self,
@@ -293,8 +294,37 @@ final class ExchangeViewController: UIViewController, ViewType {
         view.endEditing(true)
     }
 }
+//MARK: - Conform to ViewType
+
+extension ExchangeViewController: ViewType {
+    typealias ViewModel = ExchangeViewModel
+    
+    var bindings: ViewModel.Bindings {
+        ViewModel.Bindings(
+            didPressedFirstCurrenncyButton: firstCurrencySelectionButton.rx.tap.asSignal(),
+            didPressedSecondCurrencyButton: secondCurrencySelectionButton.rx.tap.asSignal()
+        )
+    }
+    
+    func bind(to viewModel: ExchangeViewModel) {
+        title = viewModel.headerTitle
+        
+        viewModel.firstCurrencyInBox.bind{ [weak self] currency in
+            self?.firstCurrencyLabel.text = currency
+        }
+        
+        viewModel.secondCurrencyInBox.bind{ [weak self] currency in
+            self?.secondCurrencyLabel.text = currency
+        }
+        
+        viewModel.disposables
+            .disposed(by: disposeBag)
+        
+    }
+}
 
 //MARK: - UITextFieldDelegate
+
 extension ExchangeViewController: UITextFieldDelegate {
     func textFieldDidBeginEditing(_ textField: UITextField) {
     }
