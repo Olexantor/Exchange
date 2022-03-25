@@ -135,8 +135,10 @@ extension SelectCurrencyViewModel: ViewModelType {
         func getCurrencies() {
             let defaults = UserDefaults.standard
             if (defaults.object(forKey: "currencies") != nil) {
+                ///--- Нужно брать из `Dependencies`, а не обращаться к синглтону
                 listOfCurrency = UserDefaults.standard.object(forKey: "currencies") as? [String] ?? [String]()
             } else {
+                ///--- Тоже нужно брать из `Dependencies`, а не обращаться к синглтону
                 NetworkManager.shared.fetchCurrencyList { result in
                     switch result {
                     case .success(let currencyList):
