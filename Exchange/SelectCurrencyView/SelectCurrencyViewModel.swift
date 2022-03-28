@@ -19,6 +19,17 @@ extension SelectCurrencyViewModel: ViewModelType {
         let title: String
         let onCompletion: (String) -> Void
     }
+    ///--- В `Bindings` по аналогии с `Inputs` и `Dependencies` только задаешь, что хочешь получить, без начальных значений, то есть вот так
+    /*
+     final class Bindings2 {
+         
+         let didSelectCell: (IndexPath) -> Void
+         
+         init(didSelectCell: @escaping (IndexPath) -> Void) {
+             self.didSelectCell = didSelectCell
+         }
+     }
+     */
     
     final class Bindings {
         var didSelectCell: ((IndexPath) -> Void) = { _ in }

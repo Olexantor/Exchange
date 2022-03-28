@@ -23,6 +23,10 @@ final class SelectCurrencyViewController: UIViewController {
     
     private var cellViewModels = [CurrencyCellViewModel]()
     
+    ///--- Вот тут задаешь замыкания или состояния, которые хочешь передать в модель
+    /// То есть в твоем случае тут будет что-то вроде
+    /// `var didSelectCell: (IndexPath) -> Void = { _ in }`
+    
     let bindings = ViewModel.Bindings()
     
     private let activityIndicator: UIActivityIndicatorView = {
@@ -104,7 +108,6 @@ extension SelectCurrencyViewController : UITableViewDataSource {
         
         guard let tableViewCell = cell else { return UITableViewCell() }
         tableViewCell.viewModel = cellViewModels[indexPath.row]
-        ///--- Этот метод вызывается каждый раз перед отображением ячейки. Уверен, что это правильное место для остановки индикатора? Подумай, в какой момент времени ты хочешь его показать и при наступлении какого события ты хочешь его скрыть?
         return tableViewCell
     }
 }
@@ -115,9 +118,9 @@ extension SelectCurrencyViewController: UITableViewDelegate {
         _ tableView: UITableView,
         didSelectRowAt indexPath: IndexPath
     ) {
-        ///--- Наоборот, не `callback` из модели пробрасываем в экран, а все нажатия из экрана через `Bindings` пробрасываем в модель.
+        ///--- Вот тут дергаешь замыкание
+        /// `didSelectCell(indexPath)`
         bindings.didSelectCell(indexPath)
-        ///--- Навигация должна быть в роутере
     }
 }
 //MARK: - Implement ViewType
@@ -125,8 +128,12 @@ extension SelectCurrencyViewController: UITableViewDelegate {
 extension SelectCurrencyViewController: ViewType {
     typealias ViewModel = SelectCurrencyViewModel
     
-    ///--- Получается, сюда надо как-то передать нажатие на ячейку.
-    
+    ///--- А здесь отправляешь это в модель
+    /*
+    var bindings: ViewModel.Bindings {
+        .init(didSelectCell: didSelectCell)
+    }
+     */
     
     func bind(to viewModel: ViewModel) {
         title = viewModel.headerTitle
