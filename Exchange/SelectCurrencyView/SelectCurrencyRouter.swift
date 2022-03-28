@@ -13,4 +13,8 @@ struct SelectCurrencyRouter: RouterType {
     init(transitionHandler: UIViewController) {
         vc = transitionHandler
     }
+    
+    func popViewController() {
+        vc.navigationController?.popViewController(animated: true)
+    }
 }

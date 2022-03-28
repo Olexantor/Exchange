@@ -10,17 +10,19 @@ import Foundation
 struct SelectCurrencyViewModel {
     let headerTitle: String
     let networkErrorInBox: Box<Error?>
-    let cellViewModels:Box<[CurrencyCellViewModel]>
-    let callback: (String) -> Void
+    let cellViewModels: Box<[CurrencyCellViewModel]>
+    let isIndicatorEnabled: Box<Bool>
 }
 
 extension SelectCurrencyViewModel: ViewModelType {
     struct Inputs {
         let title: String
-        let callback: (String) -> Void
+        let onCompletion: (String) -> Void
     }
     
-    struct Bindings {}
+    final class Bindings {
+        var didSelectCell: ((IndexPath) -> Void) = { _ in }
+    }
     
     struct Dependencies {
         let networkService: NetworkManager
@@ -45,13 +47,14 @@ extension SelectCurrencyViewModel: ViewModelType {
         
         let networkErrorInBox = Box<Error?>(nil)
         let cellViewModels = Box<[CurrencyCellViewModel]>([])
+        let isIndicatorEnabled = Box(true)
 
         var listOfCurrency = [String]() {
             didSet {
                 cellViewModels.value = createCellViewModels(for: listOfCurrency)
+                isIndicatorEnabled.value = false
             }
         }
-        
         
         func getCurrencies() {
             let defaults = dependency.userDefaults
@@ -75,14 +78,16 @@ extension SelectCurrencyViewModel: ViewModelType {
             .title
             .uppercased()
         
-        let callback = input
-            .callback
+        binding.didSelectCell = {
+            input.onCompletion(cellViewModels.value[$0.row].currency)
+            router.popViewController()
+        }
         
         return .init(
             headerTitle: headerTitle,
             networkErrorInBox: networkErrorInBox,
             cellViewModels: cellViewModels,
-            callback: callback
+            isIndicatorEnabled: isIndicatorEnabled
         )
     }
 }

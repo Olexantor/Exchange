@@ -94,6 +94,7 @@ final class ExchangeViewController: UIViewController {
         hideKeyboardWhenTappedAround()
         firstCurrencyTextField.delegate = self
         secondCurrencyTextField.delegate =  self
+//        UserDefaults.standard.removeObject(forKey: "currencies")
     }
     
     deinit {

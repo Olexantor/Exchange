@@ -23,7 +23,7 @@ final class SelectCurrencyViewController: UIViewController {
     
     private var cellViewModels = [CurrencyCellViewModel]()
     
-    private var callback: ((String) -> Void)!
+    let bindings = ViewModel.Bindings()
     
     private let activityIndicator: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView()
@@ -36,7 +36,6 @@ final class SelectCurrencyViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        activityIndicator.startAnimating()
         setupTableView()
         tableView.addSubview(activityIndicator)
         setupConstrains()
@@ -106,8 +105,6 @@ extension SelectCurrencyViewController : UITableViewDataSource {
         guard let tableViewCell = cell else { return UITableViewCell() }
         tableViewCell.viewModel = cellViewModels[indexPath.row]
         ///--- Этот метод вызывается каждый раз перед отображением ячейки. Уверен, что это правильное место для остановки индикатора? Подумай, в какой момент времени ты хочешь его показать и при наступлении какого события ты хочешь его скрыть?
-        activityIndicator.stopAnimating()
-
         return tableViewCell
     }
 }
@@ -119,9 +116,8 @@ extension SelectCurrencyViewController: UITableViewDelegate {
         didSelectRowAt indexPath: IndexPath
     ) {
         ///--- Наоборот, не `callback` из модели пробрасываем в экран, а все нажатия из экрана через `Bindings` пробрасываем в модель.
-        callback(cellViewModels[indexPath.row].currency)
-        ///--- Навигация должна быть в роутере.
-        navigationController?.popViewController(animated: true)
+        bindings.didSelectCell(indexPath)
+        ///--- Навигация должна быть в роутере
     }
 }
 //MARK: - Implement ViewType
@@ -130,18 +126,23 @@ extension SelectCurrencyViewController: ViewType {
     typealias ViewModel = SelectCurrencyViewModel
     
     ///--- Получается, сюда надо как-то передать нажатие на ячейку.
-    var bindings: ViewModel.Bindings {
-        ViewModel.Bindings()
-    }
+    
     
     func bind(to viewModel: ViewModel) {
         title = viewModel.headerTitle
-        callback = viewModel.callback
         
         viewModel.cellViewModels.bind { [weak self] cellsModels in
             self?.cellViewModels = cellsModels
             DispatchQueue.main.async {
                 self?.tableView.reloadData()
+            }
+        }
+        
+        viewModel.isIndicatorEnabled.bind{ [weak self] condition in
+            if condition {
+                self?.activityIndicator.startAnimating()
+            } else {
+                self?.activityIndicator.stopAnimating()
             }
         }
         
