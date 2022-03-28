@@ -10,6 +10,7 @@ import UIKit
 struct SelectCurrencyScreenBuilder: ScreenBuilder {
     typealias VC = SelectCurrencyViewController
     
+    ///--- Перенеси каждую зависимость с новой строчки для читаемости.
     var dependencies: VC.ViewModel.Dependencies {
         .init(networkService: NetworkManager.shared, userDefaults: UserDefaults.standard)
     }

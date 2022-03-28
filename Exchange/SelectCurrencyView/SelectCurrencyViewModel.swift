@@ -17,19 +17,9 @@ struct SelectCurrencyViewModel {
 extension SelectCurrencyViewModel: ViewModelType {
     struct Inputs {
         let title: String
+        ///--- `onCompletion` допустимо, но лучше называть конструкции так, чтобы другому разработчику сразу был понятен контекст, например, `didSelectCurrency`.
         let onCompletion: (String) -> Void
     }
-    ///--- В `Bindings` по аналогии с `Inputs` и `Dependencies` только задаешь, что хочешь получить, без начальных значений, то есть вот так
-    /*
-     final class Bindings2 {
-         
-         let didSelectCell: (IndexPath) -> Void
-         
-         init(didSelectCell: @escaping (IndexPath) -> Void) {
-             self.didSelectCell = didSelectCell
-         }
-     }
-     */
     
     final class Bindings {
         var didSelectCell: ((IndexPath) -> Void) = { _ in }
@@ -48,8 +38,10 @@ extension SelectCurrencyViewModel: ViewModelType {
         dependency: Dependencies,
         router: Routes
     ) -> Self {
+        ///--- Вложенные функции лучше не использовать, если хочешь вынести какую-то логику отдельно, то сделай это через приватный статический метод.
         func createCellViewModels(for currencies: [String]) -> [CurrencyCellViewModel] {
             var cellViewModels = [CurrencyCellViewModel]()
+            ///--- Получится вместо `forEach` использовать `map`?
             currencies.forEach { currency in
                 cellViewModels.append(CurrencyCellViewModel(currency: currency))
             }
@@ -60,6 +52,7 @@ extension SelectCurrencyViewModel: ViewModelType {
         let cellViewModels = Box<[CurrencyCellViewModel]>([])
         let isIndicatorEnabled = Box(true)
 
+        ///--- Смотри, ты используешь `listOfCurrency` как промежуточное звено между получением валют и отправкой их в боксы. А нужно ли оно, может, сразу отправлять в боксы, и избавиться от лишней переменной?
         var listOfCurrency = [String]() {
             didSet {
                 cellViewModels.value = createCellViewModels(for: listOfCurrency)
@@ -69,6 +62,7 @@ extension SelectCurrencyViewModel: ViewModelType {
         
         func getCurrencies() {
             let defaults = dependency.userDefaults
+            ///--- Литерал "currencies" используется 3 раза, может, во избежание ошибок, вынести его в какую-то константу?
             if (defaults.object(forKey: "currencies") != nil) {
                 listOfCurrency = defaults.object(forKey: "currencies") as? [String] ?? [String]()
             } else {
@@ -83,8 +77,10 @@ extension SelectCurrencyViewModel: ViewModelType {
                 }
             }
         }
+        ///--- Ты определяешь отдельную функцию и тут же ее вызываешь один раз. Точно есть смысл в такой конструкции?
         getCurrencies()
         
+        ///--- А это для чего? Почему передаешь заголовок экрана извне, он же статичный. Можно прям на экране его применить.
         let headerTitle = input
             .title
             .uppercased()
