@@ -18,7 +18,7 @@ class NetworkManager {
         Result<CurrenciesList,
         Error>
     ) -> Void) {
-        AF.request(currencyUrl).validate().response { response in
+        AF.request(Constants.currencyUrl).validate().response { response in
             switch response.result {
             case .success:
                 do {
@@ -43,7 +43,7 @@ class NetworkManager {
         Result<ExchangeRate,
         Error>
     ) -> Void) {
-        let url = convertUrl+base
+        let url = Constants.convertUrl+base
         AF.request(url).validate().response { response in
             switch response.result {
             case .success:

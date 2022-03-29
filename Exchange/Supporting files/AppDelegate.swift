@@ -20,7 +20,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func makeWindow() -> UIWindow {
-        let vc = ExchangeScreenBuilder().build(.init(title: "EXCHANGE"))
+        let vc = ExchangeScreenBuilder().build(.init())
         let window =  UIWindow(frame: UIScreen.main.bounds)
         window.rootViewController = UINavigationController(rootViewController: vc)
         return window

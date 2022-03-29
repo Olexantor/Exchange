@@ -8,17 +8,21 @@
 import Foundation
 
 struct SelectCurrencyViewModel {
-    let headerTitle: String
     let networkErrorInBox: Box<Error?>
     let cellViewModels: Box<[CurrencyCellViewModel]>
     let isIndicatorEnabled: Box<Bool>
+    
+    private static func createCellViewModels(for currencies: [String]) -> [CurrencyCellViewModel] {
+        let cellViewModels = currencies.map {
+            CurrencyCellViewModel(currency: $0)
+        }
+        return cellViewModels
+    }
 }
 
 extension SelectCurrencyViewModel: ViewModelType {
     struct Inputs {
-        let title: String
-        ///--- `onCompletion` допустимо, но лучше называть конструкции так, чтобы другому разработчику сразу был понятен контекст, например, `didSelectCurrency`.
-        let onCompletion: (String) -> Void
+        let didSelectCurrency: (String) -> Void
     }
     
     final class Bindings {
@@ -38,60 +42,36 @@ extension SelectCurrencyViewModel: ViewModelType {
         dependency: Dependencies,
         router: Routes
     ) -> Self {
-        ///--- Вложенные функции лучше не использовать, если хочешь вынести какую-то логику отдельно, то сделай это через приватный статический метод.
-        func createCellViewModels(for currencies: [String]) -> [CurrencyCellViewModel] {
-            var cellViewModels = [CurrencyCellViewModel]()
-            ///--- Получится вместо `forEach` использовать `map`?
-            currencies.forEach { currency in
-                cellViewModels.append(CurrencyCellViewModel(currency: currency))
-            }
-            return cellViewModels
-        }
-        
         let networkErrorInBox = Box<Error?>(nil)
         let cellViewModels = Box<[CurrencyCellViewModel]>([])
         let isIndicatorEnabled = Box(true)
-
-        ///--- Смотри, ты используешь `listOfCurrency` как промежуточное звено между получением валют и отправкой их в боксы. А нужно ли оно, может, сразу отправлять в боксы, и избавиться от лишней переменной?
-        var listOfCurrency = [String]() {
-            didSet {
-                cellViewModels.value = createCellViewModels(for: listOfCurrency)
-                isIndicatorEnabled.value = false
-            }
-        }
         
-        func getCurrencies() {
-            let defaults = dependency.userDefaults
-            ///--- Литерал "currencies" используется 3 раза, может, во избежание ошибок, вынести его в какую-то константу?
-            if (defaults.object(forKey: "currencies") != nil) {
-                listOfCurrency = defaults.object(forKey: "currencies") as? [String] ?? [String]()
-            } else {
-                dependency.networkService.fetchCurrencyList { result in
-                    switch result {
-                    case .success(let currencyList):
-                        listOfCurrency = currencyList.data.map{ $0.key }.sorted()
-                        defaults.set(listOfCurrency, forKey: "currencies")
-                    case .failure(let error):
-                        networkErrorInBox.value = error
-                    }
+        //getting the list of currency cell view models
+        let defaults = dependency.userDefaults
+        if (defaults.object(forKey: Constants.keyForUserDef) != nil) {
+            let listOfCurrency = defaults.object(forKey: Constants.keyForUserDef) as? [String] ?? [String]()
+            cellViewModels.value = createCellViewModels(for: listOfCurrency)
+            isIndicatorEnabled.value = false
+        } else {
+            dependency.networkService.fetchCurrencyList { result in
+                switch result {
+                case .success(let currencyList):
+                    let listOfCurrency = currencyList.data.map{ $0.key }.sorted()
+                    defaults.set(listOfCurrency, forKey: Constants.keyForUserDef)
+                    cellViewModels.value = createCellViewModels(for: listOfCurrency)
+                    isIndicatorEnabled.value = false
+                case .failure(let error):
+                    networkErrorInBox.value = error
                 }
             }
         }
-        ///--- Ты определяешь отдельную функцию и тут же ее вызываешь один раз. Точно есть смысл в такой конструкции?
-        getCurrencies()
-        
-        ///--- А это для чего? Почему передаешь заголовок экрана извне, он же статичный. Можно прям на экране его применить.
-        let headerTitle = input
-            .title
-            .uppercased()
-        
+
         binding.didSelectCell = {
-            input.onCompletion(cellViewModels.value[$0.row].currency)
+            input.didSelectCurrency(cellViewModels.value[$0.row].currency)
             router.popViewController()
         }
         
         return .init(
-            headerTitle: headerTitle,
             networkErrorInBox: networkErrorInBox,
             cellViewModels: cellViewModels,
             isIndicatorEnabled: isIndicatorEnabled

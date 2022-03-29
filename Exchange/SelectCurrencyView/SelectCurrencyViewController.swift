@@ -36,6 +36,7 @@ final class SelectCurrencyViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        title = "CURRENCIES"
         setupTableView()
         tableView.addSubview(activityIndicator)
         setupConstrains()
@@ -123,7 +124,6 @@ extension SelectCurrencyViewController: ViewType {
     typealias ViewModel = SelectCurrencyViewModel
     
     func bind(to viewModel: ViewModel) {
-        title = viewModel.headerTitle
         
         viewModel.cellViewModels.bind { [weak self] cellsModels in
             self?.cellViewModels = cellsModels

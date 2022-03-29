@@ -87,6 +87,7 @@ final class ExchangeViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
+        title = "EXCHANGE"
         setupNavigationBar()
         addingSubviews()
         setupConstraints()
@@ -94,7 +95,7 @@ final class ExchangeViewController: UIViewController {
         hideKeyboardWhenTappedAround()
         firstCurrencyTextField.delegate = self
         secondCurrencyTextField.delegate =  self
-//        UserDefaults.standard.removeObject(forKey: "currencies")
+        UserDefaults.standard.removeObject(forKey: "currencies")
     }
     
     deinit {
@@ -291,7 +292,6 @@ extension ExchangeViewController: ViewType {
     }
     
     func bind(to viewModel: ExchangeViewModel) {
-        title = viewModel.headerTitle
         
         viewModel.firstCurrencyInBox.bind{ [weak self] currency in
             self?.firstCurrencyLabel.text = currency

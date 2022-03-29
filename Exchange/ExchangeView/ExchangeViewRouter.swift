@@ -15,8 +15,8 @@ struct ExchangeViewRouter: RouterType {
         vc = transitionHandler
     }
     
-    func showSelectCurrencyView(with title: String, and completion: @escaping (String) -> Void) {
-        let newVC = SelectCurrencyScreenBuilder().build(.init(title: title, onCompletion: completion))
+    func showSelectCurrencyView(with completion: @escaping (String) -> Void) {
+        let newVC = SelectCurrencyScreenBuilder().build(.init(didSelectCurrency: completion))
         vc.navigationController?.pushViewController(newVC, animated: true)
     }
 }
