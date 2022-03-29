@@ -27,6 +27,7 @@ extension SelectCurrencyViewModel: ViewModelType {
     
     final class Bindings {
         var didSelectCell: ((IndexPath) -> Void) = { _ in }
+        var searchText: ((String) -> Void) = { _ in }
     }
     
     struct Dependencies {
@@ -43,14 +44,14 @@ extension SelectCurrencyViewModel: ViewModelType {
         router: Routes
     ) -> Self {
         let networkErrorInBox = Box<Error?>(nil)
-        let cellViewModels = Box<[CurrencyCellViewModel]>([])
+        var allViewModels = [CurrencyCellViewModel]()
         let isIndicatorEnabled = Box(true)
         
         //getting the list of currency cell view models
         let defaults = dependency.userDefaults
         if (defaults.object(forKey: Constants.keyForUserDef) != nil) {
             let listOfCurrency = defaults.object(forKey: Constants.keyForUserDef) as? [String] ?? [String]()
-            cellViewModels.value = createCellViewModels(for: listOfCurrency)
+            allViewModels = createCellViewModels(for: listOfCurrency)
             isIndicatorEnabled.value = false
         } else {
             dependency.networkService.fetchCurrencyList { result in
@@ -58,17 +59,31 @@ extension SelectCurrencyViewModel: ViewModelType {
                 case .success(let currencyList):
                     let listOfCurrency = currencyList.data.map{ $0.key }.sorted()
                     defaults.set(listOfCurrency, forKey: Constants.keyForUserDef)
-                    cellViewModels.value = createCellViewModels(for: listOfCurrency)
+                    allViewModels = createCellViewModels(for: listOfCurrency)
                     isIndicatorEnabled.value = false
                 case .failure(let error):
                     networkErrorInBox.value = error
                 }
             }
         }
-
+        
+        let cellViewModels = Box<[CurrencyCellViewModel]>(allViewModels)
+        
         binding.didSelectCell = {
             input.didSelectCurrency(cellViewModels.value[$0.row].currency)
             router.popViewController()
+        }
+        
+        binding.searchText = { text in
+            if text.isEmpty {
+                cellViewModels.value = allViewModels
+            } else {
+                cellViewModels.value = allViewModels
+                    .filter {
+                        $0.currency.lowercased()
+                            .contains(text.lowercased())
+                    }
+            }
         }
         
         return .init(

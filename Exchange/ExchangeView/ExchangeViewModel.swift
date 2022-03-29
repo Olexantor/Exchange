@@ -16,7 +16,7 @@ struct ExchangeViewModel {
 }
 
 extension ExchangeViewModel: ViewModelType {
- 
+    
     struct Inputs{
     }
     

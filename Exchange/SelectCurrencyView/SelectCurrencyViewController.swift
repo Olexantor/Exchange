@@ -9,17 +9,10 @@ import SnapKit
 import UIKit
 
 final class SelectCurrencyViewController: UIViewController {
-
+    
     private var tableView = UITableView()
     
     private let searchController = UISearchController(searchResultsController: nil)
-    private var searchBarIsEmpty: Bool {
-        guard let text = searchController.searchBar.text else { return false}
-        return text.isEmpty
-    }
-    private var isFiltering: Bool {
-        return searchController.isActive && !searchBarIsEmpty
-    }
     
     private var cellViewModels = [CurrencyCellViewModel]()
     
@@ -82,7 +75,7 @@ final class SelectCurrencyViewController: UIViewController {
         let okAction = UIAlertAction(title: "OK", style: .default)
         alert.addAction(okAction)
         present(alert, animated: true)
-}
+    }
 }
 //MARK: - UITableViewDataSource methods
 
@@ -151,6 +144,9 @@ extension SelectCurrencyViewController: ViewType {
 
 extension SelectCurrencyViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
+        guard let text = searchController.searchBar.text else { return }
+        bindings.searchText(text)
+        tableView.reloadData()
     }
     
     private func filterContentForSearchedText(_ searchText: String) {

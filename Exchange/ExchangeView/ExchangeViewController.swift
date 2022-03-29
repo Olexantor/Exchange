@@ -11,7 +11,7 @@ import UIKit
 
 final class ExchangeViewController: UIViewController {
     var disposeBag = DisposeBag()
-
+    
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         return scrollView
@@ -95,7 +95,7 @@ final class ExchangeViewController: UIViewController {
         hideKeyboardWhenTappedAround()
         firstCurrencyTextField.delegate = self
         secondCurrencyTextField.delegate =  self
-        UserDefaults.standard.removeObject(forKey: "currencies")
+        //        UserDefaults.standard.removeObject(forKey: "currencies")
     }
     
     deinit {
@@ -179,8 +179,8 @@ final class ExchangeViewController: UIViewController {
     
     @objc private func selectCurrency(sender: UIButton) {
     }
-    
     // MARK: - Alert
+    
     private func showAlert() {
         let alert = UIAlertController(
             title: "Error!",
@@ -191,8 +191,8 @@ final class ExchangeViewController: UIViewController {
         alert.addAction(okAction)
         present(alert, animated: true)
     }
-    
     //MARK: - Setup shifting content with NotificationCenter
+    
     private func registerForKeyboardNotifications() {
         NotificationCenter.default.addObserver(
             self,
@@ -263,7 +263,6 @@ final class ExchangeViewController: UIViewController {
         distance = 0
         scrollView.isScrollEnabled = true
     }
-    
     //MARK: - Keyboard Hiding Methods
     
     private func hideKeyboardWhenTappedAround() {
@@ -306,7 +305,6 @@ extension ExchangeViewController: ViewType {
         
     }
 }
-
 //MARK: - UITextFieldDelegate
 
 extension ExchangeViewController: UITextFieldDelegate {
