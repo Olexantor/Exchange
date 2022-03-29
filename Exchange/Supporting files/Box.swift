@@ -7,7 +7,7 @@
 
 import Foundation
 
-class Box<T> {
+ class Box<T> {
     typealias Listener = (T) -> ()
     private var listener: Listener?
     var value: T {

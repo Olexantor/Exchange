@@ -7,66 +7,90 @@
 
 import Foundation
 
-final class SelectCurrencyViewModel: SelectCurrencyViewModelType {
-    var conditionOfButton: SelectButtonCondition
-    var networkErrorInBox: Box<Error?> = Box(nil)
-    var currencyInBox: Box<[String]> = Box([])
-    var delegate: SelectedCurrencyDelegate?
+struct SelectCurrencyViewModel {
+    let networkErrorInBox: Box<Error?>
+    let cellViewModels: Box<[CurrencyCellViewModel]>
+    let isIndicatorEnabled: Box<Bool>
     
-    init(conditionOfButton: SelectButtonCondition) {
-        self.conditionOfButton = conditionOfButton
-        getCurrencies()
-    }
-    private var listOfCurrency = [String]() {
-        didSet {
-            currencyInBox.value = listOfCurrency
+    private static func createCellViewModels(for currencies: [String]) -> [CurrencyCellViewModel] {
+        let cellViewModels = currencies.map {
+            CurrencyCellViewModel(currency: $0)
         }
+        return cellViewModels
     }
-    private  var isFiltered = false
-    private var filteredCurrency = [String]() {
-        didSet {
-            currencyInBox.value = filteredCurrency
-        }
-    }
+}
 
-    func numberOfRows() -> Int {
-        if isFiltered {
-            return filteredCurrency.count
-        } else {
-            return listOfCurrency.count
-        }
+extension SelectCurrencyViewModel: ViewModelType {
+    struct Inputs {
+        let didSelectCurrency: (String) -> Void
     }
     
-    func cellViewModel(forIndexPath indexPath: IndexPath) -> CurrencyCellViewModelType? {
-        let currency: String
-        if isFiltered {
-            currency = filteredCurrency[indexPath.row]
-        } else {
-            currency = listOfCurrency[indexPath.row]
-        }
-        return CurrencyCellViewModel(currency: currency)
+    final class Bindings {
+        var didSelectCell: ((IndexPath) -> Void) = { _ in }
+        var searchText: ((String) -> Void) = { _ in }
     }
     
-    func filterDataWith(text: String, and condition: Bool) {
-        isFiltered = condition
-        filteredCurrency = listOfCurrency.filter{ $0.lowercased().contains(text.lowercased()) }
+    struct Dependencies {
+        let networkService: NetworkManager
+        let userDefaults: UserDefaults
     }
     
-    private func getCurrencies() {
-        let defaults = UserDefaults.standard
-        if (defaults.object(forKey: "currencies") != nil) {
-            listOfCurrency = UserDefaults.standard.object(forKey: "currencies") as? [String] ?? [String]()
+    typealias Routes = SelectCurrencyRouter
+    
+    static func configure(
+        input: Inputs,
+        binding: Bindings,
+        dependency: Dependencies,
+        router: Routes
+    ) -> Self {
+        let networkErrorInBox = Box<Error?>(nil)
+        var allViewModels = [CurrencyCellViewModel]()
+        let isIndicatorEnabled = Box(true)
+        
+        //getting the list of currency cell view models
+        let defaults = dependency.userDefaults
+        if (defaults.object(forKey: Constants.keyForUserDef) != nil) {
+            let listOfCurrency = defaults.object(forKey: Constants.keyForUserDef) as? [String] ?? [String]()
+            allViewModels = createCellViewModels(for: listOfCurrency)
+            isIndicatorEnabled.value = false
         } else {
-            NetworkManager.shared.fetchCurrencyList { [weak self] result in
+            dependency.networkService.fetchCurrencyList { result in
                 switch result {
                 case .success(let currencyList):
-                    self?.listOfCurrency = currencyList.data.map{ $0.key }.sorted()
-                    defaults.set(self?.listOfCurrency, forKey: "currencies")
+                    let listOfCurrency = currencyList.data.map{ $0.key }.sorted()
+                    defaults.set(listOfCurrency, forKey: Constants.keyForUserDef)
+                    allViewModels = createCellViewModels(for: listOfCurrency)
+                    isIndicatorEnabled.value = false
                 case .failure(let error):
-                    self?.networkErrorInBox.value = error
+                    networkErrorInBox.value = error
                 }
             }
         }
+        
+        let cellViewModels = Box<[CurrencyCellViewModel]>(allViewModels)
+        
+        binding.didSelectCell = {
+            input.didSelectCurrency(cellViewModels.value[$0.row].currency)
+            router.popViewController()
+        }
+        
+        binding.searchText = { text in
+            if text.isEmpty {
+                cellViewModels.value = allViewModels
+            } else {
+                cellViewModels.value = allViewModels
+                    .filter {
+                        $0.currency.lowercased()
+                            .contains(text.lowercased())
+                    }
+            }
+        }
+        
+        return .init(
+            networkErrorInBox: networkErrorInBox,
+            cellViewModels: cellViewModels,
+            isIndicatorEnabled: isIndicatorEnabled
+        )
     }
 }
 

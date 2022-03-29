@@ -18,14 +18,20 @@
 		1FD95ACD27D88E3C00312424 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 1FD95ACC27D88E3C00312424 /* SnapKit */; };
 		1FE3413A27D8B96F00C4D870 /* SelectCurrencyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FE3413927D8B96F00C4D870 /* SelectCurrencyViewController.swift */; };
 		1FE3413C27D8BEC700C4D870 /* CurrencyCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FE3413B27D8BEC700C4D870 /* CurrencyCell.swift */; };
-		1FE3413F27D8E3F700C4D870 /* ExchangeViewModelType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FE3413E27D8E3F700C4D870 /* ExchangeViewModelType.swift */; };
 		1FE3414127D8E61B00C4D870 /* ExchangeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FE3414027D8E61B00C4D870 /* ExchangeViewModel.swift */; };
 		1FE3414327D8E6B000C4D870 /* Box.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FE3414227D8E6B000C4D870 /* Box.swift */; };
-		1FE3414627D8E8BD00C4D870 /* SelectCurrencyViewModelType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FE3414527D8E8BD00C4D870 /* SelectCurrencyViewModelType.swift */; };
 		1FE3414A27D8E9C300C4D870 /* SelectCurrencyViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FE3414927D8E9C300C4D870 /* SelectCurrencyViewModel.swift */; };
 		1FE3414D27D8ECF300C4D870 /* CurrencyCellViewModelType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FE3414C27D8ECF300C4D870 /* CurrencyCellViewModelType.swift */; };
 		1FE3414F27D8ED1D00C4D870 /* CurrencyCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FE3414E27D8ED1D00C4D870 /* CurrencyCellViewModel.swift */; };
 		1FE3415127D8FEBA00C4D870 /* ExchangeRate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FE3415027D8FEBA00C4D870 /* ExchangeRate.swift */; };
+		CE2E216B27E89B7A0022DF44 /* MVVM+Example.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2E216927E89B7A0022DF44 /* MVVM+Example.swift */; };
+		CE2E216C27E89B7A0022DF44 /* MVVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2E216A27E89B7A0022DF44 /* MVVM.swift */; };
+		CE2E216E27E89C1C0022DF44 /* ExchangeViewScreenBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2E216D27E89C1C0022DF44 /* ExchangeViewScreenBuilder.swift */; };
+		CE2E217027E8A5F90022DF44 /* ExchangeViewRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2E216F27E8A5F90022DF44 /* ExchangeViewRouter.swift */; };
+		CE2E217527E9CD500022DF44 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = CE2E217427E9CD500022DF44 /* RxCocoa */; };
+		CE2E217727E9CD500022DF44 /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = CE2E217627E9CD500022DF44 /* RxSwift */; };
+		CE2E217927E9D3180022DF44 /* SelectCurrencyScreenBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2E217827E9D3180022DF44 /* SelectCurrencyScreenBuilder.swift */; };
+		CE2E217B27E9DE680022DF44 /* SelectCurrencyRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2E217A27E9DE680022DF44 /* SelectCurrencyRouter.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -40,14 +46,18 @@
 		1FD95AA927D7A2D600312424 /* CurrenciesList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrenciesList.swift; sourceTree = "<group>"; };
 		1FE3413927D8B96F00C4D870 /* SelectCurrencyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectCurrencyViewController.swift; sourceTree = "<group>"; };
 		1FE3413B27D8BEC700C4D870 /* CurrencyCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyCell.swift; sourceTree = "<group>"; };
-		1FE3413E27D8E3F700C4D870 /* ExchangeViewModelType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExchangeViewModelType.swift; sourceTree = "<group>"; };
 		1FE3414027D8E61B00C4D870 /* ExchangeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExchangeViewModel.swift; sourceTree = "<group>"; };
 		1FE3414227D8E6B000C4D870 /* Box.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Box.swift; sourceTree = "<group>"; };
-		1FE3414527D8E8BD00C4D870 /* SelectCurrencyViewModelType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectCurrencyViewModelType.swift; sourceTree = "<group>"; };
 		1FE3414927D8E9C300C4D870 /* SelectCurrencyViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectCurrencyViewModel.swift; sourceTree = "<group>"; };
 		1FE3414C27D8ECF300C4D870 /* CurrencyCellViewModelType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyCellViewModelType.swift; sourceTree = "<group>"; };
 		1FE3414E27D8ED1D00C4D870 /* CurrencyCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyCellViewModel.swift; sourceTree = "<group>"; };
 		1FE3415027D8FEBA00C4D870 /* ExchangeRate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExchangeRate.swift; sourceTree = "<group>"; };
+		CE2E216927E89B7A0022DF44 /* MVVM+Example.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "MVVM+Example.swift"; sourceTree = "<group>"; };
+		CE2E216A27E89B7A0022DF44 /* MVVM.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MVVM.swift; sourceTree = "<group>"; };
+		CE2E216D27E89C1C0022DF44 /* ExchangeViewScreenBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExchangeViewScreenBuilder.swift; sourceTree = "<group>"; };
+		CE2E216F27E8A5F90022DF44 /* ExchangeViewRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExchangeViewRouter.swift; sourceTree = "<group>"; };
+		CE2E217827E9D3180022DF44 /* SelectCurrencyScreenBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectCurrencyScreenBuilder.swift; sourceTree = "<group>"; };
+		CE2E217A27E9DE680022DF44 /* SelectCurrencyRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectCurrencyRouter.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -55,7 +65,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CE2E217527E9CD500022DF44 /* RxCocoa in Frameworks */,
 				1FD95AA627D796B300312424 /* Alamofire in Frameworks */,
+				CE2E217727E9CD500022DF44 /* RxSwift in Frameworks */,
 				1FD95ACD27D88E3C00312424 /* SnapKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -96,8 +108,9 @@
 			isa = PBXGroup;
 			children = (
 				1FD95A9227D791A000312424 /* ExchangeViewController.swift */,
-				1FE3413E27D8E3F700C4D870 /* ExchangeViewModelType.swift */,
 				1FE3414027D8E61B00C4D870 /* ExchangeViewModel.swift */,
+				CE2E216D27E89C1C0022DF44 /* ExchangeViewScreenBuilder.swift */,
+				CE2E216F27E8A5F90022DF44 /* ExchangeViewRouter.swift */,
 			);
 			path = ExchangeView;
 			sourceTree = "<group>";
@@ -105,9 +118,10 @@
 		1FE3414427D8E88000C4D870 /* SelectCurrencyView */ = {
 			isa = PBXGroup;
 			children = (
+				CE2E217827E9D3180022DF44 /* SelectCurrencyScreenBuilder.swift */,
 				1FE3413927D8B96F00C4D870 /* SelectCurrencyViewController.swift */,
 				1FE3414927D8E9C300C4D870 /* SelectCurrencyViewModel.swift */,
-				1FE3414527D8E8BD00C4D870 /* SelectCurrencyViewModelType.swift */,
+				CE2E217A27E9DE680022DF44 /* SelectCurrencyRouter.swift */,
 				1FE3414B27D8ECB000C4D870 /* CurrencyCell */,
 			);
 			path = SelectCurrencyView;
@@ -152,6 +166,8 @@
 		1FFB371327DE479400404EC7 /* Supporting files */ = {
 			isa = PBXGroup;
 			children = (
+				CE2E216A27E89B7A0022DF44 /* MVVM.swift */,
+				CE2E216927E89B7A0022DF44 /* MVVM+Example.swift */,
 				1FD95A8E27D791A000312424 /* AppDelegate.swift */,
 				1FD95A9727D791A400312424 /* Assets.xcassets */,
 				1FD95A9C27D791A400312424 /* Info.plist */,
@@ -179,6 +195,8 @@
 			packageProductDependencies = (
 				1FD95AA527D796B300312424 /* Alamofire */,
 				1FD95ACC27D88E3C00312424 /* SnapKit */,
+				CE2E217427E9CD500022DF44 /* RxCocoa */,
+				CE2E217627E9CD500022DF44 /* RxSwift */,
 			);
 			productName = Exchange;
 			productReference = 1FD95A8B27D791A000312424 /* Exchange.app */;
@@ -211,6 +229,7 @@
 			packageReferences = (
 				1FD95AA427D796B300312424 /* XCRemoteSwiftPackageReference "Alamofire" */,
 				1FD95ACB27D88E3C00312424 /* XCRemoteSwiftPackageReference "SnapKit" */,
+				CE2E217327E9CD500022DF44 /* XCRemoteSwiftPackageReference "RxSwift" */,
 			);
 			productRefGroup = 1FD95A8C27D791A000312424 /* Products */;
 			projectDirPath = "";
@@ -240,6 +259,8 @@
 			files = (
 				1FD95AA327D7964F00312424 /* NetworkManager.swift in Sources */,
 				1FE3415127D8FEBA00C4D870 /* ExchangeRate.swift in Sources */,
+				CE2E217927E9D3180022DF44 /* SelectCurrencyScreenBuilder.swift in Sources */,
+				CE2E217B27E9DE680022DF44 /* SelectCurrencyRouter.swift in Sources */,
 				1FE3414127D8E61B00C4D870 /* ExchangeViewModel.swift in Sources */,
 				1FD95A9327D791A000312424 /* ExchangeViewController.swift in Sources */,
 				1FD95A8F27D791A000312424 /* AppDelegate.swift in Sources */,
@@ -247,12 +268,14 @@
 				1FE3413C27D8BEC700C4D870 /* CurrencyCell.swift in Sources */,
 				1FD95AAA27D7A2D600312424 /* CurrenciesList.swift in Sources */,
 				1FE3414F27D8ED1D00C4D870 /* CurrencyCellViewModel.swift in Sources */,
+				CE2E216C27E89B7A0022DF44 /* MVVM.swift in Sources */,
 				1FE3414D27D8ECF300C4D870 /* CurrencyCellViewModelType.swift in Sources */,
+				CE2E216B27E89B7A0022DF44 /* MVVM+Example.swift in Sources */,
 				1FE3414A27D8E9C300C4D870 /* SelectCurrencyViewModel.swift in Sources */,
+				CE2E216E27E89C1C0022DF44 /* ExchangeViewScreenBuilder.swift in Sources */,
 				1FD95AA827D7980600312424 /* Constants.swift in Sources */,
-				1FE3413F27D8E3F700C4D870 /* ExchangeViewModelType.swift in Sources */,
 				1FE3414327D8E6B000C4D870 /* Box.swift in Sources */,
-				1FE3414627D8E8BD00C4D870 /* SelectCurrencyViewModelType.swift in Sources */,
+				CE2E217027E8A5F90022DF44 /* ExchangeViewRouter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -401,7 +424,7 @@
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -431,7 +454,7 @@
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -486,6 +509,14 @@
 				kind = branch;
 			};
 		};
+		CE2E217327E9CD500022DF44 /* XCRemoteSwiftPackageReference "RxSwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ReactiveX/RxSwift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -498,6 +529,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 1FD95ACB27D88E3C00312424 /* XCRemoteSwiftPackageReference "SnapKit" */;
 			productName = SnapKit;
+		};
+		CE2E217427E9CD500022DF44 /* RxCocoa */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CE2E217327E9CD500022DF44 /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxCocoa;
+		};
+		CE2E217627E9CD500022DF44 /* RxSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CE2E217327E9CD500022DF44 /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxSwift;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

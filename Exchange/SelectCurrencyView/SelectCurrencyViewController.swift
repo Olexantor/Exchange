@@ -4,21 +4,19 @@
 //
 //  Created by Александр on 09.03.2022.
 //
+
 import SnapKit
 import UIKit
 
-class SelectCurrencyViewController: UIViewController {
-    weak var delegate: SelectedCurrencyDelegate?
-    private var selectViewModel: SelectCurrencyViewModelType
+final class SelectCurrencyViewController: UIViewController {
+    
     private var tableView = UITableView()
+    
     private let searchController = UISearchController(searchResultsController: nil)
-    private var searchBarIsEmpty: Bool {
-        guard let text = searchController.searchBar.text else { return false}
-        return text.isEmpty
-    }
-    private var isFiltering: Bool {
-        return searchController.isActive && !searchBarIsEmpty
-    }
+    
+    private var cellViewModels = [CurrencyCellViewModel]()
+    
+    let bindings = ViewModel.Bindings()
     
     private let activityIndicator: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView()
@@ -29,23 +27,13 @@ class SelectCurrencyViewController: UIViewController {
         return indicator
     }()
     
-    init(viewModel: SelectCurrencyViewModelType) {
-        self.selectViewModel = viewModel
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationController?.view.addSubview(activityIndicator)
-        activityIndicator.startAnimating()
-        setupSearchController()
+        title = "CURRENCIES"
         setupTableView()
+        tableView.addSubview(activityIndicator)
         setupConstrains()
-        setupBindings()
+        setupSearchController()
     }
     
     private func setupSearchController() {
@@ -65,7 +53,6 @@ class SelectCurrencyViewController: UIViewController {
             CurrencyCell.self,
             forCellReuseIdentifier: CurrencyCell.identifier
         )
-        title = "Currecies"
         view.addSubview(tableView)
     }
     
@@ -74,22 +61,7 @@ class SelectCurrencyViewController: UIViewController {
             $0.edges.equalToSuperview()
         }
         activityIndicator.snp.makeConstraints {
-            $0.edges.equalToSuperview()
-        }
-    }
-    
-    private func setupBindings() {
-        selectViewModel.currencyInBox.bind { [weak self] _ in
-            guard let self = self else { return }
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
-                self.activityIndicator.stopAnimating()
-            }
-        }
-        selectViewModel.networkErrorInBox.bind { [weak self] error in
-            guard let self = self else { return }
-            guard error != nil else { return }
-            self.showAlert()
+            $0.center.equalToSuperview()
         }
     }
     // MARK: - Alert
@@ -112,7 +84,7 @@ extension SelectCurrencyViewController : UITableViewDataSource {
         _ tableView: UITableView,
         numberOfRowsInSection section: Int
     ) -> Int {
-        selectViewModel.numberOfRows()
+        cellViewModels.count
     }
     
     func tableView(
@@ -123,9 +95,9 @@ extension SelectCurrencyViewController : UITableViewDataSource {
             withIdentifier: CurrencyCell.identifier,
             for: indexPath
         ) as? CurrencyCell
+        
         guard let tableViewCell = cell else { return UITableViewCell() }
-        let cellViewModel = selectViewModel.cellViewModel(forIndexPath: indexPath)
-        tableViewCell.viewModel = cellViewModel
+        tableViewCell.viewModel = cellViewModels[indexPath.row]
         return tableViewCell
     }
 }
@@ -136,23 +108,48 @@ extension SelectCurrencyViewController: UITableViewDelegate {
         _ tableView: UITableView,
         didSelectRowAt indexPath: IndexPath
     ) {
-        selectViewModel.delegate?.selectedCurrencyWith(
-            currencyName: selectViewModel.currencyInBox.value[indexPath.row],
-            and: selectViewModel.conditionOfButton
-        )
-        navigationController?.popViewController(animated: true)
+        bindings.didSelectCell(indexPath)
     }
 }
+//MARK: - Implement ViewType
 
-
+extension SelectCurrencyViewController: ViewType {
+    typealias ViewModel = SelectCurrencyViewModel
+    
+    func bind(to viewModel: ViewModel) {
+        
+        viewModel.cellViewModels.bind { [weak self] cellsModels in
+            self?.cellViewModels = cellsModels
+            DispatchQueue.main.async {
+                self?.tableView.reloadData()
+            }
+        }
+        
+        viewModel.isIndicatorEnabled.bind{ [weak self] condition in
+            if condition {
+                self?.activityIndicator.startAnimating()
+            } else {
+                self?.activityIndicator.stopAnimating()
+            }
+        }
+        
+        viewModel.networkErrorInBox.bind { [weak self] error in
+            guard let self = self else { return }
+            guard error != nil else { return }
+            self.showAlert()
+        }
+    }
+}
 //MARK: - SearchResultsUpdating
+
 extension SelectCurrencyViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
-        filterContentForSearchedText(searchController.searchBar.text ?? "")
+        guard let text = searchController.searchBar.text else { return }
+        bindings.searchText(text)
+        tableView.reloadData()
     }
     
     private func filterContentForSearchedText(_ searchText: String) {
-        selectViewModel.filterDataWith(text: searchText, and: isFiltering)
-        tableView.reloadData()
     }
 }
+

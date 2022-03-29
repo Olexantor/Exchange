@@ -7,7 +7,11 @@
 import Alamofire
 import Foundation
 
-let currencyUrl = "https://api.currencyapi.com/v3/latest?apikey=\(apiKey)"
-let convertUrl = "https://api.currencyapi.com/v3/latest?apikey=\(apiKey)&base_currency="
-private let apiKey = "JCa56uEA7o9FndQGjcCvjXO3pj9Ol04Kol0E4TGu"
+struct Constants {
+    static let currencyUrl = "https://api.currencyapi.com/v3/latest?apikey=\(apiKey)"
+    static let convertUrl = "https://api.currencyapi.com/v3/latest?apikey=\(apiKey)&base_currency="
+    static let keyForUserDef = "currencies"
+    private static let apiKey = "JCa56uEA7o9FndQGjcCvjXO3pj9Ol04Kol0E4TGu"
+}
+
 

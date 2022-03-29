@@ -14,3 +14,4 @@ final class CurrencyCellViewModel: CurrencyCellViewModelType {
         self.currency = currency
     }
 }
+

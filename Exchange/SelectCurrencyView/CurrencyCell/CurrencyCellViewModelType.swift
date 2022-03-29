@@ -10,3 +10,4 @@ import Foundation
 protocol CurrencyCellViewModelType: AnyObject {
     var currency: String { get }
 }
+
