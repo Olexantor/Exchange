@@ -15,7 +15,6 @@ enum ButtonNumberInOrder {
 
 final class ExchangeViewController: UIViewController {
     let bindings = ViewModel.Bindings()
-    //    var disposeBag = DisposeBag()
     
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
