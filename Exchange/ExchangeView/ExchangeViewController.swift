@@ -9,8 +9,11 @@ import SnapKit
 import UIKit
 
 enum ButtonNumberInOrder {
-    case first
-    case second
+    case first, second
+}
+
+enum TextFieldID {
+    case firstTF, secondTF
 }
 
 final class ExchangeViewController: UIViewController {
@@ -94,22 +97,21 @@ final class ExchangeViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
         title = "EXCHANGE"
-        setupNavigationBar()
         addingSubviews()
         setupConstraints()
         registerForKeyboardNotifications()
         hideKeyboardWhenTappedAround()
         firstCurrencyTextField.delegate = self
         secondCurrencyTextField.delegate =  self
-        UserDefaults.standard.removeObject(forKey: "currencies")
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.navigationBar.barTintColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
     }
     
     deinit {
         removeKeyboardNotifications()
-    }
-    
-    private func setupNavigationBar() {
-        navigationController?.navigationBar.barTintColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
     }
     
     private func addingSubviews() {
@@ -300,12 +302,22 @@ extension ExchangeViewController: ViewType {
         viewModel.secondCurrencyInBox.bind{ [weak self] currency in
             self?.secondCurrencyLabel.text = currency
         }
+        
+        viewModel.firstCurrencyCalculatedValueInBox.bind { [weak self] currencyValue in
+            self?.firstCurrencyTextField.text = currencyValue
+        }
+        
+        viewModel.secondCurrencyCalculatedValueInBox.bind { [weak self] currencyValue in
+            self?.secondCurrencyTextField.text = currencyValue
+        }
     }
 }
 //MARK: - UITextFieldDelegate
 
 extension ExchangeViewController: UITextFieldDelegate {
     func textFieldDidBeginEditing(_ textField: UITextField) {
+        let textFieldID: TextFieldID = textField == firstCurrencyTextField ? .firstTF : .secondTF
+        bindings.didTapOnTextField(textFieldID)
     }
     
     func textFieldDidChangeSelection(_ textField: UITextField) {

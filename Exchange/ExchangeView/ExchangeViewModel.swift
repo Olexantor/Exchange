@@ -8,11 +8,14 @@
 struct ExchangeViewModel {
     let firstCurrencyInBox: Box<String>
     let secondCurrencyInBox: Box<String>
+    let firstCurrencyCalculatedValueInBox: Box<String>
+    let secondCurrencyCalculatedValueInBox: Box<String>
 }
 
 extension ExchangeViewModel: ViewModelType {
     final class Bindings {
         var didPressedSelectCurrenncyButton: (ButtonNumberInOrder) -> Void = {_ in}
+        var didTapOnTextField: (TextFieldID) -> Void = {_ in }
     }
     
     struct Dependencies {
@@ -30,6 +33,8 @@ extension ExchangeViewModel: ViewModelType {
         
         let firstCurrencyNameInBox = Box<String>("")
         let secondCurrencyNameInBox = Box<String>("")
+        let firstCurrencyCalculatedValue = Box<String>("")
+        let secondCurrencyCalculatedValue =  Box<String>("")
         
         binding.didPressedSelectCurrenncyButton = { buttonNumber in
             switch buttonNumber {
@@ -44,9 +49,20 @@ extension ExchangeViewModel: ViewModelType {
             }
         }
         
+        binding.didTapOnTextField = { textFieldID in
+            switch textFieldID {
+            case .firstTF:
+                secondCurrencyCalculatedValue.value = ""
+            case .secondTF:
+                firstCurrencyCalculatedValue.value = ""
+            }
+        }
+        
         return .init(
             firstCurrencyInBox: firstCurrencyNameInBox,
-            secondCurrencyInBox: secondCurrencyNameInBox
+            secondCurrencyInBox: secondCurrencyNameInBox,
+            firstCurrencyCalculatedValueInBox: firstCurrencyCalculatedValue,
+            secondCurrencyCalculatedValueInBox: secondCurrencyCalculatedValue
         )
     }
 }
