@@ -4,11 +4,6 @@
 //
 //  Created by Александр on 09.03.2022.
 //
-import RxCocoa
-import RxSwift
-
-import Foundation
-import UIKit
 
 struct ExchangeViewModel {
     let firstCurrencyInBox: Box<String>
@@ -16,12 +11,8 @@ struct ExchangeViewModel {
 }
 
 extension ExchangeViewModel: ViewModelType {
-    
-    struct Inputs{
-    }
-    
     final class Bindings {
-        var didPressedSelectCurrenncyButton: (UIButton) -> Void = {_ in}
+        var didPressedSelectCurrenncyButton: (ButtonNumberInOrder) -> Void = {_ in}
     }
     
     struct Dependencies {
@@ -40,13 +31,13 @@ extension ExchangeViewModel: ViewModelType {
         let firstCurrencyNameInBox = Box<String>("")
         let secondCurrencyNameInBox = Box<String>("")
         
-        
-        binding.didPressedSelectCurrenncyButton = { button in
-            if button.tag == 1 {
+        binding.didPressedSelectCurrenncyButton = { buttonNumber in
+            switch buttonNumber {
+            case .first:
                 router.showSelectCurrencyView {
                     firstCurrencyNameInBox.value = $0
                 }
-            } else {
+            case .second:
                 router.showSelectCurrencyView {
                     secondCurrencyNameInBox.value = $0
                 }

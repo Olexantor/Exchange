@@ -5,8 +5,6 @@
 //  Created by Александр Николаев on 21.03.2022.
 //
 
-import UIKit
-
 struct ExchangeScreenBuilder: ScreenBuilder {
     typealias VC = ExchangeViewController
     

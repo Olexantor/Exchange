@@ -4,8 +4,6 @@
 //
 //  Created by Александр on 08.03.2022.
 //
-import Alamofire
-import Foundation
 
 struct Constants {
     static let currencyUrl = "https://api.currencyapi.com/v3/latest?apikey=\(apiKey)"

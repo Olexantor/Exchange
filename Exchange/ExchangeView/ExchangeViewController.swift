@@ -4,10 +4,14 @@
 //
 //  Created by Александр on 08.03.2022.
 //
-import RxSwift
-import RxCocoa
+
 import SnapKit
 import UIKit
+
+enum ButtonNumberInOrder {
+    case first
+    case second
+}
 
 final class ExchangeViewController: UIViewController {
     let bindings = ViewModel.Bindings()
@@ -21,6 +25,8 @@ final class ExchangeViewController: UIViewController {
         let view = UIView()
         return view
     }()
+    
+    private var buttonNumber: ButtonNumberInOrder!
     
     private var scrollOffset : CGFloat = 0
     private var distance : CGFloat = 0
@@ -179,7 +185,8 @@ final class ExchangeViewController: UIViewController {
     }
     
     @objc private func selectCurrency(sender: UIButton) {
-        bindings.didPressedSelectCurrenncyButton(sender)
+        buttonNumber = sender.tag == 1 ? .first : .second
+        bindings.didPressedSelectCurrenncyButton(buttonNumber)
     }
     // MARK: - Alert
     

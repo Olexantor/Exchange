@@ -5,8 +5,6 @@
 //  Created by Александр on 09.03.2022.
 //
 
-import Foundation
-
 struct ExchangeRate {
     var rates = [String: Double]()
     
