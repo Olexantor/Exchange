@@ -45,6 +45,7 @@ extension SelectCurrencyViewModel: ViewModelType {
     ) -> Self {
         let networkErrorInBox = Box<Error?>(nil)
         var allViewModels = [CurrencyCellViewModel]()
+        let cellViewModels = Box<[CurrencyCellViewModel]>([])
         let isIndicatorEnabled = Box(true)
         
         //getting the list of currency cell view models
@@ -52,6 +53,7 @@ extension SelectCurrencyViewModel: ViewModelType {
         if (defaults.object(forKey: Constants.keyForUserDef) != nil) {
             let listOfCurrency = defaults.object(forKey: Constants.keyForUserDef) as? [String] ?? [String]()
             allViewModels = createCellViewModels(for: listOfCurrency)
+            cellViewModels.value = allViewModels
             isIndicatorEnabled.value = false
         } else {
             dependency.networkService.fetchCurrencyList { result in
@@ -60,14 +62,13 @@ extension SelectCurrencyViewModel: ViewModelType {
                     let listOfCurrency = currencyList.data.map{ $0.key }.sorted()
                     defaults.set(listOfCurrency, forKey: Constants.keyForUserDef)
                     allViewModels = createCellViewModels(for: listOfCurrency)
+                    cellViewModels.value = allViewModels
                     isIndicatorEnabled.value = false
                 case .failure(let error):
                     networkErrorInBox.value = error
                 }
             }
         }
-        
-        let cellViewModels = Box<[CurrencyCellViewModel]>(allViewModels)
         
         binding.didSelectCell = {
             input.didSelectCurrency(cellViewModels.value[$0.row].currency)

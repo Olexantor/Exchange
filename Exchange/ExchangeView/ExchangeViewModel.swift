@@ -8,9 +8,9 @@ import RxCocoa
 import RxSwift
 
 import Foundation
+import UIKit
 
 struct ExchangeViewModel {
-    let disposables: Disposable
     let firstCurrencyInBox: Box<String>
     let secondCurrencyInBox: Box<String>
 }
@@ -20,9 +20,8 @@ extension ExchangeViewModel: ViewModelType {
     struct Inputs{
     }
     
-    struct Bindings {
-        let didPressedFirstCurrenncyButton: Signal<Void>
-        let didPressedSecondCurrencyButton: Signal<Void>
+    final class Bindings {
+        var didPressedSelectCurrenncyButton: (UIButton) -> Void = {_ in}
     }
     
     struct Dependencies {
@@ -41,22 +40,20 @@ extension ExchangeViewModel: ViewModelType {
         let firstCurrencyNameInBox = Box<String>("")
         let secondCurrencyNameInBox = Box<String>("")
         
-        let firstButtonDisposable = binding.didPressedFirstCurrenncyButton.debug("====")
-            .emit(onNext: { _ in
+        
+        binding.didPressedSelectCurrenncyButton = { button in
+            if button.tag == 1 {
                 router.showSelectCurrencyView {
                     firstCurrencyNameInBox.value = $0
                 }
-            })
-        
-        let secondButtonDisposable = binding.didPressedSecondCurrencyButton.debug("====")
-            .emit(onNext: { _ in
+            } else {
                 router.showSelectCurrencyView {
                     secondCurrencyNameInBox.value = $0
                 }
-            })
+            }
+        }
         
         return .init(
-            disposables: CompositeDisposable(firstButtonDisposable, secondButtonDisposable),
             firstCurrencyInBox: firstCurrencyNameInBox,
             secondCurrencyInBox: secondCurrencyNameInBox
         )

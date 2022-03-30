@@ -9,14 +9,13 @@ import SnapKit
 import UIKit
 
 final class SelectCurrencyViewController: UIViewController {
+    let bindings = ViewModel.Bindings()
     
     private var tableView = UITableView()
     
     private let searchController = UISearchController(searchResultsController: nil)
     
     private var cellViewModels = [CurrencyCellViewModel]()
-    
-    let bindings = ViewModel.Bindings()
     
     private let activityIndicator: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView()
@@ -117,7 +116,6 @@ extension SelectCurrencyViewController: ViewType {
     typealias ViewModel = SelectCurrencyViewModel
     
     func bind(to viewModel: ViewModel) {
-        
         viewModel.cellViewModels.bind { [weak self] cellsModels in
             self?.cellViewModels = cellsModels
             DispatchQueue.main.async {

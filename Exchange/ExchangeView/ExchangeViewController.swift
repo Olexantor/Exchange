@@ -10,7 +10,8 @@ import SnapKit
 import UIKit
 
 final class ExchangeViewController: UIViewController {
-    var disposeBag = DisposeBag()
+    let bindings = ViewModel.Bindings()
+    //    var disposeBag = DisposeBag()
     
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -95,7 +96,7 @@ final class ExchangeViewController: UIViewController {
         hideKeyboardWhenTappedAround()
         firstCurrencyTextField.delegate = self
         secondCurrencyTextField.delegate =  self
-        //        UserDefaults.standard.removeObject(forKey: "currencies")
+        UserDefaults.standard.removeObject(forKey: "currencies")
     }
     
     deinit {
@@ -178,6 +179,7 @@ final class ExchangeViewController: UIViewController {
     }
     
     @objc private func selectCurrency(sender: UIButton) {
+        bindings.didPressedSelectCurrenncyButton(sender)
     }
     // MARK: - Alert
     
@@ -283,13 +285,6 @@ final class ExchangeViewController: UIViewController {
 extension ExchangeViewController: ViewType {
     typealias ViewModel = ExchangeViewModel
     
-    var bindings: ViewModel.Bindings {
-        ViewModel.Bindings(
-            didPressedFirstCurrenncyButton: firstCurrencySelectionButton.rx.tap.asSignal(),
-            didPressedSecondCurrencyButton: secondCurrencySelectionButton.rx.tap.asSignal()
-        )
-    }
-    
     func bind(to viewModel: ExchangeViewModel) {
         
         viewModel.firstCurrencyInBox.bind{ [weak self] currency in
@@ -299,10 +294,6 @@ extension ExchangeViewController: ViewType {
         viewModel.secondCurrencyInBox.bind{ [weak self] currency in
             self?.secondCurrencyLabel.text = currency
         }
-        
-        viewModel.disposables
-            .disposed(by: disposeBag)
-        
     }
 }
 //MARK: - UITextFieldDelegate
