@@ -295,11 +295,11 @@ extension ExchangeViewController: ViewType {
     
     func bind(to viewModel: ExchangeViewModel) {
         
-        viewModel.firstCurrencyInBox.bind{ [weak self] currency in
+        viewModel.firstCurrencyInBox.bind { [weak self] currency in
             self?.firstCurrencyLabel.text = currency
         }
         
-        viewModel.secondCurrencyInBox.bind{ [weak self] currency in
+        viewModel.secondCurrencyInBox.bind { [weak self] currency in
             self?.secondCurrencyLabel.text = currency
         }
         
@@ -309,6 +309,11 @@ extension ExchangeViewController: ViewType {
         
         viewModel.secondCurrencyCalculatedValueInBox.bind { [weak self] currencyValue in
             self?.secondCurrencyTextField.text = currencyValue
+        }
+        
+        viewModel.networkErrorInBox.bind { [weak self] error in
+            guard error != nil else { return }
+            self?.showAlert()
         }
     }
 }
@@ -321,6 +326,8 @@ extension ExchangeViewController: UITextFieldDelegate {
     }
     
     func textFieldDidChangeSelection(_ textField: UITextField) {
+        let textFieldID: TextFieldID = textField == firstCurrencyTextField ? .firstTF : .secondTF
+        bindings.textFieldDidChange(textFieldID, textField)
     }
 }
 

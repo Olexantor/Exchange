@@ -40,7 +40,7 @@ class NetworkManager {
         }
     }
     
-    func fetchExchangeRate(with base: String, and completion: @escaping (
+    func fetchExchangeRate(for base: String, and completion: @escaping (
         Result<ExchangeRate,
         Error>
     ) -> Void) {
