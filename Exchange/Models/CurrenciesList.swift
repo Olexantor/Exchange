@@ -5,8 +5,6 @@
 //  Created by Александр on 08.03.2022.
 //
 
-import Foundation
-
 struct CurrenciesList: Decodable {
     let data: [String: Datum]
 }

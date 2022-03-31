@@ -4,6 +4,7 @@
 //
 //  Created by Александр on 08.03.2022.
 //
+
 import Alamofire
 import Foundation
 
@@ -39,7 +40,7 @@ class NetworkManager {
         }
     }
     
-    func fetchExchangeRate(with base: String, and completion: @escaping (
+    func fetchExchangeRate(for base: String, and completion: @escaping (
         Result<ExchangeRate,
         Error>
     ) -> Void) {

@@ -9,14 +9,13 @@ import SnapKit
 import UIKit
 
 final class SelectCurrencyViewController: UIViewController {
+    let bindings = ViewModel.Bindings()
     
     private var tableView = UITableView()
     
     private let searchController = UISearchController(searchResultsController: nil)
     
     private var cellViewModels = [CurrencyCellViewModel]()
-    
-    let bindings = ViewModel.Bindings()
     
     private let activityIndicator: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView()
@@ -36,9 +35,15 @@ final class SelectCurrencyViewController: UIViewController {
         setupSearchController()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.navigationBar.barTintColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
+    }
+    
     private func setupSearchController() {
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
+        searchController.searchBar.backgroundColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
         searchController.searchBar.placeholder = "Search"
         self.navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
@@ -117,7 +122,6 @@ extension SelectCurrencyViewController: ViewType {
     typealias ViewModel = SelectCurrencyViewModel
     
     func bind(to viewModel: ViewModel) {
-        
         viewModel.cellViewModels.bind { [weak self] cellsModels in
             self?.cellViewModels = cellsModels
             DispatchQueue.main.async {

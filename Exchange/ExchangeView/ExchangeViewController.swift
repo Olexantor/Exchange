@@ -4,13 +4,20 @@
 //
 //  Created by Александр on 08.03.2022.
 //
-import RxSwift
-import RxCocoa
+
 import SnapKit
 import UIKit
 
+enum ButtonNumberInOrder {
+    case first, second
+}
+
+enum TextFieldID {
+    case firstTF, secondTF
+}
+
 final class ExchangeViewController: UIViewController {
-    var disposeBag = DisposeBag()
+    let bindings = ViewModel.Bindings()
     
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -88,22 +95,21 @@ final class ExchangeViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
         title = "EXCHANGE"
-        setupNavigationBar()
         addingSubviews()
         setupConstraints()
         registerForKeyboardNotifications()
         hideKeyboardWhenTappedAround()
         firstCurrencyTextField.delegate = self
         secondCurrencyTextField.delegate =  self
-        //        UserDefaults.standard.removeObject(forKey: "currencies")
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.navigationBar.barTintColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
     }
     
     deinit {
         removeKeyboardNotifications()
-    }
-    
-    private func setupNavigationBar() {
-        navigationController?.navigationBar.barTintColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
     }
     
     private func addingSubviews() {
@@ -178,6 +184,8 @@ final class ExchangeViewController: UIViewController {
     }
     
     @objc private func selectCurrency(sender: UIButton) {
+        let buttonNumber: ButtonNumberInOrder = sender.tag == 1 ? .first : .second
+        bindings.didPressedSelectCurrenncyButton(buttonNumber)
     }
     // MARK: - Alert
     
@@ -283,35 +291,42 @@ final class ExchangeViewController: UIViewController {
 extension ExchangeViewController: ViewType {
     typealias ViewModel = ExchangeViewModel
     
-    var bindings: ViewModel.Bindings {
-        ViewModel.Bindings(
-            didPressedFirstCurrenncyButton: firstCurrencySelectionButton.rx.tap.asSignal(),
-            didPressedSecondCurrencyButton: secondCurrencySelectionButton.rx.tap.asSignal()
-        )
-    }
-    
     func bind(to viewModel: ExchangeViewModel) {
         
-        viewModel.firstCurrencyInBox.bind{ [weak self] currency in
+        viewModel.firstCurrencyInBox.bind { [weak self] currency in
             self?.firstCurrencyLabel.text = currency
         }
         
-        viewModel.secondCurrencyInBox.bind{ [weak self] currency in
+        viewModel.secondCurrencyInBox.bind { [weak self] currency in
             self?.secondCurrencyLabel.text = currency
         }
         
-        viewModel.disposables
-            .disposed(by: disposeBag)
+        viewModel.firstCurrencyCalculatedValueInBox.bind { [weak self] currencyValue in
+            self?.firstCurrencyTextField.text = currencyValue
+        }
         
+        viewModel.secondCurrencyCalculatedValueInBox.bind { [weak self] currencyValue in
+            self?.secondCurrencyTextField.text = currencyValue
+        }
+        
+        viewModel.networkErrorInBox.bind { [weak self] error in
+            guard error != nil else { return }
+            self?.showAlert()
+        }
     }
 }
 //MARK: - UITextFieldDelegate
 
 extension ExchangeViewController: UITextFieldDelegate {
     func textFieldDidBeginEditing(_ textField: UITextField) {
+        let textFieldID: TextFieldID = textField == firstCurrencyTextField ? .firstTF : .secondTF
+        bindings.didTapOnTextField(textFieldID)
     }
     
     func textFieldDidChangeSelection(_ textField: UITextField) {
+        let textFieldID: TextFieldID = textField == firstCurrencyTextField ? .firstTF : .secondTF
+        guard let value = textField.text else { return }
+        bindings.textFieldDidChange(textFieldID, value)
     }
 }
 
