@@ -5,23 +5,44 @@
 //  Created by Александр on 09.03.2022.
 //
 
-import UIKit
-
 struct ExchangeViewModel {
     let firstCurrencyInBox: Box<String>
     let secondCurrencyInBox: Box<String>
     let firstCurrencyCalculatedValueInBox: Box<String>
     let secondCurrencyCalculatedValueInBox: Box<String>
     let networkErrorInBox: Box<Error?>
+}
+
+private extension ExchangeViewModel {
     private static var ratesForFirstCurrency = [String: Double]()
     private static var ratesForSecondCurrency = [String: Double]()
+    
+    private static func getRates(
+        for currency: String,
+        by buttonNumber: ButtonNumberInOrder,
+        with dependency: Dependencies,
+        and errorPlace: Box<Error?>
+    ) {
+        dependency.networkService.fetchExchangeRate(for: currency) { result in
+            switch result {
+            case .success(let currency):
+                if buttonNumber == .first {
+                    ratesForFirstCurrency = currency.rates
+                } else {
+                    ratesForSecondCurrency = currency.rates
+                }
+            case .failure(let error):
+                errorPlace.value = error
+            }
+        }
+    }
 }
 
 extension ExchangeViewModel: ViewModelType {
     final class Bindings {
         var didPressedSelectCurrenncyButton: (ButtonNumberInOrder) -> Void = { _ in}
         var didTapOnTextField: (TextFieldID) -> Void = { _ in }
-        var textFieldDidChange: (TextFieldID, UITextField) -> Void = { _,_  in }
+        var textFieldDidChange: (TextFieldID, String) -> Void = { _,_  in }
     }
     
     struct Dependencies {
@@ -42,39 +63,24 @@ extension ExchangeViewModel: ViewModelType {
         let firstCurrencyCalculatedValue = Box<String>("")
         let secondCurrencyCalculatedValue =  Box<String>("")
         let networkError = Box<Error?>(nil)
-        
-        func getRates(for currency: String, by buttonNumber: ButtonNumberInOrder) {
-            dependency.networkService.fetchExchangeRate(for: currency) { result in
-                switch result {
-                case .success(let currency):
-                    if buttonNumber == .first {
-                        ratesForFirstCurrency = currency.rates
-                    } else {
-                        ratesForSecondCurrency = currency.rates
-                    }
-                case .failure(let error):
-                    networkError.value = error
-                }
-            }
-        }
-        
+    
         binding.didPressedSelectCurrenncyButton = { buttonNumber in
             switch buttonNumber {
             case .first:
                 router.showSelectCurrencyView {
                     firstCurrencyNameInBox.value = $0
-                    getRates(for: $0, by: buttonNumber)
+                    getRates(for: $0, by: buttonNumber, with: dependency, and: networkError)
                 }
             case .second:
                 router.showSelectCurrencyView {
                     secondCurrencyNameInBox.value = $0
-                    getRates(for: $0, by: buttonNumber)
+                    getRates(for: $0, by: buttonNumber, with: dependency, and: networkError)
                 }
             }
         }
         
-        binding.didTapOnTextField = { textFieldID in
-            switch textFieldID {
+        binding.didTapOnTextField = {
+            switch $0 {
             case .firstTF:
                 secondCurrencyCalculatedValue.value = ""
             case .secondTF:
@@ -84,7 +90,7 @@ extension ExchangeViewModel: ViewModelType {
         
         binding.textFieldDidChange = {
             guard !firstCurrencyNameInBox.value.isEmpty && !secondCurrencyNameInBox.value.isEmpty else { return }
-            guard let text = $1.text, let value = Double(text) else { return }
+            guard let value = Double($1) else { return }
             switch $0 {
             case .firstTF:
                 secondCurrencyCalculatedValue.value = String(

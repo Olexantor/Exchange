@@ -32,7 +32,7 @@ extension SelectCurrencyViewModel: ViewModelType {
     
     struct Dependencies {
         let networkService: NetworkManager
-        let userDefaults: UserDefaults
+        let storageService: DataManagerType
     }
     
     typealias Routes = SelectCurrencyRouter
@@ -49,9 +49,7 @@ extension SelectCurrencyViewModel: ViewModelType {
         let isIndicatorEnabled = Box(true)
         
         //getting the list of currency cell view models
-        let defaults = dependency.userDefaults
-        if (defaults.object(forKey: Constants.keyForUserDef) != nil) {
-            let listOfCurrency = defaults.object(forKey: Constants.keyForUserDef) as? [String] ?? [String]()
+        if let listOfCurrency = dependency.storageService.unloadCurrency() {
             allViewModels = createCellViewModels(for: listOfCurrency)
             cellViewModels.value = allViewModels
             isIndicatorEnabled.value = false
@@ -60,7 +58,7 @@ extension SelectCurrencyViewModel: ViewModelType {
                 switch result {
                 case .success(let currencyList):
                     let listOfCurrency = currencyList.data.map{ $0.key }.sorted()
-                    defaults.set(listOfCurrency, forKey: Constants.keyForUserDef)
+                    dependency.storageService.save(currency: listOfCurrency)
                     allViewModels = createCellViewModels(for: listOfCurrency)
                     cellViewModels.value = allViewModels
                     isIndicatorEnabled.value = false

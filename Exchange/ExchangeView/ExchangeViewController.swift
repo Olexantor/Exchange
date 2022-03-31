@@ -28,8 +28,6 @@ final class ExchangeViewController: UIViewController {
         return view
     }()
     
-    private var buttonNumber: ButtonNumberInOrder!
-    
     private var scrollOffset : CGFloat = 0
     private var distance : CGFloat = 0
     
@@ -186,7 +184,7 @@ final class ExchangeViewController: UIViewController {
     }
     
     @objc private func selectCurrency(sender: UIButton) {
-        buttonNumber = sender.tag == 1 ? .first : .second
+        let buttonNumber: ButtonNumberInOrder = sender.tag == 1 ? .first : .second
         bindings.didPressedSelectCurrenncyButton(buttonNumber)
     }
     // MARK: - Alert
@@ -327,7 +325,8 @@ extension ExchangeViewController: UITextFieldDelegate {
     
     func textFieldDidChangeSelection(_ textField: UITextField) {
         let textFieldID: TextFieldID = textField == firstCurrencyTextField ? .firstTF : .secondTF
-        bindings.textFieldDidChange(textFieldID, textField)
+        guard let value = textField.text else { return }
+        bindings.textFieldDidChange(textFieldID, value)
     }
 }
 
