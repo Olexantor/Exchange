@@ -6,10 +6,10 @@
 //
 
 struct Constants {
-    static let currencyUrl = "https://api.currencyapi.com/v3/latest?apikey=\(apiKey)"
-    static let convertUrl = "https://api.currencyapi.com/v3/latest?apikey=\(apiKey)&base_currency="
+    static let currencyUrlString = "https://api.currencyapi.com/v3/latest?apikey=\(apiKey)"
+    static let convertUrlString = "https://api.currencyapi.com/v3/latest?apikey=\(apiKey)&base_currency="
     static let keyForUserDef = "currencies"
-    private static let apiKey = "JCa56uEA7o9FndQGjcCvjXO3pj9Ol04Kol0E4TGu"
+    private static let apiKey = "cANJqXY4NHuLFItDZzDVsiGGgJPTKN3bZYi1VzP2"
 }
 
 

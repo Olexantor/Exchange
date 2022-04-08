@@ -89,15 +89,18 @@ extension UsersViewController: ViewType {
             .disposed(by: disposeBag)
         
         viewModel.users
-            .drive(users)
+            .drive(onNext: { [weak self] users in
+                self?.users.accept(users)
+        })
+//            .drive(users)
             .disposed(by: disposeBag)
         
         viewModel.isLoading
             .drive(activityIndicator.rx.isAnimating)
             .disposed(by: disposeBag)
         
-        viewModel.disposables
-            .disposed(by: disposeBag)
+//        viewModel.disposables
+//            .disposed(by: disposeBag)
     }
 }
 
