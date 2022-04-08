@@ -4,40 +4,66 @@
 //
 //  Created by Александр on 09.03.2022.
 //
-
+import RxCocoa
+import RxSwift
 import SnapKit
 import UIKit
 
 final class SelectCurrencyViewController: UIViewController {
-    let bindings = ViewModel.Bindings()
+//    let bindings = ViewModel.Bindings()
     
-    private var tableView = UITableView()
+//    private var tableView = UITableView()
     
     private let searchController = UISearchController(searchResultsController: nil)
     
-    private var cellViewModels = [CurrencyCellViewModel]()
+//    private var cellViewModels = [CurrencyCellViewModel]()
+    private let cellViewModels = BehaviorRelay<[CurrencyCellViewModel]>(value: [])
+    private let didSelectCurrency = PublishRelay<CurrencyCellViewModel>()
     
-    private let activityIndicator: UIActivityIndicatorView = {
+    private let disposeBag = DisposeBag()
+    
+    private lazy var tableView: UITableView = {
+        let tableView = UITableView()
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.register(
+            CurrencyCell.self,
+            forCellReuseIdentifier: CurrencyCell.identifier
+        )
+        tableView.backgroundColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
+        view.addSubview(tableView)
+        return tableView
+    }()
+    
+    private lazy var activityIndicator: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView()
-        indicator.color = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
-        indicator.hidesWhenStopped = true
-        let transfrom = CGAffineTransform.init(scaleX: 3, y: 3)
-        indicator.transform = transfrom
+        indicator.style = .gray
+//        indicator.color = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
+//        indicator.hidesWhenStopped = true
+//        let transfrom = CGAffineTransform.init(scaleX: 3, y: 3)
+//        indicator.transform = transfrom
+        view.addSubview(indicator)
         return indicator
     }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "CURRENCIES"
-        setupTableView()
-        tableView.addSubview(activityIndicator)
-        setupConstrains()
+//        setupTableView()
+//        tableView.addSubview(activityIndicator)
+//        setupConstrains()
         setupSearchController()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.navigationBar.barTintColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        tableView.frame = view.frame
+        activityIndicator.center = view.center
     }
     
     private func setupSearchController() {
@@ -50,25 +76,25 @@ final class SelectCurrencyViewController: UIViewController {
         definesPresentationContext = true
     }
     
-    private func setupTableView() {
-        tableView.backgroundColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.register(
-            CurrencyCell.self,
-            forCellReuseIdentifier: CurrencyCell.identifier
-        )
-        view.addSubview(tableView)
-    }
+//    private func setupTableView() {
+//        tableView.backgroundColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
+//        tableView.delegate = self
+//        tableView.dataSource = self
+//        tableView.register(
+//            CurrencyCell.self,
+//            forCellReuseIdentifier: CurrencyCell.identifier
+//        )
+//        view.addSubview(tableView)
+//    }
     
-    private func setupConstrains() {
-        tableView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
-        }
-        activityIndicator.snp.makeConstraints {
-            $0.center.equalToSuperview()
-        }
-    }
+//    private func setupConstrains() {
+//        tableView.snp.makeConstraints {
+//            $0.edges.equalToSuperview()
+//        }
+//        activityIndicator.snp.makeConstraints {
+//            $0.center.equalToSuperview()
+//        }
+//    }
     // MARK: - Alert
     
     private func showAlert() {
@@ -89,7 +115,7 @@ extension SelectCurrencyViewController : UITableViewDataSource {
         _ tableView: UITableView,
         numberOfRowsInSection section: Int
     ) -> Int {
-        cellViewModels.count
+        cellViewModels.value.count
     }
     
     func tableView(
@@ -102,7 +128,7 @@ extension SelectCurrencyViewController : UITableViewDataSource {
         ) as? CurrencyCell
         
         guard let tableViewCell = cell else { return UITableViewCell() }
-        tableViewCell.viewModel = cellViewModels[indexPath.row]
+        tableViewCell.viewModel = cellViewModels.value[indexPath.row]
         return tableViewCell
     }
 }
@@ -113,7 +139,9 @@ extension SelectCurrencyViewController: UITableViewDelegate {
         _ tableView: UITableView,
         didSelectRowAt indexPath: IndexPath
     ) {
-        bindings.didSelectCell(indexPath)
+//        bindings.didSelectCell(indexPath)
+        let cellViewModel = cellViewModels.value[indexPath.row]
+        didSelectCurrency.accept(cellViewModel)
     }
 }
 //MARK: - Implement ViewType
@@ -121,15 +149,27 @@ extension SelectCurrencyViewController: UITableViewDelegate {
 extension SelectCurrencyViewController: ViewType {
     typealias ViewModel = SelectCurrencyViewModel
     
+    var bindings: ViewModel.Bindings {
+        .init(
+            didSelectCurrency: didSelectCurrency.asSignal()
+        )
+    }
+    
     func bind(to viewModel: ViewModel) {
+        cellViewModels.asDriver()
+            .drive(onNext: { [weak self] _ in
+                self?.tableView.reloadData()
+            })
+            .disposed(by: disposeBag)
+        
         viewModel.cellViewModels.bind { [weak self] cellsModels in
-            self?.cellViewModels = cellsModels
+//            self?.cellViewModels = cellsModels
             DispatchQueue.main.async {
                 self?.tableView.reloadData()
             }
         }
         
-        viewModel.isIndicatorEnabled.bind{ [weak self] condition in
+        viewModel.isLoading.bind{ [weak self] condition in
             if condition {
                 self?.activityIndicator.startAnimating()
             } else {
@@ -148,8 +188,8 @@ extension SelectCurrencyViewController: ViewType {
 
 extension SelectCurrencyViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
-        guard let text = searchController.searchBar.text else { return }
-        bindings.searchText(text)
+//        guard let text = searchController.searchBar.text else { return }
+//        bindings.searchText(text)
         tableView.reloadData()
     }
     

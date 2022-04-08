@@ -99,8 +99,8 @@ extension UsersViewController: ViewType {
             .drive(activityIndicator.rx.isAnimating)
             .disposed(by: disposeBag)
         
-//        viewModel.disposables
-//            .disposed(by: disposeBag)
+        viewModel.disposables
+            .disposed(by: disposeBag)
     }
 }
 
