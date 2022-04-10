@@ -49,13 +49,16 @@ extension SelectCurrencyViewModel: ViewModelType {
         
         let cellViewModels = BehaviorRelay<[CurrencyCellViewModel]>(value: [])
         let didReceiveError = PublishRelay<String>()
-        var fetchCurrency: Disposable
+//        var fetchCurrency: Disposable
+        let disposables = CompositeDisposable(
+            disposables: []
+        )
 
         
         if let listOfCurrency = dependency.storageService.unloadCurrency() {
             cellViewModels.accept(createCellViewModels(for: listOfCurrency))
         } else {
-            fetchCurrency = dependency
+           let fetchCurrency = dependency
                 .networkService
                 .fetchCurrencyList()
                 .delay(.seconds(3), scheduler: MainScheduler.instance)
@@ -63,11 +66,15 @@ extension SelectCurrencyViewModel: ViewModelType {
                     didReceiveError.accept(error.localizedDescription)
                     return .empty()
                 }
-                .emit(onNext: {
+                .map {
                     let currency = $0.data.map { $0.key }.sorted()
                     dependency.storageService.save(currency: currency )
-                    cellViewModels.accept(createCellViewModels(for: currency))
-                })
+//                    cellViewModels.accept(createCellViewModels(for: currency))
+                    return createCellViewModels(for: currency)
+                }
+                    .emit(to: cellViewModels)
+    
+            _ = disposables.insert(fetchCurrency)
         }
         
         let isLoading = cellViewModels
@@ -76,9 +83,7 @@ extension SelectCurrencyViewModel: ViewModelType {
         
  
         
-        let disposables = CompositeDisposable(
-            disposables: [fetchCurrency]
-        )
+       
         
         return .init(
 //            networkErrorInBox: networkErrorInBox,
