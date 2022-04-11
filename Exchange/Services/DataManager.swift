@@ -6,6 +6,12 @@
 //
 
 import Foundation
+import RxCocoa
+import RxSwift
+
+enum UDError: Error {
+    case doesNotExist
+}
 
 class DataManager: DataManagerType {
     static let shared = DataManager()
@@ -14,10 +20,26 @@ class DataManager: DataManagerType {
     
     func save(currency: [String]) {
         defaults.set(currency, forKey: Constants.keyForUserDef)
+
     }
     
-    func unloadCurrency() -> [String]? {
-        return defaults.stringArray(forKey: Constants.keyForUserDef)
+//    func unloadCurrency() -> Single<[String]?> {
+//      return defaults.stringArray(forKey: Constants.keyForUserDef)
+//        return defaults.rx.observe(Array<String>.self, Constants.keyForUserDef)
+//            .asSingle()
+//    }
+    
+    func loadCurrency() -> Single<[String]> {
+        return Single.create { [self] single in
+            let disposable = Disposables.create()
+            
+            guard let content = defaults.stringArray(forKey: Constants.keyForUserDef) else {
+                single(.failure(UDError.doesNotExist))
+                return disposable
+            }
+            single(.success(content))
+            return disposable
+        }
     }
     
     func deleteCurrency() {
@@ -26,6 +48,7 @@ class DataManager: DataManagerType {
 }
 
 class FakeDataManager: DataManagerType {
+    
     static let shared = FakeDataManager()
     private let defaults = UserDefaults.standard
     private init() {}
@@ -33,11 +56,16 @@ class FakeDataManager: DataManagerType {
     func save(currency: [String]) {
     }
     
-    func unloadCurrency() -> [String]? {
-        return nil
+    func loadCurrency() -> Single<[String]>  {
+        return Single.create { single in
+            let disposable = Disposables.create()
+            single(.failure(UDError.doesNotExist))
+            return disposable
+        }
     }
     
     func deleteCurrency() {
         defaults.removeObject(forKey: Constants.keyForUserDef)
     }
 }
+

@@ -29,7 +29,7 @@ extension SelectCurrencyViewModel: ViewModelType {
     
     struct Bindings {
         let didSelectCurrency: Signal<CurrencyCellViewModel>
-        let searchCurrency: Driver<String?>
+        let searchText: Driver<String?>
     }
     
     struct Dependencies {
@@ -46,15 +46,16 @@ extension SelectCurrencyViewModel: ViewModelType {
         router: Routes
     ) -> Self {
         
-        let cellViewModels = BehaviorRelay<[CurrencyCellViewModel]>(value: [])
+        let filteredViewModels = BehaviorRelay<[CurrencyCellViewModel]>(value: [])
         let didReceiveError = PublishRelay<String>()
-        let disposables = CompositeDisposable(disposables: [])
+//        let disposables = CompositeDisposable(disposables: [])
         var allViewModels = [CurrencyCellViewModel]()
         
         
+        /*
         if let listOfCurrency = dependency.storageService.unloadCurrency() {
             allViewModels = createCellViewModels(for: listOfCurrency)
-            cellViewModels.accept(allViewModels)
+            filteredViewModels.accept(allViewModels)
         } else {
             let fetchCurrency = dependency
                 .networkService
@@ -69,20 +70,45 @@ extension SelectCurrencyViewModel: ViewModelType {
                     allViewModels = createCellViewModels(for: currency)
                     return allViewModels
                 }
-                .emit(to: cellViewModels)
+                .emit(to: filteredViewModels)
             _ = disposables.insert(fetchCurrency)
         }
+         */
         
-        let isLoading = cellViewModels
+        let fetchCurrency = dependency.storageService
+            .loadCurrency()
+            .subscribe {
+                switch $0 {
+                case .success(let listOfCurrency):
+                    allViewModels = createCellViewModels(for: listOfCurrency)
+                    filteredViewModels.accept(allViewModels)
+                case .failure(let error):
+                    print(error)
+                    dependency.networkService
+                        .fetchCurrencyList()
+                        .asSignal { error in
+                            didReceiveError.accept(error.localizedDescription)
+                            return .empty()
+                        }
+                        .map {
+                            let currency = $0.data.map { $0.key }.sorted()
+                            dependency.storageService.save(currency: currency )
+                            allViewModels = createCellViewModels(for: currency)
+                            return allViewModels
+                        }
+                        .emit(to: filteredViewModels)
+                }
+            }
+        
+        let isLoading = filteredViewModels
             .asDriver()
             .map { $0.isEmpty }
         
         let showError = didReceiveError
             .asSignal()
-            .emit(onNext: { _ in
-                router.showAlert()
+            .emit(onNext: { error in
+                router.showAlert(with: error.description)
             })
-        _ = disposables.insert(showError)
         
         let transferSelectedCurrency = binding
             .didSelectCurrency
@@ -90,23 +116,27 @@ extension SelectCurrencyViewModel: ViewModelType {
                 input.didSelectCurrency($0.currency)
                 router.popViewController()
             })
-        _ = disposables.insert(transferSelectedCurrency)
         
         let searchCurrency = binding
-            .searchCurrency
+            .searchText
             .compactMap { $0 }
             .map { text -> [CurrencyCellViewModel] in
                 guard !text.isEmpty else { return allViewModels }
-                let filteredModels = allViewModels
+                return allViewModels
                     .filter { $0.currency.lowercased().contains(text.lowercased())
                     }
-                return filteredModels
             }
-            .drive(cellViewModels)
-        _ = disposables.insert(searchCurrency)
+            .drive(filteredViewModels)
+        
+        let disposables = CompositeDisposable(
+            fetchCurrency,
+            showError,
+            transferSelectedCurrency,
+            searchCurrency
+        )
         
         return .init(
-            cellViewModels: cellViewModels.asDriver(),
+            cellViewModels: filteredViewModels.asDriver(),
             isLoading: isLoading,
             disposables: disposables
         )

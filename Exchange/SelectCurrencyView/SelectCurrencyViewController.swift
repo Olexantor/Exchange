@@ -107,7 +107,7 @@ extension SelectCurrencyViewController: ViewType {
     var bindings: ViewModel.Bindings {
         .init(
             didSelectCurrency: didSelectCurrency.asSignal(),
-            searchCurrency: searchController.searchBar.rx.text.asDriver()
+            searchText: searchController.searchBar.rx.text.asDriver()
         )
     }
     
@@ -119,9 +119,7 @@ extension SelectCurrencyViewController: ViewType {
             .disposed(by: disposeBag)
         
         viewModel.cellViewModels
-            .drive(onNext: { [weak self] cellModels in
-                self?.cellViewModels.accept(cellModels)
-            })
+            .drive(cellViewModels)
             .disposed(by: disposeBag)
 
         viewModel.isLoading
