@@ -23,20 +23,11 @@ class DataManager: DataManagerType {
 
     }
     
-//    func unloadCurrency() -> Single<[String]?> {
-//      return defaults.stringArray(forKey: Constants.keyForUserDef)
-//        return defaults.rx.observe(Array<String>.self, Constants.keyForUserDef)
-//            .asSingle()
-//    }
-    
-    func loadCurrency() -> Single<[String]> {
+    func getCurrency() -> Single<[String]> {
         return Single.create { [self] single in
             let disposable = Disposables.create()
             
-            guard let content = defaults.stringArray(forKey: Constants.keyForUserDef) else {
-                single(.failure(UDError.doesNotExist))
-                return disposable
-            }
+            let content = defaults.stringArray(forKey: Constants.keyForUserDef) ?? []
             single(.success(content))
             return disposable
         }
@@ -56,7 +47,7 @@ class FakeDataManager: DataManagerType {
     func save(currency: [String]) {
     }
     
-    func loadCurrency() -> Single<[String]>  {
+    func getCurrency() -> Single<[String]>  {
         return Single.create { single in
             let disposable = Disposables.create()
             single(.failure(UDError.doesNotExist))

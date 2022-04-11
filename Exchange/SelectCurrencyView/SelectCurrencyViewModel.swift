@@ -48,57 +48,33 @@ extension SelectCurrencyViewModel: ViewModelType {
         
         let filteredViewModels = BehaviorRelay<[CurrencyCellViewModel]>(value: [])
         let didReceiveError = PublishRelay<String>()
-//        let disposables = CompositeDisposable(disposables: [])
         var allViewModels = [CurrencyCellViewModel]()
         
-        
-        /*
-        if let listOfCurrency = dependency.storageService.unloadCurrency() {
-            allViewModels = createCellViewModels(for: listOfCurrency)
-            filteredViewModels.accept(allViewModels)
-        } else {
-            let fetchCurrency = dependency
-                .networkService
-                .fetchCurrencyList()
-                .asSignal { error in
-                    didReceiveError.accept(error.localizedDescription)
-                    return .empty()
-                }
-                .map {
-                    let currency = $0.data.map { $0.key }.sorted()
-                    dependency.storageService.save(currency: currency )
-                    allViewModels = createCellViewModels(for: currency)
-                    return allViewModels
-                }
-                .emit(to: filteredViewModels)
-            _ = disposables.insert(fetchCurrency)
-        }
-         */
+       let loadedCurrency = dependency.networkService
+             .fetchCurrencyList()
+             .asDriver { error in
+                 didReceiveError.accept(error.localizedDescription)
+                 return .empty()
+             }
+             .map { currency -> [CurrencyCellViewModel] in
+                 let currency = currency.data.map { $0.key }.sorted()
+                 dependency.storageService.save(currency: currency )
+                 allViewModels = createCellViewModels(for: currency)
+                 return allViewModels
+             }
         
         let fetchCurrency = dependency.storageService
-            .loadCurrency()
-            .subscribe {
-                switch $0 {
-                case .success(let listOfCurrency):
-                    allViewModels = createCellViewModels(for: listOfCurrency)
-                    filteredViewModels.accept(allViewModels)
-                case .failure(let error):
-                    print(error)
-                    dependency.networkService
-                        .fetchCurrencyList()
-                        .asSignal { error in
-                            didReceiveError.accept(error.localizedDescription)
-                            return .empty()
-                        }
-                        .map {
-                            let currency = $0.data.map { $0.key }.sorted()
-                            dependency.storageService.save(currency: currency )
-                            allViewModels = createCellViewModels(for: currency)
-                            return allViewModels
-                        }
-                        .emit(to: filteredViewModels)
+            .getCurrency()
+            .asDriver(onErrorJustReturn: [])
+            .flatMap { listOfCurrency -> Driver<[CurrencyCellViewModel]> in
+                if listOfCurrency.isEmpty {
+                   return loadedCurrency
+                } else {
+                    return .just(createCellViewModels(for: listOfCurrency))
                 }
             }
+            .drive(filteredViewModels)
+
         
         let isLoading = filteredViewModels
             .asDriver()
@@ -106,9 +82,7 @@ extension SelectCurrencyViewModel: ViewModelType {
         
         let showError = didReceiveError
             .asSignal()
-            .emit(onNext: { error in
-                router.showAlert(with: error.description)
-            })
+            .emit(onNext: router.showAlert)
         
         let transferSelectedCurrency = binding
             .didSelectCurrency

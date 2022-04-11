@@ -10,6 +10,6 @@ import RxSwift
 
 protocol DataManagerType {
     func save(currency: [String])
-    func loadCurrency() -> Single<[String]>
+    func getCurrency() -> Single<[String]>
     func deleteCurrency()
 }
