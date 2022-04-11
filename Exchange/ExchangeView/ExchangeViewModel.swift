@@ -69,12 +69,12 @@ extension ExchangeViewModel: ViewModelType {
             case .first:
                 router.showSelectCurrencyView {
                     firstCurrencyNameInBox.value = $0
-                    getRates(for: $0, by: buttonNumber, with: dependency, and: networkError)
+//                    getRates(for: $0, by: buttonNumber, with: dependency, and: networkError)
                 }
             case .second:
                 router.showSelectCurrencyView {
                     secondCurrencyNameInBox.value = $0
-                    getRates(for: $0, by: buttonNumber, with: dependency, and: networkError)
+//                    getRates(for: $0, by: buttonNumber, with: dependency, and: networkError)
                 }
             }
         }

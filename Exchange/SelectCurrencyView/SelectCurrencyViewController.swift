@@ -56,7 +56,6 @@ final class SelectCurrencyViewController: UIViewController {
     }
     
     private func setupSearchController() {
-        searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.backgroundColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
         searchController.searchBar.placeholder = "Search"
@@ -107,7 +106,8 @@ extension SelectCurrencyViewController: ViewType {
     
     var bindings: ViewModel.Bindings {
         .init(
-            didSelectCurrency: didSelectCurrency.asSignal()
+            didSelectCurrency: didSelectCurrency.asSignal(),
+            searchCurrency: searchController.searchBar.rx.text.asDriver()
         )
     }
     
@@ -132,16 +132,3 @@ extension SelectCurrencyViewController: ViewType {
             .disposed(by: disposeBag)
     }
 }
-//MARK: - SearchResultsUpdating
-
-extension SelectCurrencyViewController: UISearchResultsUpdating {
-    func updateSearchResults(for searchController: UISearchController) {
-//        guard let text = searchController.searchBar.text else { return }
-//        bindings.searchText(text)
-        tableView.reloadData()
-    }
-    
-    private func filterContentForSearchedText(_ searchText: String) {
-    }
-}
-

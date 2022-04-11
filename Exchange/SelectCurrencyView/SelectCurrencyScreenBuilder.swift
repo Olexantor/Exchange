@@ -13,7 +13,7 @@ struct SelectCurrencyScreenBuilder: ScreenBuilder {
     var dependencies: VC.ViewModel.Dependencies {
         .init(
             networkService: CurrencyService(),
-            storageService: FakeDataManager.shared
+            storageService: DataManager.shared
         )
     }
 }

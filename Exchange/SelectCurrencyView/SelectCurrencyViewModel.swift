@@ -11,7 +11,6 @@ import RxSwift
 
 struct SelectCurrencyViewModel {
     let cellViewModels: Driver<[CurrencyCellViewModel]>
-//    let networkErrorInBox: Box<Error?>
     let isLoading: Driver<Bool>
     let disposables: Disposable
     
@@ -29,8 +28,8 @@ extension SelectCurrencyViewModel: ViewModelType {
     }
     
     struct Bindings {
-        var didSelectCurrency: Signal<CurrencyCellViewModel>
-//        var searchText: ((String) -> Void) = { _ in }
+        let didSelectCurrency: Signal<CurrencyCellViewModel>
+        let searchCurrency: Driver<String?>
     }
     
     struct Dependencies {
@@ -50,15 +49,16 @@ extension SelectCurrencyViewModel: ViewModelType {
         let cellViewModels = BehaviorRelay<[CurrencyCellViewModel]>(value: [])
         let didReceiveError = PublishRelay<String>()
         let disposables = CompositeDisposable(disposables: [])
-
+        var allViewModels = [CurrencyCellViewModel]()
+        
         
         if let listOfCurrency = dependency.storageService.unloadCurrency() {
-            cellViewModels.accept(createCellViewModels(for: listOfCurrency))
+            allViewModels = createCellViewModels(for: listOfCurrency)
+            cellViewModels.accept(allViewModels)
         } else {
             let fetchCurrency = dependency
                 .networkService
                 .fetchCurrencyList()
-                .delay(.seconds(3), scheduler: MainScheduler.instance)
                 .asSignal { error in
                     didReceiveError.accept(error.localizedDescription)
                     return .empty()
@@ -66,10 +66,10 @@ extension SelectCurrencyViewModel: ViewModelType {
                 .map {
                     let currency = $0.data.map { $0.key }.sorted()
                     dependency.storageService.save(currency: currency )
-                    return createCellViewModels(for: currency)
+                    allViewModels = createCellViewModels(for: currency)
+                    return allViewModels
                 }
                 .emit(to: cellViewModels)
-            
             _ = disposables.insert(fetchCurrency)
         }
         
@@ -83,18 +83,27 @@ extension SelectCurrencyViewModel: ViewModelType {
                 router.showAlert()
             })
         _ = disposables.insert(showError)
- 
+        
         let transferSelectedCurrency = binding
             .didSelectCurrency
             .emit(onNext: {
-                print($0.currency)
+                input.didSelectCurrency($0.currency)
                 router.popViewController()
             })
         _ = disposables.insert(transferSelectedCurrency)
         
-        print(disposables.count)
-        
-       
+        let searchCurrency = binding
+            .searchCurrency
+            .compactMap { $0 }
+            .map { text -> [CurrencyCellViewModel] in
+                guard !text.isEmpty else { return allViewModels }
+                let filteredModels = allViewModels
+                    .filter { $0.currency.lowercased().contains(text.lowercased())
+                    }
+                return filteredModels
+            }
+            .drive(cellViewModels)
+        _ = disposables.insert(searchCurrency)
         
         return .init(
             cellViewModels: cellViewModels.asDriver(),
@@ -103,61 +112,3 @@ extension SelectCurrencyViewModel: ViewModelType {
         )
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//        let networkErrorInBox = Box<Error?>(nil)
-//        var allViewModels = [CurrencyCellViewModel]()
-//        let cellViewModels = Box<[CurrencyCellViewModel]>([])
-//        let isIndicatorEnabled = Box(true)
-
-//getting the list of currency cell view models
-/*
-if let listOfCurrency = dependency.storageService.unloadCurrency() {
-    allViewModels = createCellViewModels(for: listOfCurrency)
-    cellViewModels.value = allViewModels
-    isLoading.value = false
-} else {
-    dependency.networkService.fetchCurrencyList { result in
-        switch result {
-        case .success(let currencyList):
-            let listOfCurrency = currencyList.data.map{ $0.key }.sorted()
-            dependency.storageService.save(currency: listOfCurrency)
-            allViewModels = createCellViewModels(for: listOfCurrency)
-            cellViewModels.value = allViewModels
-            isLoading.value = false
-        case .failure(let error):
-            networkErrorInBox.value = error
-        }
-    }
-}
- */
-
-//        binding.didSelectCell = {
-//            input.didSelectCurrency(cellViewModels.value[$0.row].currency)
-//            router.popViewController()
-//        }
-
-//        binding.searchText = { text in
-//            if text.isEmpty {
-//                cellViewModels.value = allViewModels
-//            } else {
-//                cellViewModels.value = allViewModels
-//                    .filter {
-//                        $0.currency.lowercased()
-//                            .contains(text.lowercased())
-//                    }
-//            }
-//        }
