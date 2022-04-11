@@ -17,4 +17,16 @@ struct SelectCurrencyRouter: RouterType {
     func popViewController() {
         vc.navigationController?.popViewController(animated: true)
     }
+    
+    func showAlert() {
+        let alert = UIAlertController(
+            title: "Error!",
+            message: "Something wrong with network",
+            preferredStyle: .alert
+        )
+        let okAction = UIAlertAction(title: "OK", style: .default)
+        alert.addAction(okAction)
+        vc.present(alert, animated: true)
+    }
 }
+

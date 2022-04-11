@@ -49,16 +49,13 @@ extension SelectCurrencyViewModel: ViewModelType {
         
         let cellViewModels = BehaviorRelay<[CurrencyCellViewModel]>(value: [])
         let didReceiveError = PublishRelay<String>()
-//        var fetchCurrency: Disposable
-        let disposables = CompositeDisposable(
-            disposables: []
-        )
+        let disposables = CompositeDisposable(disposables: [])
 
         
         if let listOfCurrency = dependency.storageService.unloadCurrency() {
             cellViewModels.accept(createCellViewModels(for: listOfCurrency))
         } else {
-           let fetchCurrency = dependency
+            let fetchCurrency = dependency
                 .networkService
                 .fetchCurrencyList()
                 .delay(.seconds(3), scheduler: MainScheduler.instance)
@@ -69,11 +66,10 @@ extension SelectCurrencyViewModel: ViewModelType {
                 .map {
                     let currency = $0.data.map { $0.key }.sorted()
                     dependency.storageService.save(currency: currency )
-//                    cellViewModels.accept(createCellViewModels(for: currency))
                     return createCellViewModels(for: currency)
                 }
-                    .emit(to: cellViewModels)
-    
+                .emit(to: cellViewModels)
+            
             _ = disposables.insert(fetchCurrency)
         }
         
@@ -81,12 +77,26 @@ extension SelectCurrencyViewModel: ViewModelType {
             .asDriver()
             .map { $0.isEmpty }
         
+        let showError = didReceiveError
+            .asSignal()
+            .emit(onNext: { _ in
+                router.showAlert()
+            })
+        _ = disposables.insert(showError)
  
+        let transferSelectedCurrency = binding
+            .didSelectCurrency
+            .emit(onNext: {
+                print($0.currency)
+                router.popViewController()
+            })
+        _ = disposables.insert(transferSelectedCurrency)
+        
+        print(disposables.count)
         
        
         
         return .init(
-//            networkErrorInBox: networkErrorInBox,
             cellViewModels: cellViewModels.asDriver(),
             isLoading: isLoading,
             disposables: disposables

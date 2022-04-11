@@ -10,14 +10,10 @@ import SnapKit
 import UIKit
 
 final class SelectCurrencyViewController: UIViewController {
-//    let bindings = ViewModel.Bindings()
-    
-//    private var tableView = UITableView()
-    
     private let searchController = UISearchController(searchResultsController: nil)
     
-//    private var cellViewModels = [CurrencyCellViewModel]()
     private let cellViewModels = BehaviorRelay<[CurrencyCellViewModel]>(value: [])
+    
     private let didSelectCurrency = PublishRelay<CurrencyCellViewModel>()
     
     private let disposeBag = DisposeBag()
@@ -38,10 +34,6 @@ final class SelectCurrencyViewController: UIViewController {
     private lazy var activityIndicator: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView()
         indicator.style = .gray
-//        indicator.color = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
-//        indicator.hidesWhenStopped = true
-//        let transfrom = CGAffineTransform.init(scaleX: 3, y: 3)
-//        indicator.transform = transfrom
         view.addSubview(indicator)
         return indicator
     }()
@@ -49,9 +41,6 @@ final class SelectCurrencyViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "CURRENCIES"
-//        setupTableView()
-//        tableView.addSubview(activityIndicator)
-//        setupConstrains()
         setupSearchController()
     }
     
@@ -74,38 +63,6 @@ final class SelectCurrencyViewController: UIViewController {
         self.navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
         definesPresentationContext = true
-    }
-    
-//    private func setupTableView() {
-//        tableView.backgroundColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
-//        tableView.delegate = self
-//        tableView.dataSource = self
-//        tableView.register(
-//            CurrencyCell.self,
-//            forCellReuseIdentifier: CurrencyCell.identifier
-//        )
-//        view.addSubview(tableView)
-//    }
-    
-//    private func setupConstrains() {
-//        tableView.snp.makeConstraints {
-//            $0.edges.equalToSuperview()
-//        }
-//        activityIndicator.snp.makeConstraints {
-//            $0.center.equalToSuperview()
-//        }
-//    }
-    // MARK: - Alert
-    
-    private func showAlert() {
-        let alert = UIAlertController(
-            title: "Error!",
-            message: "Something wrong with network",
-            preferredStyle: .alert
-        )
-        let okAction = UIAlertAction(title: "OK", style: .default)
-        alert.addAction(okAction)
-        present(alert, animated: true)
     }
 }
 //MARK: - UITableViewDataSource methods
@@ -139,7 +96,6 @@ extension SelectCurrencyViewController: UITableViewDelegate {
         _ tableView: UITableView,
         didSelectRowAt indexPath: IndexPath
     ) {
-//        bindings.didSelectCell(indexPath)
         let cellViewModel = cellViewModels.value[indexPath.row]
         didSelectCurrency.accept(cellViewModel)
     }
@@ -162,26 +118,18 @@ extension SelectCurrencyViewController: ViewType {
             })
             .disposed(by: disposeBag)
         
-        viewModel.cellViewModels.bind { [weak self] cellsModels in
-//            self?.cellViewModels = cellsModels
-            DispatchQueue.main.async {
-                self?.tableView.reloadData()
-            }
-        }
+        viewModel.cellViewModels
+            .drive(onNext: { [weak self] cellModels in
+                self?.cellViewModels.accept(cellModels)
+            })
+            .disposed(by: disposeBag)
+
+        viewModel.isLoading
+            .drive(activityIndicator.rx.isAnimating)
+            .disposed(by: disposeBag)
         
-        viewModel.isLoading.bind{ [weak self] condition in
-            if condition {
-                self?.activityIndicator.startAnimating()
-            } else {
-                self?.activityIndicator.stopAnimating()
-            }
-        }
-        
-        viewModel.networkErrorInBox.bind { [weak self] error in
-            guard let self = self else { return }
-            guard error != nil else { return }
-            self.showAlert()
-        }
+        viewModel.disposables
+            .disposed(by: disposeBag)
     }
 }
 //MARK: - SearchResultsUpdating
