@@ -75,10 +75,31 @@ extension ExchangeViewModel: ViewModelType {
         let networkError = Box<Error?>(nil)
         
         let firstButtonTap = binding.didTapFirstCurrencySelectionButton
+            .
+            .flatMapLatest { _ -> String in
+                            router.showSelectCurrencyView {
+                                firstCurrencyNameInBox.value = $0
+                                getRates(for: $0, by: .first, with: dependency, and: networkError)
+                                return $0
+                            }
+            }
+        
+        
+        
+        
+        
+        
+        
+            .do(onNext: router.showSelectCurrencyView {
+                firstCurrencyNameInBox.value = $0
+                getRates(for: $0, by: .first, with: dependency, and: networkError)
+                return $0
+            })
             .emit(onNext: {
                 router.showSelectCurrencyView {
                     firstCurrencyNameInBox.value = $0
                     getRates(for: $0, by: .first, with: dependency, and: networkError)
+                    return $0
                 }
             })
         
@@ -87,6 +108,7 @@ extension ExchangeViewModel: ViewModelType {
                 router.showSelectCurrencyView {
                     secondCurrencyNameInBox.value = $0
                     getRates(for: $0, by: .second, with: dependency, and: networkError)
+                    return $0
                 }
             })
         

@@ -113,14 +113,12 @@ extension SelectCurrencyViewController: ViewType {
     
     func bind(to viewModel: ViewModel) {
         cellViewModels.asDriver()
-            .debug("===========")
             .drive(onNext: { [weak self] _ in
                 self?.tableView.reloadData()
             })
             .disposed(by: disposeBag)
         
         viewModel.cellViewModels
-            .debug("0000000000000")
             .drive(cellViewModels)
             .disposed(by: disposeBag)
 
