@@ -21,8 +21,8 @@ struct CurrencyService {
             .asSingle()
     }
     
-    func fetchExchangeRate() -> Single<ExchangeRate> {
-        let url = URL(string: Constants.convertUrlString)!
+    func fetchExchangeRate(for base: String) -> Single<ExchangeRate> {
+        let url = URL(string: Constants.convertUrlString+base)!
         let request = URLRequest(url: url )
         
         return URLSession.shared.rx

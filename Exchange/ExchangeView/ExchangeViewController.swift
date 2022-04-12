@@ -182,10 +182,10 @@ final class ExchangeViewController: UIViewController {
         }
     }
     
-    @objc private func selectCurrency(sender: UIButton) {
-        let buttonNumber: ButtonNumberInOrder = sender.tag == 1 ? .first : .second
-        bindings.didPressedSelectCurrenncyButton(buttonNumber)
-    }
+//    @objc private func selectCurrency(sender: UIButton) {
+//        let buttonNumber: ButtonNumberInOrder = sender.tag == 1 ? .first : .second
+//        bindings.didPressedSelectCurrenncyButton(buttonNumber)
+//    }
     // MARK: - Alert
     
     private func showAlert() {
@@ -293,7 +293,9 @@ extension ExchangeViewController: ViewType {
     var bindings: ViewModel.Bindings {
         .init(
             didTapFirstCurrencySelectionButton: firstCurrencySelectionButton.rx.tap.asSignal(),
-            didTapSecondCurrencySelectionButton: secondCurrencySelectionButton.rx.tap.asSignal()
+            didTapSecondCurrencySelectionButton: secondCurrencySelectionButton.rx.tap.asSignal(),
+            textOfFirstCurrencyTextField: firstCurrencyTextField.rx.text.asDriver(),
+            textOfSecondCurrencyTextField: secondCurrencyTextField.rx.text.asDriver()
         )
     }
     
@@ -311,26 +313,17 @@ extension ExchangeViewController: ViewType {
             })
             .disposed(by: disposeBag)
         
-//        viewModel.firstCurrency.bind { [weak self] currency in
-//            self?.firstCurrencyLabel.text = currency
-//        }
-//        
-//        viewModel.secondCurrency.bind { [weak self] currency in
-//            self?.secondCurrencyLabel.text = currency
-//        }
+        viewModel.firstCurrencyCalculatedValue
+            .drive(onNext: { [weak self] value in
+                self?.firstCurrencyTextField.text = value
+            })
+            .disposed(by: disposeBag)
         
-        viewModel.firstCurrencyCalculatedValueInBox.bind { [weak self] currencyValue in
-            self?.firstCurrencyTextField.text = currencyValue
-        }
-        
-        viewModel.secondCurrencyCalculatedValueInBox.bind { [weak self] currencyValue in
-            self?.secondCurrencyTextField.text = currencyValue
-        }
-        
-        viewModel.networkErrorInBox.bind { [weak self] error in
-            guard error != nil else { return }
-            self?.showAlert()
-        }
+        viewModel.secondCurrencyCalculatedValue
+            .drive(onNext: { [weak self] value in
+                self?.secondCurrencyTextField.text = value
+            })
+            .disposed(by: disposeBag)
         
         viewModel.disposables
             .disposed(by: disposeBag)
@@ -339,16 +332,16 @@ extension ExchangeViewController: ViewType {
 //MARK: - UITextFieldDelegate
 
 extension ExchangeViewController: UITextFieldDelegate {
-    func textFieldDidBeginEditing(_ textField: UITextField) {
-        let textFieldID: TextFieldID = textField == firstCurrencyTextField ? .firstTF : .secondTF
-        bindings.didTapOnTextField(textFieldID)
-    }
+//    func textFieldDidBeginEditing(_ textField: UITextField) {
+//        let textFieldID: TextFieldID = textField == firstCurrencyTextField ? .firstTF : .secondTF
+//        bindings.didTapOnTextField(textFieldID)
+//    }
     
-    func textFieldDidChangeSelection(_ textField: UITextField) {
-        let textFieldID: TextFieldID = textField == firstCurrencyTextField ? .firstTF : .secondTF
-        guard let value = textField.text else { return }
-        bindings.textFieldDidChange(textFieldID, value)
-    }
+//    func textFieldDidChangeSelection(_ textField: UITextField) {
+//        let textFieldID: TextFieldID = textField == firstCurrencyTextField ? .firstTF : .secondTF
+//        guard let value = textField.text else { return }
+//        bindings.textFieldDidChange(textFieldID, value)
+//    }
 }
 
 

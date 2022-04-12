@@ -15,9 +15,8 @@ enum ButtonNumberInOrder {
 struct ExchangeViewModel {
     let firstCurrency: Driver<String>
     let secondCurrency: Driver<String>
-    let firstCurrencyCalculatedValueInBox: Box<String>
-    let secondCurrencyCalculatedValueInBox: Box<String>
-    let networkErrorInBox: Box<Error?>
+    let firstCurrencyCalculatedValue: Driver<String>
+    let secondCurrencyCalculatedValue: Driver<String>
     let disposables: Disposable
 }
 
@@ -31,32 +30,35 @@ private extension ExchangeViewModel {
         with dependency: Dependencies,
         and errorText: PublishRelay<String>
     ) {
-        dependency.networkService.fetchExchangeRate(for: currency) { result in
-            switch result {
-            case .success(let currency):
-                if buttonNumber == .first {
-                    ratesForFirstCurrency = currency.rates
-                } else {
-                    ratesForSecondCurrency = currency.rates
-                }
-            case .failure(let error):
+        _ = dependency
+            .networkService
+            .fetchExchangeRate(for: currency)
+            .asSignal { error in
                 errorText.accept(error.localizedDescription)
+                return .empty()
             }
-        }
+            .do(onNext: {
+                if buttonNumber == .first {
+                    ratesForFirstCurrency = $0.rates
+                    print(ratesForFirstCurrency)
+                } else {
+                    ratesForSecondCurrency = $0.rates
+                    print(ratesForSecondCurrency)
+                }
+            })
     }
 }
 
 extension ExchangeViewModel: ViewModelType {
     struct Bindings {
-        var didPressedSelectCurrenncyButton: (ButtonNumberInOrder) -> Void = { _ in}
-        var didTapOnTextField: (TextFieldID) -> Void = { _ in }
-        var textFieldDidChange: (TextFieldID, String) -> Void = { _,_  in }
         let didTapFirstCurrencySelectionButton: Signal<Void>
         let didTapSecondCurrencySelectionButton: Signal<Void>
+        let textOfFirstCurrencyTextField: Driver<String?>
+        let textOfSecondCurrencyTextField: Driver<String?>
     }
     
     struct Dependencies {
-        let networkService: NetworkManager
+        let networkService: CurrencyService
     }
     
     typealias Routes = ExchangeViewRouter
@@ -69,31 +71,100 @@ extension ExchangeViewModel: ViewModelType {
     ) -> Self {
         
         let didReceiveError = PublishRelay<String>()
-        
         let firstCurrency = BehaviorRelay<String>(value: "")
         let secondCurrency = BehaviorRelay<String>(value: "")
-        let firstCurrencyCalculatedValue = Box<String>("")
-        let secondCurrencyCalculatedValue =  Box<String>("")
-        let networkError = Box<Error?>(nil)
+        let textOfFirstCurrencyTextField = BehaviorRelay<String>(value: "")
+        let textOfSecondCurrencyTextField =  BehaviorRelay<String>(value: "")
         
         let firstButtonTap = binding.didTapFirstCurrencySelectionButton
-            .emit(onNext: {
+//            .debug("==========")
+            .emit(onNext:  {
                 router.showSelectCurrencyView {
                     firstCurrency.accept($0)
-                    getRates(for: $0, by: .first, with: dependency, and: didReceiveError)
+//                    getRates(for: $0, by: .first, with: dependency, and: didReceiveError)
+//                    print(firstCurrency.value)
+//                    print(ratesForFirstCurrency)
                 }
             })
         
         let secondButtonTap = binding.didTapSecondCurrencySelectionButton
-            .emit(onNext: {
+//            .debug("++++++++++")
+            .emit(onNext:  {
                 router.showSelectCurrencyView {
                     secondCurrency.accept($0)
-                    getRates(for: $0, by: .second, with: dependency, and: didReceiveError)
+//                    getRates(for: $0, by: .first, with: dependency, and: didReceiveError)
+//                    print(secondCurrency.value)
+//                    print(ratesForSecondCurrency)
                 }
             })
         
-    
-//        binding.didPressedSelectCurrenncyButton = { buttonNumber in
+        let rirstCurrencyRates = firstCurrency
+            .asDriver()
+            .debug("==========")
+            .drive {
+                getRates(for: $0, by: .first, with: dependency, and: didReceiveError)
+            }
+        
+        let secondCurrencyRates = secondCurrency
+            .asDriver()
+            .debug("+++++++++++")
+            .drive {
+                getRates(for: $0, by: .first, with: dependency, and: didReceiveError)
+            }
+        
+        let disposables = CompositeDisposable(
+            firstButtonTap,
+            secondButtonTap,
+            rirstCurrencyRates,
+            secondCurrencyRates
+        )
+        
+        return .init(
+            firstCurrency: firstCurrency.asDriver(),
+            secondCurrency: secondCurrency.asDriver(),
+            firstCurrencyCalculatedValue: textOfFirstCurrencyTextField.asDriver(),
+            secondCurrencyCalculatedValue: textOfSecondCurrencyTextField.asDriver(),
+            disposables: disposables
+        )
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//dependency.networkService.fetchExchangeRate(for: currency) { result in
+//            switch result {
+//            case .success(let currency):
+//                if buttonNumber == .first {
+//                    ratesForFirstCurrency = currency.rates
+//                } else {
+//                    ratesForSecondCurrency = currency.rates
+//                }
+//            case .failure(let error):
+//                errorText.accept(error.localizedDescription)
+//            }
+//        }
+
+
+
+
+
+
+//binding.didPressedSelectCurrenncyButton = { buttonNumber in
 //            switch buttonNumber {
 //            case .first:
 //                router.showSelectCurrencyView {
@@ -133,18 +204,9 @@ extension ExchangeViewModel: ViewModelType {
 //                )
 //            }
 //        }
-        let disposables = CompositeDisposable(
-            firstButtonTap,
-            secondButtonTap
-        )
-        
-        return .init(
-            firstCurrency: firstCurrency.asDriver(),
-            secondCurrency: secondCurrency.asDriver(),
-            firstCurrencyCalculatedValueInBox: firstCurrencyCalculatedValue,
-            secondCurrencyCalculatedValueInBox: secondCurrencyCalculatedValue,
-            networkErrorInBox: networkError,
-            disposables: disposables
-        )
-    }
-}
+
+
+
+//        var didPressedSelectCurrenncyButton: (ButtonNumberInOrder) -> Void = { _ in}
+//        var didTapOnTextField: (TextFieldID) -> Void = { _ in }
+//        var textFieldDidChange: (TextFieldID, String) -> Void = { _,_  in }
