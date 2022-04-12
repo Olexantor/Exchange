@@ -23,7 +23,7 @@ struct SelectCurrencyViewModel {
 
 extension SelectCurrencyViewModel: ViewModelType {
     struct Inputs {
-        let didSelectCurrency: (String) -> (String)
+        let didSelectCurrency: (String) -> (Void)
     }
     
     struct Bindings {

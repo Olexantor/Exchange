@@ -13,8 +13,8 @@ enum ButtonNumberInOrder {
 }
 
 struct ExchangeViewModel {
-    let firstCurrencyInBox: Box<String>
-    let secondCurrencyInBox: Box<String>
+    let firstCurrency: Driver<String>
+    let secondCurrency: Driver<String>
     let firstCurrencyCalculatedValueInBox: Box<String>
     let secondCurrencyCalculatedValueInBox: Box<String>
     let networkErrorInBox: Box<Error?>
@@ -29,7 +29,7 @@ private extension ExchangeViewModel {
         for currency: String,
         by buttonNumber: ButtonNumberInOrder,
         with dependency: Dependencies,
-        and errorPlace: Box<Error?>
+        and errorText: PublishRelay<String>
     ) {
         dependency.networkService.fetchExchangeRate(for: currency) { result in
             switch result {
@@ -40,7 +40,7 @@ private extension ExchangeViewModel {
                     ratesForSecondCurrency = currency.rates
                 }
             case .failure(let error):
-                errorPlace.value = error
+                errorText.accept(error.localizedDescription)
             }
         }
     }
@@ -68,47 +68,27 @@ extension ExchangeViewModel: ViewModelType {
         router: Routes
     ) -> Self {
         
-        let firstCurrencyNameInBox = Box<String>("")
-        let secondCurrencyNameInBox = Box<String>("")
+        let didReceiveError = PublishRelay<String>()
+        
+        let firstCurrency = BehaviorRelay<String>(value: "")
+        let secondCurrency = BehaviorRelay<String>(value: "")
         let firstCurrencyCalculatedValue = Box<String>("")
         let secondCurrencyCalculatedValue =  Box<String>("")
         let networkError = Box<Error?>(nil)
         
         let firstButtonTap = binding.didTapFirstCurrencySelectionButton
-            .
-            .flatMapLatest { _ -> String in
-                            router.showSelectCurrencyView {
-                                firstCurrencyNameInBox.value = $0
-                                getRates(for: $0, by: .first, with: dependency, and: networkError)
-                                return $0
-                            }
-            }
-        
-        
-        
-        
-        
-        
-        
-            .do(onNext: router.showSelectCurrencyView {
-                firstCurrencyNameInBox.value = $0
-                getRates(for: $0, by: .first, with: dependency, and: networkError)
-                return $0
-            })
             .emit(onNext: {
                 router.showSelectCurrencyView {
-                    firstCurrencyNameInBox.value = $0
-                    getRates(for: $0, by: .first, with: dependency, and: networkError)
-                    return $0
+                    firstCurrency.accept($0)
+                    getRates(for: $0, by: .first, with: dependency, and: didReceiveError)
                 }
             })
         
         let secondButtonTap = binding.didTapSecondCurrencySelectionButton
             .emit(onNext: {
                 router.showSelectCurrencyView {
-                    secondCurrencyNameInBox.value = $0
-                    getRates(for: $0, by: .second, with: dependency, and: networkError)
-                    return $0
+                    secondCurrency.accept($0)
+                    getRates(for: $0, by: .second, with: dependency, and: didReceiveError)
                 }
             })
         
@@ -159,8 +139,8 @@ extension ExchangeViewModel: ViewModelType {
         )
         
         return .init(
-            firstCurrencyInBox: firstCurrencyNameInBox,
-            secondCurrencyInBox: secondCurrencyNameInBox,
+            firstCurrency: firstCurrency.asDriver(),
+            secondCurrency: secondCurrency.asDriver(),
             firstCurrencyCalculatedValueInBox: firstCurrencyCalculatedValue,
             secondCurrencyCalculatedValueInBox: secondCurrencyCalculatedValue,
             networkErrorInBox: networkError,
