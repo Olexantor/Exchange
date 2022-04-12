@@ -4,20 +4,19 @@
 //
 //  Created by Александр on 08.03.2022.
 //
-
+import RxCocoa
+import RxSwift
 import SnapKit
 import UIKit
-
-enum ButtonNumberInOrder {
-    case first, second
-}
 
 enum TextFieldID {
     case firstTF, secondTF
 }
 
 final class ExchangeViewController: UIViewController {
-    let bindings = ViewModel.Bindings()
+//    let bindings = ViewModel.Bindings()
+//
+    private let disposeBag = DisposeBag()
     
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -40,13 +39,13 @@ final class ExchangeViewController: UIViewController {
     
     private let firstCurrencySelectionButton: UIButton = {
         let button = UIButton(type: .system)
-        button.tag = 1
         button.setTitle("select 1st currency", for: .normal)
-        button.addTarget(
-            self,
-            action: #selector(selectCurrency),
-            for: .touchUpInside
-        )
+//        button.tag = 1
+//        button.addTarget(
+//            self,
+//            action: #selector(selectCurrency),
+//            for: .touchUpInside
+//        )
         return button
         
     }()
@@ -68,12 +67,12 @@ final class ExchangeViewController: UIViewController {
     private let secondCurrencySelectionButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("select 2nd currency", for: .normal)
-        button.tag = 2
-        button.addTarget(
-            self,
-            action: #selector(selectCurrency),
-            for: .touchUpInside
-        )
+//        button.tag = 2
+//        button.addTarget(
+//            self,
+//            action: #selector(selectCurrency),
+//            for: .touchUpInside
+//        )
         return button
     }()
     
@@ -291,6 +290,13 @@ final class ExchangeViewController: UIViewController {
 extension ExchangeViewController: ViewType {
     typealias ViewModel = ExchangeViewModel
     
+    var bindings: ViewModel.Bindings {
+        .init(
+            didTapFirstCurrencySelectionButton: firstCurrencySelectionButton.rx.tap.asSignal(),
+            didTapSecondCurrencySelectionButton: secondCurrencySelectionButton.rx.tap.asSignal()
+        )
+    }
+    
     func bind(to viewModel: ExchangeViewModel) {
         
         viewModel.firstCurrencyInBox.bind { [weak self] currency in
@@ -313,6 +319,9 @@ extension ExchangeViewController: ViewType {
             guard error != nil else { return }
             self?.showAlert()
         }
+        
+        viewModel.disposables
+            .disposed(by: disposeBag)
     }
 }
 //MARK: - UITextFieldDelegate
