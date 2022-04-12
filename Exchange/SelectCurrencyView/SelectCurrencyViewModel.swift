@@ -46,43 +46,39 @@ extension SelectCurrencyViewModel: ViewModelType {
         router: Routes
     ) -> Self {
         
-        let filteredViewModels = BehaviorRelay<[CurrencyCellViewModel]>(value: [])
         let didReceiveError = PublishRelay<String>()
-        var allViewModels = [CurrencyCellViewModel]()
         
-       let loadedCurrency = dependency.networkService
-             .fetchCurrencyList()
-             .asDriver { error in
-                 didReceiveError.accept(error.localizedDescription)
-                 return .empty()
-             }
-             .map { currency -> [CurrencyCellViewModel] in
-                 let currency = currency.data.map { $0.key }.sorted()
-                 dependency.storageService.save(currency: currency )
-                 allViewModels = createCellViewModels(for: currency)
-                 return allViewModels
-             }
+        let loadedCurrency = dependency.networkService
+            .fetchCurrencyList()
+            .map { currency -> [CurrencyCellViewModel] in
+                let currency = currency.data.map { $0.key }.sorted()
+                dependency.storageService.save(currency: currency )
+                return createCellViewModels(for: currency)
+            }
         
-        let fetchCurrency = dependency.storageService
+        let viewModels = dependency
+            .storageService
             .getCurrency()
-            .asDriver(onErrorJustReturn: [])
-            .flatMap { listOfCurrency -> Driver<[CurrencyCellViewModel]> in
+            .catchAndReturn([])
+            .flatMap { listOfCurrency -> Single<[CurrencyCellViewModel]> in
                 if listOfCurrency.isEmpty {
-                   return loadedCurrency
+                    return loadedCurrency
                 } else {
                     return .just(createCellViewModels(for: listOfCurrency))
                 }
             }
-            .drive(filteredViewModels)
-
-        
-        let isLoading = filteredViewModels
-            .asDriver()
-            .map { $0.isEmpty }
+            .asDriver { error in
+                didReceiveError.accept(error.localizedDescription)
+                return .empty()
+            }
         
         let showError = didReceiveError
             .asSignal()
             .emit(onNext: router.showAlert)
+
+        let isLoading = viewModels
+            .asDriver()
+            .map { $0.isEmpty }
         
         let transferSelectedCurrency = binding
             .didSelectCurrency
@@ -91,22 +87,21 @@ extension SelectCurrencyViewModel: ViewModelType {
                 router.popViewController()
             })
         
-        let searchCurrency = binding
-            .searchText
-            .compactMap { $0 }
-            .map { text -> [CurrencyCellViewModel] in
-                guard !text.isEmpty else { return allViewModels }
-                return allViewModels
-                    .filter { $0.currency.lowercased().contains(text.lowercased())
-                    }
+        let filteredViewModels = Driver
+            .combineLatest(
+                viewModels,
+                binding.searchText
+            ) { viewModels, searchText -> [CurrencyCellViewModel] in
+                guard let searchText = searchText, !searchText.isEmpty else {
+                    return viewModels
+                }
+                return viewModels.filter { $0.currency.lowercased().contains(searchText.lowercased())
+                }
             }
-            .drive(filteredViewModels)
-        
+         
         let disposables = CompositeDisposable(
-            fetchCurrency,
             showError,
-            transferSelectedCurrency,
-            searchCurrency
+            transferSelectedCurrency
         )
         
         return .init(
