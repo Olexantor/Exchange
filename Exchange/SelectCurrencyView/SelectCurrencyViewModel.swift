@@ -6,11 +6,13 @@
 //
 
 import Foundation
+import RxCocoa
+import RxSwift
 
 struct SelectCurrencyViewModel {
-    let networkErrorInBox: Box<Error?>
-    let cellViewModels: Box<[CurrencyCellViewModel]>
-    let isIndicatorEnabled: Box<Bool>
+    let cellViewModels: Driver<[CurrencyCellViewModel]>
+    let isLoading: Driver<Bool>
+    let disposables: Disposable
     
     private static func createCellViewModels(for currencies: [String]) -> [CurrencyCellViewModel] {
         let cellViewModels = currencies.map {
@@ -25,13 +27,13 @@ extension SelectCurrencyViewModel: ViewModelType {
         let didSelectCurrency: (String) -> Void
     }
     
-    final class Bindings {
-        var didSelectCell: ((IndexPath) -> Void) = { _ in }
-        var searchText: ((String) -> Void) = { _ in }
+    struct Bindings {
+        let didSelectCurrency: Signal<CurrencyCellViewModel>
+        let searchText: Driver<String?>
     }
     
     struct Dependencies {
-        let networkService: NetworkManager
+        let networkService: CurrencyService
         let storageService: DataManagerType
     }
     
@@ -43,53 +45,69 @@ extension SelectCurrencyViewModel: ViewModelType {
         dependency: Dependencies,
         router: Routes
     ) -> Self {
-        let networkErrorInBox = Box<Error?>(nil)
-        var allViewModels = [CurrencyCellViewModel]()
-        let cellViewModels = Box<[CurrencyCellViewModel]>([])
-        let isIndicatorEnabled = Box(true)
         
-        //getting the list of currency cell view models
-        if let listOfCurrency = dependency.storageService.unloadCurrency() {
-            allViewModels = createCellViewModels(for: listOfCurrency)
-            cellViewModels.value = allViewModels
-            isIndicatorEnabled.value = false
-        } else {
-            dependency.networkService.fetchCurrencyList { result in
-                switch result {
-                case .success(let currencyList):
-                    let listOfCurrency = currencyList.data.map{ $0.key }.sorted()
-                    dependency.storageService.save(currency: listOfCurrency)
-                    allViewModels = createCellViewModels(for: listOfCurrency)
-                    cellViewModels.value = allViewModels
-                    isIndicatorEnabled.value = false
-                case .failure(let error):
-                    networkErrorInBox.value = error
+        let didReceiveError = PublishRelay<String>()
+        
+        let loadedCurrency = dependency.networkService
+            .fetchCurrencyList()
+            .map { currency -> [CurrencyCellViewModel] in
+                let currency = currency.data.map { $0.key }.sorted()
+                dependency.storageService.save(currency: currency )
+                return createCellViewModels(for: currency)
+            }
+        
+        let viewModels = dependency
+            .storageService
+            .getCurrency()
+            .catchAndReturn([])
+            .flatMap { listOfCurrency -> Single<[CurrencyCellViewModel]> in
+                if listOfCurrency.isEmpty {
+                    return loadedCurrency
+                } else {
+                    return .just(createCellViewModels(for: listOfCurrency))
                 }
             }
-        }
-        
-        binding.didSelectCell = {
-            input.didSelectCurrency(cellViewModels.value[$0.row].currency)
-            router.popViewController()
-        }
-        
-        binding.searchText = { text in
-            if text.isEmpty {
-                cellViewModels.value = allViewModels
-            } else {
-                cellViewModels.value = allViewModels
-                    .filter {
-                        $0.currency.lowercased()
-                            .contains(text.lowercased())
-                    }
+            .asDriver { error in
+                didReceiveError.accept(error.localizedDescription)
+                return .empty()
             }
-        }
+        
+        let showError = didReceiveError
+            .asSignal()
+            .emit(onNext: router.showAlert)
+
+        let isLoading = viewModels
+            .asDriver()
+            .map { $0.isEmpty }
+        
+        let transferSelectedCurrency = binding
+            .didSelectCurrency
+            .emit(onNext: {
+                input.didSelectCurrency($0.currency)
+                router.popViewController()
+            })
+        
+        let filteredViewModels = Driver
+            .combineLatest(
+                viewModels,
+                binding.searchText
+            ) { viewModels, searchText -> [CurrencyCellViewModel] in
+                guard let searchText = searchText, !searchText.isEmpty else {
+                    return viewModels
+                }
+                return viewModels.filter { $0.currency.lowercased().contains(searchText.lowercased())
+                }
+            }
+         
+        let disposables = CompositeDisposable(
+            showError,
+            transferSelectedCurrency
+        )
         
         return .init(
-            networkErrorInBox: networkErrorInBox,
-            cellViewModels: cellViewModels,
-            isIndicatorEnabled: isIndicatorEnabled
+            cellViewModels: filteredViewModels.asDriver(),
+            isLoading: isLoading,
+            disposables: disposables
         )
     }
 }
-

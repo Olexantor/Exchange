@@ -5,10 +5,12 @@
 //  Created by Александр Николаев on 21.03.2022.
 //
 
-struct ExchangeScreenBuilder: ScreenBuilder {
+struct ExchangeViewScreenBuilder: ScreenBuilder {
     typealias VC = ExchangeViewController
     
-    var dependencies: ExchangeViewController.ViewModel.Dependencies {
-        .init(networkService: NetworkManager.shared)
+    var dependencies: VC.ViewModel.Dependencies {
+        .init(
+            networkService: NetworkManager.shared
+        )
     }
 }

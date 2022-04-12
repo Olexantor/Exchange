@@ -12,8 +12,8 @@ struct SelectCurrencyScreenBuilder: ScreenBuilder {
     
     var dependencies: VC.ViewModel.Dependencies {
         .init(
-            networkService: NetworkManager.shared,
-            storageService: FakeDataManager.shared
+            networkService: CurrencyService(),
+            storageService: DataManager.shared
         )
     }
 }
