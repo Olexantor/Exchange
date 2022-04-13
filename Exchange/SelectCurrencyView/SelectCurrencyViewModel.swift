@@ -71,15 +71,17 @@ extension SelectCurrencyViewModel: ViewModelType {
                 return .empty()
             }
         
-        let showError = didReceiveError
+        let showErrorDisposable = didReceiveError
             .asSignal()
-            .emit(onNext: router.showAlert)
+            .emit { error in
+                router.showAlert(with: error)
+            }
 
         let isLoading = viewModels
             .asDriver()
             .map { $0.isEmpty }
         
-        let transferSelectedCurrency = binding
+        let transferSelectedCurrencyDisposable = binding
             .didSelectCurrency
             .emit(onNext: {
                 input.didSelectCurrency($0.currency)
@@ -99,8 +101,8 @@ extension SelectCurrencyViewModel: ViewModelType {
             }
          
         let disposables = CompositeDisposable(
-            showError,
-            transferSelectedCurrency
+            showErrorDisposable,
+            transferSelectedCurrencyDisposable
         )
         
         return .init(

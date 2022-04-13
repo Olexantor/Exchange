@@ -9,13 +9,7 @@ import RxSwift
 import SnapKit
 import UIKit
 
-enum TextFieldID {
-    case firstTF, secondTF
-}
-
 final class ExchangeViewController: UIViewController {
-//    let bindings = ViewModel.Bindings()
-//
     private let disposeBag = DisposeBag()
     
     private let scrollView: UIScrollView = {
@@ -40,12 +34,6 @@ final class ExchangeViewController: UIViewController {
     private let firstCurrencySelectionButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("select 1st currency", for: .normal)
-//        button.tag = 1
-//        button.addTarget(
-//            self,
-//            action: #selector(selectCurrency),
-//            for: .touchUpInside
-//        )
         return button
         
     }()
@@ -67,12 +55,6 @@ final class ExchangeViewController: UIViewController {
     private let secondCurrencySelectionButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("select 2nd currency", for: .normal)
-//        button.tag = 2
-//        button.addTarget(
-//            self,
-//            action: #selector(selectCurrency),
-//            for: .touchUpInside
-//        )
         return button
     }()
     
@@ -98,8 +80,6 @@ final class ExchangeViewController: UIViewController {
         setupConstraints()
         registerForKeyboardNotifications()
         hideKeyboardWhenTappedAround()
-        firstCurrencyTextField.delegate = self
-        secondCurrencyTextField.delegate =  self
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -180,23 +160,6 @@ final class ExchangeViewController: UIViewController {
             make.leading.equalTo(secondCurrencyTextField.snp.trailing)
             make.centerY.equalTo(secondCurrencyTextField)
         }
-    }
-    
-//    @objc private func selectCurrency(sender: UIButton) {
-//        let buttonNumber: ButtonNumberInOrder = sender.tag == 1 ? .first : .second
-//        bindings.didPressedSelectCurrenncyButton(buttonNumber)
-//    }
-    // MARK: - Alert
-    
-    private func showAlert() {
-        let alert = UIAlertController(
-            title: "Error!",
-            message: "Something wrong with network",
-            preferredStyle: .alert
-        )
-        let okAction = UIAlertAction(title: "OK", style: .default)
-        alert.addAction(okAction)
-        present(alert, animated: true)
     }
     //MARK: - Setup shifting content with NotificationCenter
     
@@ -300,7 +263,6 @@ extension ExchangeViewController: ViewType {
     }
     
     func bind(to viewModel: ExchangeViewModel) {
-        
         viewModel.firstCurrency
             .drive(onNext: { [weak self] currency in
                 self?.firstCurrencyLabel.text = currency
@@ -328,20 +290,6 @@ extension ExchangeViewController: ViewType {
         viewModel.disposables
             .disposed(by: disposeBag)
     }
-}
-//MARK: - UITextFieldDelegate
-
-extension ExchangeViewController: UITextFieldDelegate {
-//    func textFieldDidBeginEditing(_ textField: UITextField) {
-//        let textFieldID: TextFieldID = textField == firstCurrencyTextField ? .firstTF : .secondTF
-//        bindings.didTapOnTextField(textFieldID)
-//    }
-    
-//    func textFieldDidChangeSelection(_ textField: UITextField) {
-//        let textFieldID: TextFieldID = textField == firstCurrencyTextField ? .firstTF : .secondTF
-//        guard let value = textField.text else { return }
-//        bindings.textFieldDidChange(textFieldID, value)
-//    }
 }
 
 
