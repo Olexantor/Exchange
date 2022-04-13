@@ -59,15 +59,12 @@ extension ExchangeViewModel: ViewModelType {
                     .networkService
                     .fetchExchangeRate(for: currency)
             }
-            .map {
-                ratesForFirstCurrency.accept($0.rates)
-                print(ratesForFirstCurrency.value)
-            }
+            .map { $0.rates }
             .asDriver { error in
                 didReceiveError.accept(error.localizedDescription)
                 return .empty()
             }
-            .drive()
+            .drive(ratesForFirstCurrency)
         
         let secondButtonTapDisposable = binding.didTapSecondCurrencySelectionButton
             .emit { _ in
@@ -83,15 +80,12 @@ extension ExchangeViewModel: ViewModelType {
                     .networkService
                     .fetchExchangeRate(for: currency)
             }
-            .map {
-                ratesForSecondCurrency.accept($0.rates)
-                print(ratesForSecondCurrency.value)
-            }
+            .map { $0.rates }
             .asDriver { error in
                 didReceiveError.accept(error.localizedDescription)
                 return .empty()
             }
-            .drive()
+            .drive(ratesForSecondCurrency)
         
         let firstTextFieldDisposable = binding.textOfFirstCurrencyTextField
             .compactMap { $0 }
