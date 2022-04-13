@@ -73,9 +73,7 @@ extension SelectCurrencyViewModel: ViewModelType {
         
         let showErrorDisposable = didReceiveError
             .asSignal()
-            .emit { error in
-                router.showAlert(with: error)
-            }
+            .emit(onNext: router.showAlert)
 
         let isLoading = viewModels
             .asDriver()

@@ -264,27 +264,19 @@ extension ExchangeViewController: ViewType {
     
     func bind(to viewModel: ExchangeViewModel) {
         viewModel.firstCurrency
-            .drive(onNext: { [weak self] currency in
-                self?.firstCurrencyLabel.text = currency
-            })
+            .drive(firstCurrencyLabel.rx.text)
             .disposed(by: disposeBag)
         
         viewModel.secondCurrency
-            .drive(onNext: { [weak self] currency in
-                self?.secondCurrencyLabel.text = currency
-            })
+            .drive(secondCurrencyLabel.rx.text)
             .disposed(by: disposeBag)
         
         viewModel.firstCurrencyCalculatedValue
-            .drive(onNext: { [weak self] value in
-                self?.firstCurrencyTextField.text = value
-            })
+            .drive(firstCurrencyTextField.rx.text)
             .disposed(by: disposeBag)
         
         viewModel.secondCurrencyCalculatedValue
-            .drive(onNext: { [weak self] value in
-                self?.secondCurrencyTextField.text = value
-            })
+            .drive(secondCurrencyTextField.rx.text)
             .disposed(by: disposeBag)
         
         viewModel.disposables

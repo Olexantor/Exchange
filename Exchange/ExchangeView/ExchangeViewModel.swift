@@ -38,12 +38,12 @@ extension ExchangeViewModel: ViewModelType {
     ) -> Self {
         
         let didReceiveError = PublishRelay<String>()
-        let firstCurrency = BehaviorRelay<String>(value: "")
-        let secondCurrency = BehaviorRelay<String>(value: "")
-        let ratesForFirstCurrency = BehaviorRelay<Dictionary<String, Double>>(value: [:])
-        let ratesForSecondCurrency = BehaviorRelay<Dictionary<String, Double>>(value: [:])
-        let textOfFirstCurrencyTextField = BehaviorRelay<String>(value: "")
-        let textOfSecondCurrencyTextField =  BehaviorRelay<String>(value: "")
+        let firstCurrency = BehaviorRelay(value: "")
+        let secondCurrency = BehaviorRelay(value: "")
+        let ratesForFirstCurrency = BehaviorRelay(value: [String:Double]())
+        let ratesForSecondCurrency = BehaviorRelay(value: [String:Double]())
+        let textOfFirstCurrencyTextField = BehaviorRelay(value: "")
+        let textOfSecondCurrencyTextField =  BehaviorRelay(value: "")
         
         let firstButtonTapDisposable = binding.didTapFirstCurrencySelectionButton
             .emit { _ in
@@ -88,36 +88,40 @@ extension ExchangeViewModel: ViewModelType {
             .drive(ratesForSecondCurrency)
         
         let firstTextFieldDisposable = binding.textOfFirstCurrencyTextField
+            .skip(1)
             .compactMap { $0 }
-            .drive(onNext: {
-                guard !firstCurrency.value.isEmpty && !secondCurrency.value.isEmpty else { return }
-                guard let value = Double($0) else { return }
-                textOfSecondCurrencyTextField.accept(
-                    String(
-                        format: "%0.2f",
-                        (value * Double(ratesForFirstCurrency.value[secondCurrency.value] ?? 0.0))
-                    )
-                )
-            })
-        
+            .map {
+                guard !firstCurrency.value.isEmpty && !secondCurrency.value.isEmpty else { return Double() }
+                guard let value = Double($0) else { return Double() }
+                return value
+            }
+            .map {
+                String(
+                format: "%0.2f",
+                ($0 * Double(ratesForFirstCurrency.value[secondCurrency.value] ?? 0.0))
+            )
+            }
+            .drive(textOfSecondCurrencyTextField)
+
         let secondTextFieldDisposable = binding.textOfSecondCurrencyTextField
+            .skip(1)
             .compactMap { $0 }
-            .drive(onNext: {
-                guard !firstCurrency.value.isEmpty && !secondCurrency.value.isEmpty else { return }
-                guard let value = Double($0) else { return }
-                textOfFirstCurrencyTextField.accept(
-                    String(
-                        format: "%0.2f",
-                        (value * Double(ratesForSecondCurrency.value[firstCurrency.value] ?? 0.0))
-                    )
-                )
-            })
-        
+            .map {
+                guard !firstCurrency.value.isEmpty && !secondCurrency.value.isEmpty else { return Double() }
+                guard let value = Double($0) else { return Double() }
+                return value
+            }
+            .map {
+                String(
+                format: "%0.2f",
+                ($0 * Double(ratesForSecondCurrency.value[firstCurrency.value] ?? 0.0))
+            )
+            }
+            .drive(textOfFirstCurrencyTextField)
+                
         let showErrorDisposable = didReceiveError
             .asSignal()
-            .emit { error in
-                router.showAlert(with: error)
-            }
+            .emit(onNext: router.showAlert)
         
         let disposables = CompositeDisposable(
             firstButtonTapDisposable,
