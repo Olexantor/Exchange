@@ -66,9 +66,7 @@ extension ExchangeViewModel: ViewModelType {
             .drive(ratesForFirstCurrency)
         
         let secondButtonTapDisposable = binding.didTapSecondCurrencySelectionButton
-            .flatMap { _ in
-                router.showSelectCurrencyViewController()
-            }
+            .flatMap(router.showSelectCurrencyViewController)
             .emit(to: secondCurrency)
         
         let secondCurrencyRatesDisposable = secondCurrency
