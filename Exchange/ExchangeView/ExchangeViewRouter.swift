@@ -16,21 +16,6 @@ struct ExchangeViewRouter: RouterType {
         vc = transitionHandler
     }
     
-    func showSelectCurrencyViewController() -> Signal<String> {
-        Observable<String>.create { observer in
-            showSelectCurrencyView { currency in
-                observer.onNext(currency)
-            }
-            return Disposables.create()
-        }
-        .asSignal(onErrorJustReturn: "")
-    }
-    
-    func showSelectCurrencyView(with completion: @escaping (String) -> Void) {
-        let newVC = SelectCurrencyScreenBuilder().build(.init(didSelectCurrency: completion))
-        vc.navigationController?.pushViewController(newVC, animated: true)
-    }
-    
     func showAlert(with message: String) {
         let alert = UIAlertController(
             title: "Error!",
@@ -41,4 +26,20 @@ struct ExchangeViewRouter: RouterType {
         alert.addAction(okAction)
         vc.present(alert, animated: true)
     }
+    
+    func showSelectCurrencyViewController() -> Signal<String> {
+        Observable<String>.create { observer in
+            showSelectCurrencyView { currency in
+                observer.onNext(currency)
+            }
+            return Disposables.create()
+        }
+        .asSignal(onErrorJustReturn: "")
+    }
+    
+    private func showSelectCurrencyView(with completion: @escaping (String) -> Void) {
+        let newVC = SelectCurrencyScreenBuilder().build(.init(didSelectCurrency: completion))
+        vc.navigationController?.pushViewController(newVC, animated: true)
+    }
+    
 }
