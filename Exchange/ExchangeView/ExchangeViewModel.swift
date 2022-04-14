@@ -89,34 +89,38 @@ extension ExchangeViewModel: ViewModelType {
             .skip(1)
             .compactMap { $0 }
             .map {
-                guard !firstCurrency.value.isEmpty && !secondCurrency.value.isEmpty else { return Double() }
+                guard !firstCurrency.value.isEmpty && !secondCurrency.value.isEmpty else {
+                    return Double()
+                }
                 guard let value = Double($0) else { return Double() }
                 return value
             }
             .map {
                 String(
-                format: "%0.2f",
-                ($0 * Double(ratesForFirstCurrency.value[secondCurrency.value] ?? 0.0))
-            )
+                    format: "%0.2f",
+                    ($0 * Double(ratesForFirstCurrency.value[secondCurrency.value] ?? 0.0))
+                )
             }
             .drive(textOfSecondCurrencyTextField)
-
+        
         let secondTextFieldDisposable = binding.textOfSecondCurrencyTextField
             .skip(1)
             .compactMap { $0 }
             .map {
-                guard !firstCurrency.value.isEmpty && !secondCurrency.value.isEmpty else { return Double() }
+                guard !firstCurrency.value.isEmpty && !secondCurrency.value.isEmpty else {
+                    return Double()
+                }
                 guard let value = Double($0) else { return Double() }
                 return value
             }
             .map {
                 String(
-                format: "%0.2f",
-                ($0 * Double(ratesForSecondCurrency.value[firstCurrency.value] ?? 0.0))
-            )
+                    format: "%0.2f",
+                    ($0 * Double(ratesForSecondCurrency.value[firstCurrency.value] ?? 0.0))
+                )
             }
             .drive(textOfFirstCurrencyTextField)
-                
+        
         let showErrorDisposable = didReceiveError
             .asSignal()
             .emit(onNext: router.showAlert)

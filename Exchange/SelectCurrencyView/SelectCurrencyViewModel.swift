@@ -74,7 +74,7 @@ extension SelectCurrencyViewModel: ViewModelType {
         let showErrorDisposable = didReceiveError
             .asSignal()
             .emit(onNext: router.showAlert)
-
+        
         let isLoading = viewModels
             .asDriver()
             .map { $0.isEmpty }
@@ -95,10 +95,11 @@ extension SelectCurrencyViewModel: ViewModelType {
                 guard let searchText = searchText, !searchText.isEmpty else {
                     return viewModels
                 }
-                return viewModels.filter { $0.currency.lowercased().contains(searchText.lowercased())
+                return viewModels.filter {
+                    $0.currency.lowercased().contains(searchText.lowercased())
                 }
             }
-         
+        
         let disposables = CompositeDisposable(
             showErrorDisposable,
             transferSelectedCurrencyDisposable

@@ -11,7 +11,6 @@
 		1FD95A9327D791A000312424 /* ExchangeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FD95A9227D791A000312424 /* ExchangeViewController.swift */; };
 		1FD95A9827D791A400312424 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1FD95A9727D791A400312424 /* Assets.xcassets */; };
 		1FD95A9B27D791A400312424 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1FD95A9927D791A400312424 /* LaunchScreen.storyboard */; };
-		1FD95AA327D7964F00312424 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FD95AA227D7964F00312424 /* NetworkManager.swift */; };
 		1FD95AA627D796B300312424 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 1FD95AA527D796B300312424 /* Alamofire */; };
 		1FD95AA827D7980600312424 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FD95AA727D7980600312424 /* Constants.swift */; };
 		1FD95AAA27D7A2D600312424 /* CurrenciesList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FD95AA927D7A2D600312424 /* CurrenciesList.swift */; };
@@ -45,7 +44,6 @@
 		1FD95A9727D791A400312424 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1FD95A9A27D791A400312424 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		1FD95A9C27D791A400312424 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		1FD95AA227D7964F00312424 /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
 		1FD95AA727D7980600312424 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		1FD95AA927D7A2D600312424 /* CurrenciesList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrenciesList.swift; sourceTree = "<group>"; };
 		1FE3413927D8B96F00C4D870 /* SelectCurrencyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectCurrencyViewController.swift; sourceTree = "<group>"; };
@@ -157,7 +155,6 @@
 		1FFB371127DE475D00404EC7 /* Services */ = {
 			isa = PBXGroup;
 			children = (
-				1FD95AA227D7964F00312424 /* NetworkManager.swift */,
 				1FD95AA727D7980600312424 /* Constants.swift */,
 				CE8D095C27F5BC6A003BB3CE /* DataManager.swift */,
 				CE8D096027F5BCCC003BB3CE /* DataManagerType.swift */,
@@ -269,7 +266,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1FD95AA327D7964F00312424 /* NetworkManager.swift in Sources */,
 				CE8D095D27F5BC6A003BB3CE /* DataManager.swift in Sources */,
 				1FE3415127D8FEBA00C4D870 /* ExchangeRate.swift in Sources */,
 				CE2E217927E9D3180022DF44 /* SelectCurrencyScreenBuilder.swift in Sources */,

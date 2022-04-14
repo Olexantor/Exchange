@@ -121,7 +121,7 @@ extension SelectCurrencyViewController: ViewType {
         viewModel.cellViewModels
             .drive(cellViewModels)
             .disposed(by: disposeBag)
-
+        
         viewModel.isLoading
             .drive(activityIndicator.rx.isAnimating)
             .disposed(by: disposeBag)

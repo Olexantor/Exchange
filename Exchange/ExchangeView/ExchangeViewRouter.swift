@@ -29,17 +29,13 @@ struct ExchangeViewRouter: RouterType {
     
     func showSelectCurrencyViewController() -> Signal<String> {
         Observable<String>.create { observer in
-            showSelectCurrencyView { currency in
+            let newVC = SelectCurrencyScreenBuilder().build(.init(didSelectCurrency: { currency in
                 observer.onNext(currency)
-            }
+                observer.onCompleted()
+            }))
+            vc.navigationController?.pushViewController(newVC, animated: true)
             return Disposables.create()
         }
         .asSignal(onErrorJustReturn: "")
     }
-    
-    private func showSelectCurrencyView(with completion: @escaping (String) -> Void) {
-        let newVC = SelectCurrencyScreenBuilder().build(.init(didSelectCurrency: completion))
-        vc.navigationController?.pushViewController(newVC, animated: true)
-    }
-    
 }

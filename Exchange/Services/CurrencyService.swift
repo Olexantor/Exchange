@@ -6,7 +6,7 @@
 //
 
 enum RequestError: Error {
-    case incorrectRequesrt
+    case incorrectRequest
 }
 
 import Foundation
@@ -17,7 +17,7 @@ import UIKit
 struct CurrencyService {
     func fetchCurrencyList() -> Single<CurrenciesList> {
         guard let url = URL(string: Constants.currencyUrlString) else {
-            return .error(RequestError.incorrectRequesrt)
+            return .error(RequestError.incorrectRequest)
         }
         let request = URLRequest(url: url )
         
@@ -29,7 +29,7 @@ struct CurrencyService {
     
     func fetchExchangeRate(for base: String) -> Single<ExchangeRate> {
         guard let url = URL(string: Constants.convertUrlString+base) else {
-            return .error(RequestError.incorrectRequesrt)
+            return .error(RequestError.incorrectRequest)
         }
         let request = URLRequest(url: url )
         
