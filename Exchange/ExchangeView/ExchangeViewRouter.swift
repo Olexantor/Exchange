@@ -16,13 +16,14 @@ struct ExchangeViewRouter: RouterType {
         vc = transitionHandler
     }
     
-    func showSelectCurrencyViewController() -> Observable<String> {
+    func showSelectCurrencyViewController() -> Signal<String> {
         Observable<String>.create { observer in
             showSelectCurrencyView { currency in
                 observer.onNext(currency)
             }
             return Disposables.create()
         }
+        .asSignal(onErrorJustReturn: "")
     }
     
     func showSelectCurrencyView(with completion: @escaping (String) -> Void) {
