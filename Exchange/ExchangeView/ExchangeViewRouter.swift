@@ -6,12 +6,23 @@
 //
 
 import UIKit
+import RxSwift
+import RxCocoa
 
 struct ExchangeViewRouter: RouterType {
     let vc: UIViewController
     
     init(transitionHandler: UIViewController) {
         vc = transitionHandler
+    }
+    
+    func showSelectCurrencyViewController() -> Observable<String> {
+        Observable<String>.create { observer in
+            showSelectCurrencyView { currency in
+                observer.onNext(currency)
+            }
+            return Disposables.create()
+        }
     }
     
     func showSelectCurrencyView(with completion: @escaping (String) -> Void) {

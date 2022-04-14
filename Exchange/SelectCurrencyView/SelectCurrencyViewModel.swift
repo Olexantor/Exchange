@@ -81,8 +81,9 @@ extension SelectCurrencyViewModel: ViewModelType {
         
         let transferSelectedCurrencyDisposable = binding
             .didSelectCurrency
+            .map { $0.currency }
             .emit(onNext: {
-                input.didSelectCurrency($0.currency)
+                input.didSelectCurrency($0)
                 router.popViewController()
             })
         

@@ -46,11 +46,20 @@ extension ExchangeViewModel: ViewModelType {
         let textOfSecondCurrencyTextField =  BehaviorRelay(value: "")
         
         let firstButtonTapDisposable = binding.didTapFirstCurrencySelectionButton
-            .emit { _ in
-                router.showSelectCurrencyView {
-                    firstCurrency.accept($0)
-                }
+            .asObservable()
+            .flatMap { _ -> Observable<String> in
+                      router.showSelectCurrencyViewController()
             }
+            .subscribe { firstCurrency.accept($0) }
+        
+//            .map {
+//                router.showSelectCurrencyViewController()
+//            }
+//            .emit { _ in
+//                router.showSelectCurrencyView {
+//                    firstCurrency.accept($0)
+//                }
+//            }
         
         let firstCurrencyRatesDisposable = firstCurrency
             .skip(1)
