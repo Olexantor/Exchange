@@ -20,13 +20,11 @@ class DataManager: DataManagerType {
     
     func save(currency: [String]) {
         defaults.set(currency, forKey: Constants.keyForUserDef)
-
     }
     
     func getCurrency() -> Single<[String]> {
         return Single.create { [self] single in
             let disposable = Disposables.create()
-            
             let content = defaults.stringArray(forKey: Constants.keyForUserDef) ?? []
             single(.success(content))
             return disposable
@@ -39,7 +37,6 @@ class DataManager: DataManagerType {
 }
 
 class FakeDataManager: DataManagerType {
-    
     static let shared = FakeDataManager()
     private let defaults = UserDefaults.standard
     private init() {}

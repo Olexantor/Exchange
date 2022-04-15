@@ -4,20 +4,13 @@
 //
 //  Created by Александр on 08.03.2022.
 //
-
+import RxCocoa
+import RxSwift
 import SnapKit
 import UIKit
 
-enum ButtonNumberInOrder {
-    case first, second
-}
-
-enum TextFieldID {
-    case firstTF, secondTF
-}
-
 final class ExchangeViewController: UIViewController {
-    let bindings = ViewModel.Bindings()
+    private let disposeBag = DisposeBag()
     
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -40,13 +33,7 @@ final class ExchangeViewController: UIViewController {
     
     private let firstCurrencySelectionButton: UIButton = {
         let button = UIButton(type: .system)
-        button.tag = 1
         button.setTitle("select 1st currency", for: .normal)
-        button.addTarget(
-            self,
-            action: #selector(selectCurrency),
-            for: .touchUpInside
-        )
         return button
         
     }()
@@ -68,12 +55,6 @@ final class ExchangeViewController: UIViewController {
     private let secondCurrencySelectionButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("select 2nd currency", for: .normal)
-        button.tag = 2
-        button.addTarget(
-            self,
-            action: #selector(selectCurrency),
-            for: .touchUpInside
-        )
         return button
     }()
     
@@ -99,8 +80,6 @@ final class ExchangeViewController: UIViewController {
         setupConstraints()
         registerForKeyboardNotifications()
         hideKeyboardWhenTappedAround()
-        firstCurrencyTextField.delegate = self
-        secondCurrencyTextField.delegate =  self
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -181,23 +160,6 @@ final class ExchangeViewController: UIViewController {
             make.leading.equalTo(secondCurrencyTextField.snp.trailing)
             make.centerY.equalTo(secondCurrencyTextField)
         }
-    }
-    
-    @objc private func selectCurrency(sender: UIButton) {
-        let buttonNumber: ButtonNumberInOrder = sender.tag == 1 ? .first : .second
-        bindings.didPressedSelectCurrenncyButton(buttonNumber)
-    }
-    // MARK: - Alert
-    
-    private func showAlert() {
-        let alert = UIAlertController(
-            title: "Error!",
-            message: "Something wrong with network",
-            preferredStyle: .alert
-        )
-        let okAction = UIAlertAction(title: "OK", style: .default)
-        alert.addAction(okAction)
-        present(alert, animated: true)
     }
     //MARK: - Setup shifting content with NotificationCenter
     
@@ -291,42 +253,34 @@ final class ExchangeViewController: UIViewController {
 extension ExchangeViewController: ViewType {
     typealias ViewModel = ExchangeViewModel
     
-    func bind(to viewModel: ExchangeViewModel) {
-        
-        viewModel.firstCurrencyInBox.bind { [weak self] currency in
-            self?.firstCurrencyLabel.text = currency
-        }
-        
-        viewModel.secondCurrencyInBox.bind { [weak self] currency in
-            self?.secondCurrencyLabel.text = currency
-        }
-        
-        viewModel.firstCurrencyCalculatedValueInBox.bind { [weak self] currencyValue in
-            self?.firstCurrencyTextField.text = currencyValue
-        }
-        
-        viewModel.secondCurrencyCalculatedValueInBox.bind { [weak self] currencyValue in
-            self?.secondCurrencyTextField.text = currencyValue
-        }
-        
-        viewModel.networkErrorInBox.bind { [weak self] error in
-            guard error != nil else { return }
-            self?.showAlert()
-        }
-    }
-}
-//MARK: - UITextFieldDelegate
-
-extension ExchangeViewController: UITextFieldDelegate {
-    func textFieldDidBeginEditing(_ textField: UITextField) {
-        let textFieldID: TextFieldID = textField == firstCurrencyTextField ? .firstTF : .secondTF
-        bindings.didTapOnTextField(textFieldID)
+    var bindings: ViewModel.Bindings {
+        .init(
+            didTapFirstCurrencySelectionButton: firstCurrencySelectionButton.rx.tap.asSignal(),
+            didTapSecondCurrencySelectionButton: secondCurrencySelectionButton.rx.tap.asSignal(),
+            textOfFirstCurrencyTextField: firstCurrencyTextField.rx.text.asDriver(),
+            textOfSecondCurrencyTextField: secondCurrencyTextField.rx.text.asDriver()
+        )
     }
     
-    func textFieldDidChangeSelection(_ textField: UITextField) {
-        let textFieldID: TextFieldID = textField == firstCurrencyTextField ? .firstTF : .secondTF
-        guard let value = textField.text else { return }
-        bindings.textFieldDidChange(textFieldID, value)
+    func bind(to viewModel: ExchangeViewModel) {
+        viewModel.firstCurrency
+            .drive(firstCurrencyLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        viewModel.secondCurrency
+            .drive(secondCurrencyLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        viewModel.firstCurrencyCalculatedValue
+            .drive(firstCurrencyTextField.rx.text)
+            .disposed(by: disposeBag)
+        
+        viewModel.secondCurrencyCalculatedValue
+            .drive(secondCurrencyTextField.rx.text)
+            .disposed(by: disposeBag)
+        
+        viewModel.disposables
+            .disposed(by: disposeBag)
     }
 }
 

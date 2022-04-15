@@ -5,48 +5,27 @@
 //  Created by Александр on 09.03.2022.
 //
 
-struct ExchangeViewModel {
-    let firstCurrencyInBox: Box<String>
-    let secondCurrencyInBox: Box<String>
-    let firstCurrencyCalculatedValueInBox: Box<String>
-    let secondCurrencyCalculatedValueInBox: Box<String>
-    let networkErrorInBox: Box<Error?>
-}
+import RxCocoa
+import RxSwift
 
-private extension ExchangeViewModel {
-    private static var ratesForFirstCurrency = [String: Double]()
-    private static var ratesForSecondCurrency = [String: Double]()
-    
-    private static func getRates(
-        for currency: String,
-        by buttonNumber: ButtonNumberInOrder,
-        with dependency: Dependencies,
-        and errorPlace: Box<Error?>
-    ) {
-        dependency.networkService.fetchExchangeRate(for: currency) { result in
-            switch result {
-            case .success(let currency):
-                if buttonNumber == .first {
-                    ratesForFirstCurrency = currency.rates
-                } else {
-                    ratesForSecondCurrency = currency.rates
-                }
-            case .failure(let error):
-                errorPlace.value = error
-            }
-        }
-    }
+struct ExchangeViewModel {
+    let firstCurrency: Driver<String>
+    let secondCurrency: Driver<String>
+    let firstCurrencyCalculatedValue: Driver<String>
+    let secondCurrencyCalculatedValue: Driver<String>
+    let disposables: Disposable
 }
 
 extension ExchangeViewModel: ViewModelType {
-    final class Bindings {
-        var didPressedSelectCurrenncyButton: (ButtonNumberInOrder) -> Void = { _ in}
-        var didTapOnTextField: (TextFieldID) -> Void = { _ in }
-        var textFieldDidChange: (TextFieldID, String) -> Void = { _,_  in }
+    struct Bindings {
+        let didTapFirstCurrencySelectionButton: Signal<Void>
+        let didTapSecondCurrencySelectionButton: Signal<Void>
+        let textOfFirstCurrencyTextField: Driver<String?>
+        let textOfSecondCurrencyTextField: Driver<String?>
     }
     
     struct Dependencies {
-        let networkService: NetworkManager
+        let networkService: CurrencyService
     }
     
     typealias Routes = ExchangeViewRouter
@@ -58,59 +37,86 @@ extension ExchangeViewModel: ViewModelType {
         router: Routes
     ) -> Self {
         
-        let firstCurrencyNameInBox = Box<String>("")
-        let secondCurrencyNameInBox = Box<String>("")
-        let firstCurrencyCalculatedValue = Box<String>("")
-        let secondCurrencyCalculatedValue =  Box<String>("")
-        let networkError = Box<Error?>(nil)
-    
-        binding.didPressedSelectCurrenncyButton = { buttonNumber in
-            switch buttonNumber {
-            case .first:
-                router.showSelectCurrencyView {
-                    firstCurrencyNameInBox.value = $0
-//                    getRates(for: $0, by: buttonNumber, with: dependency, and: networkError)
-                }
-            case .second:
-                router.showSelectCurrencyView {
-                    secondCurrencyNameInBox.value = $0
-//                    getRates(for: $0, by: buttonNumber, with: dependency, and: networkError)
-                }
+        let didReceiveError = PublishRelay<String>()
+        
+        let firstСhosenСurrency = binding.didTapFirstCurrencySelectionButton
+            .flatMap(router.showSelectCurrencyViewController)
+            .asDriver(onErrorJustReturn: "")
+        
+        let firstCurrencyRates = firstСhosenСurrency
+            .asObservable()
+            .flatMapLatest { currency -> Single<ExchangeRate> in
+                dependency
+                    .networkService
+                    .fetchExchangeRate(for: currency)
             }
+            .map { $0.rates }
+            .asDriver { error in
+                didReceiveError.accept(error.localizedDescription)
+                return .empty()
+            }
+        
+        let secondChosenCurrency = binding.didTapSecondCurrencySelectionButton
+            .flatMap(router.showSelectCurrencyViewController)
+            .asDriver(onErrorJustReturn: "")
+        
+        let secondCurrencyRates = secondChosenCurrency
+            .asObservable()
+            .flatMapLatest { currency -> Single<ExchangeRate> in
+                dependency
+                    .networkService
+                    .fetchExchangeRate(for: currency)
+            }
+            .map { $0.rates }
+            .asDriver { error in
+                didReceiveError.accept(error.localizedDescription)
+                return .empty()
+            }
+        
+        let firstCurrencyCalculatedValue = Driver.combineLatest(
+            firstСhosenСurrency,
+            binding.textOfSecondCurrencyTextField,
+            firstCurrencyRates,
+            secondCurrencyRates
+        ) {
+            firstCurrency, text, ratesOfFirstCurrency, ratesOfSecondCurrency -> String in
+            guard !ratesOfFirstCurrency.isEmpty && !ratesOfSecondCurrency.isEmpty else {
+                return String()
+            }
+            guard let text = text, let number = Double(text) else { return String() }
+            return String(
+                format: "%0.2f",
+                (number * Double(ratesOfSecondCurrency[firstCurrency] ?? 0.0))
+            )
         }
         
-        binding.didTapOnTextField = {
-            switch $0 {
-            case .firstTF:
-                secondCurrencyCalculatedValue.value = ""
-            case .secondTF:
-                firstCurrencyCalculatedValue.value = ""
+        let secondCurrencyCalculatedValue = Driver.combineLatest(
+            secondChosenCurrency,
+            binding.textOfFirstCurrencyTextField,
+            firstCurrencyRates,
+            secondCurrencyRates
+        ) {
+            secondCurrency, text, ratesOfFirstCurrency, ratesOfSecondCurrency -> String in
+            guard !ratesOfFirstCurrency.isEmpty && !ratesOfSecondCurrency.isEmpty else {
+                return String()
             }
+            guard let text = text, let number = Double(text) else { return String() }
+            return String(
+                format: "%0.2f",
+                (number * Double(ratesOfFirstCurrency[secondCurrency] ?? 0.0))
+            )
         }
         
-        binding.textFieldDidChange = {
-            guard !firstCurrencyNameInBox.value.isEmpty && !secondCurrencyNameInBox.value.isEmpty else { return }
-            guard let value = Double($1) else { return }
-            switch $0 {
-            case .firstTF:
-                secondCurrencyCalculatedValue.value = String(
-                    format: "%0.2f",
-                    (value * Double(ratesForFirstCurrency[secondCurrencyNameInBox.value] ?? 0.0))
-                )
-            case .secondTF:
-                firstCurrencyCalculatedValue.value = String(
-                    format: "%0.2f",
-                    (value * Double(ratesForSecondCurrency[firstCurrencyNameInBox.value] ?? 0.0))
-                )
-            }
-        }
+        let showErrorDisposable = didReceiveError
+            .asSignal()
+            .emit(onNext: router.showAlert)
         
         return .init(
-            firstCurrencyInBox: firstCurrencyNameInBox,
-            secondCurrencyInBox: secondCurrencyNameInBox,
-            firstCurrencyCalculatedValueInBox: firstCurrencyCalculatedValue,
-            secondCurrencyCalculatedValueInBox: secondCurrencyCalculatedValue,
-            networkErrorInBox: networkError
+            firstCurrency: firstСhosenСurrency,
+            secondCurrency: secondChosenCurrency,
+            firstCurrencyCalculatedValue: firstCurrencyCalculatedValue,
+            secondCurrencyCalculatedValue: secondCurrencyCalculatedValue,
+            disposables: showErrorDisposable
         )
     }
 }

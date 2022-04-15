@@ -11,5 +11,3 @@ struct Constants {
     static let keyForUserDef = "currencies"
     private static let apiKey = "cANJqXY4NHuLFItDZzDVsiGGgJPTKN3bZYi1VzP2"
 }
-
-

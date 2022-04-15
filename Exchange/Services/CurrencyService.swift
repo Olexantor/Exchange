@@ -5,6 +5,10 @@
 //  Created by Александр Николаев on 08.04.2022.
 //
 
+enum RequestError: Error {
+    case incorrectRequest
+}
+
 import Foundation
 import RxSwift
 import RxCocoa
@@ -12,7 +16,9 @@ import UIKit
 
 struct CurrencyService {
     func fetchCurrencyList() -> Single<CurrenciesList> {
-        let url = URL(string: Constants.currencyUrlString)!
+        guard let url = URL(string: Constants.currencyUrlString) else {
+            return .error(RequestError.incorrectRequest)
+        }
         let request = URLRequest(url: url )
         
         return URLSession.shared.rx
@@ -21,8 +27,10 @@ struct CurrencyService {
             .asSingle()
     }
     
-    func fetchExchangeRate() -> Single<ExchangeRate> {
-        let url = URL(string: Constants.convertUrlString)!
+    func fetchExchangeRate(for base: String) -> Single<ExchangeRate> {
+        guard let url = URL(string: Constants.convertUrlString+base) else {
+            return .error(RequestError.incorrectRequest)
+        }
         let request = URLRequest(url: url )
         
         return URLSession.shared.rx

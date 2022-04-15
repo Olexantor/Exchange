@@ -10,7 +10,7 @@ struct ExchangeViewScreenBuilder: ScreenBuilder {
     
     var dependencies: VC.ViewModel.Dependencies {
         .init(
-            networkService: NetworkManager.shared
+            networkService: CurrencyService()
         )
     }
 }

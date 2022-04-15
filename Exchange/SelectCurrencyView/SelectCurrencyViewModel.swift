@@ -5,7 +5,6 @@
 //  Created by Александр on 09.03.2022.
 //
 
-import Foundation
 import RxCocoa
 import RxSwift
 
@@ -24,7 +23,7 @@ struct SelectCurrencyViewModel {
 
 extension SelectCurrencyViewModel: ViewModelType {
     struct Inputs {
-        let didSelectCurrency: (String) -> Void
+        let didSelectCurrency: (String) -> (Void)
     }
     
     struct Bindings {
@@ -72,18 +71,19 @@ extension SelectCurrencyViewModel: ViewModelType {
                 return .empty()
             }
         
-        let showError = didReceiveError
+        let showErrorDisposable = didReceiveError
             .asSignal()
             .emit(onNext: router.showAlert)
-
+        
         let isLoading = viewModels
             .asDriver()
             .map { $0.isEmpty }
         
-        let transferSelectedCurrency = binding
+        let transferSelectedCurrencyDisposable = binding
             .didSelectCurrency
+            .map { $0.currency }
             .emit(onNext: {
-                input.didSelectCurrency($0.currency)
+                input.didSelectCurrency($0)
                 router.popViewController()
             })
         
@@ -95,13 +95,14 @@ extension SelectCurrencyViewModel: ViewModelType {
                 guard let searchText = searchText, !searchText.isEmpty else {
                     return viewModels
                 }
-                return viewModels.filter { $0.currency.lowercased().contains(searchText.lowercased())
+                return viewModels.filter {
+                    $0.currency.lowercased().contains(searchText.lowercased())
                 }
             }
-         
+        
         let disposables = CompositeDisposable(
-            showError,
-            transferSelectedCurrency
+            showErrorDisposable,
+            transferSelectedCurrencyDisposable
         )
         
         return .init(
