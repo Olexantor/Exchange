@@ -39,11 +39,11 @@ extension ExchangeViewModel: ViewModelType {
         
         let didReceiveError = PublishRelay<String>()
         
-        let firstButtonTap = binding.didTapFirstCurrencySelectionButton
+        let firstСhosenСurrency = binding.didTapFirstCurrencySelectionButton
             .flatMap(router.showSelectCurrencyViewController)
             .asDriver(onErrorJustReturn: "")
         
-        let firstCurrencyRates = firstButtonTap
+        let firstCurrencyRates = firstСhosenСurrency
             .asObservable()
             .flatMapLatest { currency -> Single<ExchangeRate> in
                 dependency
@@ -56,11 +56,11 @@ extension ExchangeViewModel: ViewModelType {
                 return .empty()
             }
         
-        let secondButtonTap = binding.didTapSecondCurrencySelectionButton
+        let secondChosenCurrency = binding.didTapSecondCurrencySelectionButton
             .flatMap(router.showSelectCurrencyViewController)
             .asDriver(onErrorJustReturn: "")
         
-        let secondCurrencyRates = secondButtonTap
+        let secondCurrencyRates = secondChosenCurrency
             .asObservable()
             .flatMapLatest { currency -> Single<ExchangeRate> in
                 dependency
@@ -74,7 +74,7 @@ extension ExchangeViewModel: ViewModelType {
             }
         
         let firstCurrencyCalculatedValue = Driver.combineLatest(
-            firstButtonTap,
+            firstСhosenСurrency,
             binding.textOfSecondCurrencyTextField,
             firstCurrencyRates,
             secondCurrencyRates
@@ -91,7 +91,7 @@ extension ExchangeViewModel: ViewModelType {
         }
         
         let secondCurrencyCalculatedValue = Driver.combineLatest(
-            secondButtonTap,
+            secondChosenCurrency,
             binding.textOfFirstCurrencyTextField,
             firstCurrencyRates,
             secondCurrencyRates
@@ -112,8 +112,8 @@ extension ExchangeViewModel: ViewModelType {
             .emit(onNext: router.showAlert)
         
         return .init(
-            firstCurrency: firstButtonTap,
-            secondCurrency: secondButtonTap,
+            firstCurrency: firstСhosenСurrency,
+            secondCurrency: secondChosenCurrency,
             firstCurrencyCalculatedValue: firstCurrencyCalculatedValue,
             secondCurrencyCalculatedValue: secondCurrencyCalculatedValue,
             disposables: showErrorDisposable
