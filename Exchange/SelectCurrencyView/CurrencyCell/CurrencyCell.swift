@@ -20,13 +20,8 @@ final class CurrencyCell: UITableViewCell {
     
     private lazy var ui = createUI()
     
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
+    override func layoutSubviews() {
         layoutUI()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }
 
@@ -47,6 +42,6 @@ private extension CurrencyCell {
     }
     
     func layoutUI() {
-        ui.currencyLabel.pin.all().vertically(8)
+        ui.currencyLabel.pin.horizontally().vertically(8)
     }
 }
