@@ -13,76 +13,6 @@ final class ExchangeViewController: UIViewController {
     private lazy var ui = createUI()
     private let disposeBag = DisposeBag()
     
-//    private let scrollView: UIScrollView = {
-//        let scrollView = UIScrollView()
-//        return scrollView
-//    }()
-//    private let contentView: UIView = {
-//        let view = UIView()
-//        return view
-//    }()
-//
-//    private var scrollOffset : CGFloat = 0
-//    private var distance : CGFloat = 0
-//
-//    private let exchangeImageView: UIImageView = {
-//        let imageView = UIImageView()
-//        imageView.image = UIImage(named: "circleArrows")
-//        imageView.sizeToFit()
-//        return imageView
-//    }()
-//
-//    private let firstCurrencySelectionButton: UIButton = {
-//        let button = UIButton(type: .system)
-//        button.setTitle("select 1st currency", for: .normal)
-//        return button
-//
-//    }()
-//
-//    private let firstCurrencyTextField: UITextField = {
-//        let field = UITextField()
-//        field.placeholder = "0.0"
-//        field.textAlignment  = .center
-//        field.keyboardType = .decimalPad
-//        return field
-//    }()
-//
-//    private var firstCurrencyLabel: UILabel = {
-//        let label  = UILabel()
-//        label.text = ""
-//        return label
-//    }()
-//
-//    private let secondCurrencySelectionButton: UIButton = {
-//        let button = UIButton(type: .system)
-//        button.setTitle("select 2nd currency", for: .normal)
-//        return button
-//    }()
-//
-//    private let secondCurrencyTextField: UITextField = {
-//        let field = UITextField()
-//        field.placeholder = "0.0"
-//        field.textAlignment  = .center
-//        field.keyboardType = .decimalPad
-//        return field
-//    }()
-//
-//    private var secondCurrencyLabel: UILabel = {
-//        let label  = UILabel()
-//        label.text = ""
-//        return label
-//    }()
-    
-//    override func viewDidLoad() {
-//        super.viewDidLoad()
-//        view.backgroundColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
-//        title = "EXCHANGE"
-//        addingSubviews()
-//        setupConstraints()
-//        registerForKeyboardNotifications()
-//        hideKeyboardWhenTappedAround()
-//    }
-    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         layoutUI()
@@ -90,85 +20,9 @@ final class ExchangeViewController: UIViewController {
         hideKeyboardWhenTappedAround()
     }
     
-//    override func viewWillAppear(_ animated: Bool) {
-//        super.viewWillAppear(animated)
-//        navigationController?.navigationBar.barTintColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
-//    }
-    
     deinit {
         removeKeyboardNotifications()
     }
-    
-//    private func addingSubviews() {
-//        view.addSubview(scrollView)
-//        scrollView.addSubview(contentView)
-//        contentView.addSubview(exchangeImageView)
-//        contentView.addSubview(firstCurrencySelectionButton)
-//        contentView.addSubview(firstCurrencyTextField)
-//        contentView.addSubview(firstCurrencyLabel)
-//        contentView.addSubview(secondCurrencySelectionButton)
-//        contentView.addSubview(secondCurrencyTextField)
-//        contentView.addSubview(secondCurrencyLabel)
-//    }
-    
-//    private func setupConstraints() {
-//        scrollView.snp.makeConstraints { make in
-//            make.edges.equalToSuperview()
-//        }
-//
-//        contentView.snp.makeConstraints { make in
-//            make.width.top.bottom.equalToSuperview()
-//        }
-//
-//        exchangeImageView.snp.makeConstraints { make in
-//            make.size.equalTo(100)
-//            make.centerX.equalToSuperview()
-//            make.top.equalToSuperview().offset(50)
-//        }
-//
-//        firstCurrencySelectionButton.snp.makeConstraints { make in
-//            make.width.equalTo(170)
-//            make.height.equalTo(32)
-//            make.centerX.equalToSuperview()
-//            make.top.equalTo(exchangeImageView.snp.bottom).offset(16)
-//        }
-//
-//        firstCurrencyTextField.snp.makeConstraints { make in
-//            make.width.equalTo(170)
-//            make.height.equalTo(34)
-//            make.centerX.equalToSuperview()
-//            make.top.equalTo(firstCurrencySelectionButton.snp.bottom).offset(24)
-//        }
-//
-//        firstCurrencyLabel.snp.makeConstraints { make in
-//            make.width.equalTo(40)
-//            make.height.equalTo(32)
-//            make.centerY.equalTo(firstCurrencyTextField)
-//            make.leading.equalTo(firstCurrencyTextField.snp.trailing)
-//        }
-//
-//        secondCurrencySelectionButton.snp.makeConstraints { make in
-//            make.centerX.equalToSuperview()
-//            make.height.equalTo(firstCurrencySelectionButton)
-//            make.width.equalTo(firstCurrencySelectionButton)
-//            make.top.equalTo(firstCurrencyTextField).offset(48)
-//        }
-//
-//        secondCurrencyTextField.snp.makeConstraints { make in
-//            make.width.equalTo(firstCurrencyTextField.snp.width)
-//            make.height.equalTo(firstCurrencyTextField.snp.height)
-//            make.centerX.equalToSuperview()
-//            make.top.equalTo(secondCurrencySelectionButton.snp.bottom).offset(24)
-//            make.bottom.equalToSuperview().offset(-180)
-//        }
-//
-//        secondCurrencyLabel.snp.makeConstraints { make in
-//            make.width.equalTo(firstCurrencyLabel.snp.width)
-//            make.height.equalTo(firstCurrencyLabel.snp.height)
-//            make.leading.equalTo(secondCurrencyTextField.snp.trailing)
-//            make.centerY.equalTo(secondCurrencyTextField)
-//        }
-//    }
     //MARK: - Setup shifting content with NotificationCenter
     
     private func registerForKeyboardNotifications() {
@@ -372,26 +226,27 @@ private extension ExchangeViewController {
     func layoutUI() {
         ui.scrollView.pin.all()
         
-        ui.contentView.pin.width(of: ui.scrollView).horizontally()
+        ui.contentView.pin.width(of: ui.scrollView).vertically()
         
         ui.exchangeImageView.pin.size(100).hCenter().top(50)
         
         ui.firstCurrencySelectionButton.pin.width(170).height(32).hCenter()
-            .top(to: ui.contentView.edge.bottom).marginTop(16)
-        
+            .top(to: ui.exchangeImageView.edge.bottom).marginTop(16)
+
         ui.firstCurrencyTextField.pin.width(of: ui.firstCurrencySelectionButton).height(34)
             .hCenter().top(to: ui.firstCurrencySelectionButton.edge.bottom).marginTop(24)
-        
-        ui.firstCurrencyLabel.pin.width(40).height(32).vCenter(to: ui.firstCurrencyTextField.edge.vCenter)
+
+        ui.firstCurrencyLabel.pin.width(40).height(32)
+            .vCenter(to: ui.firstCurrencyTextField.edge.vCenter)
             .left(to: ui.firstCurrencyTextField.edge.right)
-        
+
         ui.secondCurrencySelectionButton.pin.hCenter().height(of: ui.firstCurrencySelectionButton)
             .width(of: ui.firstCurrencySelectionButton)
             .top(to: ui.firstCurrencyTextField.edge.bottom).marginTop(48)
-        
+
         ui.secondCurrencyTextField.pin.size(of: ui.firstCurrencyTextField).hCenter()
             .top(to: ui.secondCurrencySelectionButton.edge.bottom).marginTop(24).bottom(-180)
-        
+
         ui.secondCurrencyLabel.pin.size(of: ui.firstCurrencyLabel)
             .vCenter(to: ui.secondCurrencyTextField.edge.vCenter)
             .left(to: ui.secondCurrencyTextField.edge.right)
