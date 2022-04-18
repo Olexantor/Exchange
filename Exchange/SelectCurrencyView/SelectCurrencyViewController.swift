@@ -124,7 +124,11 @@ private extension SelectCurrencyViewController {
         navigationItem.hidesSearchBarWhenScrolling = false
         definesPresentationContext = true
         
-        return .init(tableView: tableView, activityIndicator: indicator, searchController: searchController)
+        return .init(
+            tableView: tableView,
+            activityIndicator: indicator,
+            searchController: searchController
+        )
     }
     
     func layoutUI() {

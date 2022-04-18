@@ -13,11 +13,15 @@ final class ExchangeViewController: UIViewController {
     private lazy var ui = createUI()
     private let disposeBag = DisposeBag()
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        registerForKeyboardNotifications()
+        hideKeyboardWhenTappedAround()
+    }
+    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         layoutUI()
-        registerForKeyboardNotifications()
-        hideKeyboardWhenTappedAround()
     }
     
     deinit {
@@ -226,28 +230,44 @@ private extension ExchangeViewController {
     func layoutUI() {
         ui.scrollView.pin.all()
         
-        ui.contentView.pin.width(of: ui.scrollView).vertically()
+        ui.contentView.pin
+            .width(of: ui.scrollView)
+            .vertically()
         
-        ui.exchangeImageView.pin.size(100).hCenter().top(50)
+        ui.exchangeImageView.pin
+            .size(100)
+            .hCenter()
+            .top(50)
         
-        ui.firstCurrencySelectionButton.pin.width(170).height(32).hCenter()
+        ui.firstCurrencySelectionButton.pin
+            .width(170)
+            .height(32)
+            .hCenter()
             .top(to: ui.exchangeImageView.edge.bottom).marginTop(16)
 
-        ui.firstCurrencyTextField.pin.width(of: ui.firstCurrencySelectionButton).height(34)
+        ui.firstCurrencyTextField.pin
+            .width(of: ui.firstCurrencySelectionButton)
+            .height(34)
             .hCenter().top(to: ui.firstCurrencySelectionButton.edge.bottom).marginTop(24)
 
-        ui.firstCurrencyLabel.pin.width(40).height(32)
+        ui.firstCurrencyLabel.pin
+            .width(40)
+            .height(32)
             .vCenter(to: ui.firstCurrencyTextField.edge.vCenter)
             .left(to: ui.firstCurrencyTextField.edge.right)
 
-        ui.secondCurrencySelectionButton.pin.hCenter().height(of: ui.firstCurrencySelectionButton)
-            .width(of: ui.firstCurrencySelectionButton)
+        ui.secondCurrencySelectionButton.pin
+            .hCenter()
+            .size(of: ui.firstCurrencySelectionButton)
             .top(to: ui.firstCurrencyTextField.edge.bottom).marginTop(48)
 
-        ui.secondCurrencyTextField.pin.size(of: ui.firstCurrencyTextField).hCenter()
+        ui.secondCurrencyTextField.pin
+            .hCenter()
+            .size(of: ui.firstCurrencyTextField)
             .top(to: ui.secondCurrencySelectionButton.edge.bottom).marginTop(24).bottom(-180)
 
-        ui.secondCurrencyLabel.pin.size(of: ui.firstCurrencyLabel)
+        ui.secondCurrencyLabel.pin
+            .size(of: ui.firstCurrencyLabel)
             .vCenter(to: ui.secondCurrencyTextField.edge.vCenter)
             .left(to: ui.secondCurrencyTextField.edge.right)
     }

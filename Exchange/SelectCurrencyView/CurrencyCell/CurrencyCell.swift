@@ -21,6 +21,7 @@ final class CurrencyCell: UITableViewCell {
     private lazy var ui = createUI()
     
     override func layoutSubviews() {
+        super.layoutSubviews()
         layoutUI()
     }
 }
