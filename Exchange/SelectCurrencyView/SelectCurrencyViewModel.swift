@@ -76,6 +76,7 @@ extension SelectCurrencyViewModel: ViewModelType {
             .emit(onNext: router.showAlert)
         
         let isLoading = viewModels
+            .startWith([])
             .asDriver()
             .map { $0.isEmpty }
         
