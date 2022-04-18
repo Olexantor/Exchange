@@ -78,6 +78,7 @@ extension SelectCurrencyViewModel: ViewModelType {
         let isLoading = viewModels
             .asDriver()
             .map { $0.isEmpty }
+            .startWith(true)
         
         let transferSelectedCurrencyDisposable = binding
             .didSelectCurrency

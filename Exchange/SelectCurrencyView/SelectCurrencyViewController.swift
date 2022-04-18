@@ -10,58 +10,17 @@ import SnapKit
 import UIKit
 
 final class SelectCurrencyViewController: UIViewController {
-    private let searchController = UISearchController(searchResultsController: nil)
-    
     private let cellViewModels = BehaviorRelay<[CurrencyCellViewModel]>(value: [])
     
     private let didSelectCurrency = PublishRelay<CurrencyCellViewModel>()
     
     private let disposeBag = DisposeBag()
     
-    private lazy var tableView: UITableView = {
-        let tableView = UITableView()
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.register(
-            CurrencyCell.self,
-            forCellReuseIdentifier: CurrencyCell.identifier
-        )
-        tableView.backgroundColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
-        view.addSubview(tableView)
-        return tableView
-    }()
-    
-    private lazy var activityIndicator: UIActivityIndicatorView = {
-        let indicator = UIActivityIndicatorView()
-        indicator.style = .gray
-        view.addSubview(indicator)
-        return indicator
-    }()
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        title = "CURRENCIES"
-        setupSearchController()
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        navigationController?.navigationBar.barTintColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
-    }
-    
+    private lazy var ui = createUI()
+        
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        tableView.frame = view.frame
-        activityIndicator.center = view.center
-    }
-    
-    private func setupSearchController() {
-        searchController.obscuresBackgroundDuringPresentation = false
-        searchController.searchBar.backgroundColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
-        searchController.searchBar.placeholder = "Search"
-        self.navigationItem.searchController = searchController
-        navigationItem.hidesSearchBarWhenScrolling = false
-        definesPresentationContext = true
+        layoutUI()
     }
 }
 //MARK: - UITableViewDataSource methods
@@ -107,14 +66,14 @@ extension SelectCurrencyViewController: ViewType {
     var bindings: ViewModel.Bindings {
         .init(
             didSelectCurrency: didSelectCurrency.asSignal(),
-            searchText: searchController.searchBar.rx.text.asDriver()
+            searchText: ui.searchController.searchBar.rx.text.asDriver()
         )
     }
     
     func bind(to viewModel: ViewModel) {
         cellViewModels.asDriver()
             .drive(onNext: { [weak self] _ in
-                self?.tableView.reloadData()
+                self?.ui.tableView.reloadData()
             })
             .disposed(by: disposeBag)
         
@@ -123,10 +82,58 @@ extension SelectCurrencyViewController: ViewType {
             .disposed(by: disposeBag)
         
         viewModel.isLoading
-            .drive(activityIndicator.rx.isAnimating)
+            .drive(ui.activityIndicator.rx.isAnimating)
             .disposed(by: disposeBag)
         
         viewModel.disposables
             .disposed(by: disposeBag)
     }
 }
+//MARK: - Setup UI
+
+private extension SelectCurrencyViewController {
+    struct UI {
+        let tableView: UITableView
+        let activityIndicator: UIActivityIndicatorView
+        let searchController: UISearchController
+    }
+    
+    func createUI() -> UI {
+        title = "CURRENCIES"
+        navigationController?.navigationBar.barTintColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
+        
+        let tableView = UITableView()
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.register(
+            CurrencyCell.self,
+            forCellReuseIdentifier: CurrencyCell.identifier
+        )
+        tableView.backgroundColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
+        view.addSubview(tableView)
+        
+        let indicator =  UIActivityIndicatorView()
+        indicator.style = .gray
+        view.addSubview(indicator)
+        
+        let searchController = UISearchController(searchResultsController: nil)
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.searchBar.backgroundColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
+        searchController.searchBar.placeholder = "Search"
+        self.navigationItem.searchController = searchController
+        navigationItem.hidesSearchBarWhenScrolling = false
+        definesPresentationContext = true
+        
+        return .init(
+            tableView: tableView,
+            activityIndicator: indicator,
+            searchController: searchController
+        )
+    }
+    
+    func layoutUI() {
+        ui.tableView.pin.all()
+        ui.activityIndicator.pin.center()
+    }
+}
+
