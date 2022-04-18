@@ -17,13 +17,7 @@ final class SelectCurrencyViewController: UIViewController {
     private let disposeBag = DisposeBag()
     
     private lazy var ui = createUI()
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        title = "CURRENCIES"
-        navigationController?.navigationBar.barTintColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
-    }
-    
+        
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         layoutUI()
@@ -95,6 +89,7 @@ extension SelectCurrencyViewController: ViewType {
             .disposed(by: disposeBag)
     }
 }
+//MARK: - Setup UI
 
 private extension SelectCurrencyViewController {
     struct UI {
@@ -104,6 +99,9 @@ private extension SelectCurrencyViewController {
     }
     
     func createUI() -> UI {
+        title = "CURRENCIES"
+        navigationController?.navigationBar.barTintColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
+        
         let tableView = UITableView()
         tableView.delegate = self
         tableView.dataSource = self
